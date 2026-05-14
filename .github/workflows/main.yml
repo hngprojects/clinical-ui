@@ -1,0 +1,43 @@
+name: Clinical UI CI/CD (PR Workflow)
+
+on:
+  push:
+    branches: [ dani, dev ] # Runs on your branch and the target branch
+  pull_request:
+    branches: [ dev ] # Runs when you open a PR to dev
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run build
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    # CRITICAL: This ensures deployment ONLY happens on the 'dev' branch
+    # and NOT when you are just working on your 'dani' branch.
+    if: github.ref == 'refs/heads/dev'
+    steps:
+      - name: SSH and PM2 Restart
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            cd ~/hng-team-project/clinical-ui
+            git checkout dev
+            git pull origin dev
+            
+            npm install --production
+            npm run build
+            pm2 restart clinical-fe-prod --update-env
