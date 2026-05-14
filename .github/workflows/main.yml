@@ -1,10 +1,8 @@
-name: Clinical UI CI/CD (PR Workflow)
+name: Clinical UI CI/CD
 
 on:
   push:
-    branches: [ dani, dev ] # Runs on your branch and the target branch
-  pull_request:
-    branches: [ dev ] # Runs when you open a PR to dev
+    branches: [ dani, dev, main ]
 
 jobs:
   ci:
@@ -17,14 +15,12 @@ jobs:
       - run: npm install
       - run: npm run build
 
-  deploy:
+  deploy-staging:
     needs: ci
-    runs-on: ubuntu-latest
-    # CRITICAL: This ensures deployment ONLY happens on the 'dev' branch
-    # and NOT when you are just working on your 'dani' branch.
     if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
     steps:
-      - name: SSH and PM2 Restart
+      - name: Deploy Staging
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -34,10 +30,32 @@ jobs:
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             
-            cd ~/hng-team-project/clinical-ui
-            git checkout dev
+            # Use the path confirmed by your 'pm2 env' output
+            cd ~/clinical-fe/staging
             git pull origin dev
             
             npm install --production
             npm run build
-            pm2 restart clinical-fe-prod --update-env
+            pm2 restart 0 --update-env
+
+  deploy-prod:
+    needs: ci
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Production
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            cd ~/clinical-fe/prod
+            git pull origin main
+            
+            npm install --production
+            npm run build
+            pm2 restart 1 --update-env
