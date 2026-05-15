@@ -16,7 +16,6 @@ export function Hero() {
     <section className="relative overflow-x-hidden bg-white pt-10 pb-16 lg:pt-16 lg:pb-24">
       <div className="container mx-auto px-6 lg:px-12">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
-     
           <motion.div
             className="flex-[1.4] flex flex-col items-center lg:items-start gap-6 text-center lg:text-left"
             initial="initial"
@@ -48,7 +47,7 @@ export function Hero() {
                     className="object-cover"
                   />
                 </div>
-                <div className="relative h-6 w-6 rounded-full border-2 border-white bg-#F5F5F5 overflow-hidden">
+                <div className="relative h-6 w-6 rounded-full border-2 border-white bg-[#F5F5F5] overflow-hidden">
                   <Image
                     src="/assets/how-it-works/curly-haired-woman.jpg"
                     alt="User"
@@ -112,6 +111,7 @@ export function Hero() {
                   priority
                 />
               </div>
+              
               <div className="absolute bottom-[2%] right-[2%] lg:bottom-[5%] lg:right-[8%] lg:left-auto z-20 w-12 h-12 lg:w-20 lg:h-20 flex items-center justify-center">
                 <div className="relative w-full h-full p-2 bg-white rounded-full shadow-md border border-slate-100 lg:shadow-none lg:border-none flex items-center justify-center">
                   <Image
@@ -123,116 +123,115 @@ export function Hero() {
                   />
                 </div>
               </div>
-              <div className="relative flex flex-col items-center gap-0 z-10 w-full max-w-[240px] lg:max-w-[380px]">
-                <div className="absolute -left-4 lg:-left-6 top-0 bottom-0 z-20 flex w-[50px] lg:w-[84px] flex-col gap-1.5 lg:gap-2 rounded-lg lg:rounded-xl bg-white p-1 lg:p-2 shadow-lg ring-1 ring-s
-                  {[
-                    "/assets/how-it-works/woman-with-laptop.png",
-                    "/assets/how-it-works/successful-entrepreneur.png",
-                    "/assets/how-it-works/african-american-student.png",
-                  ].map((src, i) => (
-                    <div
-                      key={i}
-                      className="relative flex-1 w-full overflow-hidden rounded-md lg:rounded-lg"
-                    >
+
+              <div className="absolute -left-4 lg:-left-6 top-0 bottom-0 z-20 flex w-[50px] lg:w-[84px] flex-col gap-1.5 lg:gap-2 rounded-lg lg:rounded-xl bg-white p-1 lg:p-2 shadow-lg ring-1 ring-sla
+                {[
+                  "/assets/how-it-works/woman-with-laptop.png",
+                  "/assets/how-it-works/successful-entrepreneur.png",
+                  "/assets/how-it-works/african-american-student.png",
+                ].map((src, i) => (
+                  <div
+                    key={i}
+                    className="relative flex-1 w-full overflow-hidden rounded-md lg:rounded-lg"
+                  >
+                    <Image
+                      src={src}
+                      alt="User"
+                      fill
+                      sizes="(max-width: 1024px) 50px, 84px"
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+                <div className="flex flex-1 w-full flex-col items-center justify-center rounded-md lg:rounded-lg bg-[#E8F0F9] text-center text-[8px] lg:text-[14px] font-medium font-inter leading-tight
+                  User
+                  <br />
+                  Reports
+                </div>
+              </div>
+
+              <div className="relative z-10 w-full">
+                <div
+                  className="rounded-t-[16px] lg:rounded-t-[24px] p-4 lg:p-8 pb-8 lg:pb-12 flex flex-col gap-2 lg:gap-3 [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)]"
+                  style={{
+                    borderWidth: "3px 3px 0px 3px",
+                    borderStyle: "solid",
+                    borderColor: "transparent",
+                    backgroundImage:
+                      "linear-gradient(to bottom, white, white, transparent), linear-gradient(180deg, #1565C0 0%, #F2F2F2 73.08%)",
+                    backgroundOrigin: "border-box",
+                    backgroundClip: "padding-box, border-box",
+                  }}
+                >
+                  <div className="flex items-center gap-2 lg:gap-3">
+                    <div className="flex h-6 w-6 lg:h-10 lg:w-10 items-center justify-center">
                       <Image
-                        src={src}
-                        alt="User"
-                        fill
-                        sizes="(max-width: 1024px) 50px, 84px"
-                        className="object-cover"
+                        src="/assets/how-it-works/ai-scan.svg"
+                        alt="AI Scan"
+                        width={24}
+                        height={24}
+                        className="w-full h-full"
                       />
                     </div>
-                  ))}
-                  <div className="flex flex-1 w-full flex-col items-center justify-center rounded-md lg:rounded-lg bg-[#E8F0F9] text-center text-[8px] lg:text-[14px] font-medium font-inter leading-tig
-                    User
-                    <br />
-                    Reports
+                    <span className="text-[10px] lg:text-sm font-bold text-[#1B1B1B] leading-tight">
+                      Advanced Intelligent Analysis
+                    </span>
                   </div>
-                </div>
 
-                <div className="relative z-10 w-full">
-                  <div
-                    className="rounded-t-[16px] lg:rounded-t-[24px] p-4 lg:p-8 pb-8 lg:pb-12 flex flex-col gap-2 lg:gap-3 [mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)]"
-                    style={{
-                      borderWidth: "3px 3px 0px 3px",
-                      borderStyle: "solid",
-                      borderColor: "transparent",
-                      backgroundImage:
-                        "linear-gradient(to bottom, white, white, transparent), linear-gradient(180deg, #1565C0 0%, #F2F2F2 73.08%)",
-                      backgroundOrigin: "border-box",
-                      backgroundClip: "padding-box, border-box",
-                    }}
-                  >
-                    <div className="flex items-center gap-2 lg:gap-3">
-                      <div className="flex h-6 w-6 lg:h-10 lg:w-10 items-center justify-center">
-                        <Image
-                          src="/assets/how-it-works/ai-scan.svg"
-                          alt="AI Scan"
-                          width={24}
-                          height={24}
-                          className="w-full h-full"
-                        />
-                      </div>
-                      <span className="text-[10px] lg:text-sm font-bold text-[#1B1B1B] leading-tight">
-                        Advanced Intelligent Analysis
-                      </span>
+                  <div className="space-y-2 lg:space-y-3">
+                    <div className="flex gap-2 lg:gap-3">
+                      <div className="h-2 lg:h-4 w-[100px] lg:w-[180px] rounded-full bg-[#E8F0F9]" />
+                      <div className="h-2 lg:h-4 w-[40px] lg:w-[80px] rounded-full bg-[#E8F0F9]" />
                     </div>
-
-                    <div className="space-y-2 lg:space-y-3">
-                      <div className="flex gap-2 lg:gap-3">
-                        <div className="h-2 lg:h-4 w-[100px] lg:w-[180px] rounded-full bg-[#E8F0F9]" />
-                        <div className="h-2 lg:h-4 w-[40px] lg:w-[80px] rounded-full bg-[#E8F0F9]" />
-                      </div>
-                      <div className="flex gap-2 lg:gap-3">
-                        <div className="h-2 lg:h-4 w-10 lg:w-[80px] rounded-full bg-[#E8F0F9]" />
-                        <div className="h-2 lg:h-4 w-10 lg:w-[80px] rounded-full bg-[#E8F0F9]" />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 lg:gap-4 self-stretch rounded-xl lg:rounded-2xl bg-white/20 px-3 lg:px-4 py-2 lg:py-3 shadow-[1px_2px_3px_0px_rgba(0,0,0,0.08)] border-b-2 b
-                      <div className="flex shrink-0 items-center justify-center rounded-lg bg-[#FFF7ED] p-1.5 lg:p-2">
-                        <Image
-                          src="/assets/how-it-works/key.svg"
-                          alt="Key icon"
-                          width={24}
-                          height={24}
-                          className="h-5 w-5 lg:h-6 lg:w-6"
-                        />
-                      </div>
-                      <span className="font-['Inter'] text-[10px] font-medium leading-tight text-[#F59E0B] lg:text-lg">
-                        Key Findings
-                      </span>
-                    </div>
-
-                    {/* Recommendations Chip */}
-                    <div className="flex items-center gap-3 lg:gap-4 self-stretch rounded-xl lg:rounded-2xl bg-white/20 px-3 lg:px-4 py-2 lg:py-3 shadow-[1px_2px_3px_0px_rgba(0,0,0,0.08)] border-b-2 b
-                      <div className="flex shrink-0 items-center justify-center rounded-lg bg-[#ECFDF5] p-1.5 lg:p-2">
-                        <Image
-                          src="/assets/how-it-works/recommendation.svg"
-                          alt="Recommendation icon"
-                          width={24}
-                          height={24}
-                          className="h-5 w-5 lg:h-6 lg:w-6"
-                        />
-                      </div>
-                      <span className="font-['Inter'] text-[10px] font-medium leading-tight text-emerald-600 lg:text-lg">
-                        Recommendations
-                      </span>
+                    <div className="flex gap-2 lg:gap-3">
+                      <div className="h-2 lg:h-4 w-[40px] lg:w-[80px] rounded-full bg-[#E8F0F9]" />
+                      <div className="h-2 lg:h-4 w-[40px] lg:w-[80px] rounded-full bg-[#E8F0F9]" />
                     </div>
                   </div>
-                </div>
 
-                {/* CTA Button */}
-                <div className="z-20 -mt-6 lg:-mt-10 w-full px-4 lg:px-0">
-                  <Button className="w-full rounded-lg lg:rounded-xl bg-[#1565C0] py-4 lg:py-7 text-[10px] lg:text-sm text-base font-medium font-['Inter'] leading-6 hover:bg-[#0D47A1] transition-all">
-                    Get Started
-                    <HugeiconsIcon
-                      icon={ArrowRight02Icon}
-                      size={20}
-                      className="ml-1 lg:ml-2"
-                    />
-                  </Button>
+                  <div className="flex items-center gap-3 lg:gap-4 self-stretch rounded-xl lg:rounded-2xl bg-white/20 px-3 lg:px-4 py-2 lg:py-3 shadow-[1px_2px_3px_0px_rgba(0,0,0,0.08)] border-b-2 bor
+                    <div className="flex shrink-0 items-center justify-center rounded-lg bg-[#FFF7ED] p-1.5 lg:p-2">
+                      <Image
+                        src="/assets/how-it-works/key.svg"
+                        alt="Key icon"
+                        width={24}
+                        height={24}
+                        className="h-5 w-5 lg:h-6 lg:w-6"
+                      />
+                    </div>
+                    <span className="font-['Inter'] text-[10px] font-medium leading-tight text-[#F59E0B] lg:text-lg">
+                      Key Findings
+                    </span>
+                  </div>
+
+                  {/* Recommendations Chip */}
+                  <div className="flex items-center gap-3 lg:gap-4 self-stretch rounded-xl lg:rounded-2xl bg-white/20 px-3 lg:px-4 py-2 lg:py-3 shadow-[1px_2px_3px_0px_rgba(0,0,0,0.08)] border-b-2 bor
+                    <div className="flex shrink-0 items-center justify-center rounded-lg bg-[#ECFDF5] p-1.5 lg:p-2">
+                      <Image
+                        src="/assets/how-it-works/recommendation.svg"
+                        alt="Recommendation icon"
+                        width={24}
+                        height={24}
+                        className="h-5 w-5 lg:h-6 lg:w-6"
+                      />
+                    </div>
+                    <span className="font-['Inter'] text-[10px] font-medium leading-tight text-emerald-600 lg:text-lg">
+                      Recommendations
+                    </span>
+                  </div>
                 </div>
+              </div>
+
+              {/* CTA Button */}
+              <div className="z-20 -mt-6 lg:-mt-10 w-full px-4 lg:px-0">
+                <Button className="w-full rounded-lg lg:rounded-xl bg-[#1565C0] py-4 lg:py-7 text-[10px] lg:text-sm text-base font-medium font-['Inter'] leading-6 hover:bg-[#0D47A1] transition-all">
+                  Get Started
+                  <HugeiconsIcon
+                    icon={ArrowRight02Icon}
+                    size={20}
+                    className="ml-1 lg:ml-2"
+                  />
+                </Button>
               </div>
             </div>
           </motion.div>
