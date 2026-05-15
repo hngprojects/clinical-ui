@@ -102,7 +102,7 @@ export function WaitlistForm() {
                   +1k
                 </div>
               </div>
-              <span className="text-sm font-medium text-[#1565C0] md:text-base">
+              <span className="text-sm font-medium text-brand-blue md:text-base">
                 Join 1k+ people on the waitlist
               </span>
             </div>
