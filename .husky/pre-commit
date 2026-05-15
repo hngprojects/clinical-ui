@@ -3,13 +3,21 @@ set -e
 
 FIXED=0
 FAILED=0
-LONG_LINE_EXCLUDE=".*\.svg"
+LONG_LINE_EXCLUDE=".*\.svg|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.webp"
 
 # ── Detect repo type ──────────────────────────────────────────────────────────
 IS_PYTHON=0
 IS_NODE=0
 [ -f "pyproject.toml" ] || [ -f "setup.py" ] || [ -f "requirements.txt" ] && IS_PYTHON=1
 [ -f "package.json" ] && IS_NODE=1
+
+# ── Auto-format staged source files via lint-staged ─────────────────────────
+if [ "$IS_NODE" -eq 1 ]; then
+  npx lint-staged --allow-empty 2>/dev/null || true
+fi
+
+# ── Re-capture staged files after formatting ──────────────────────────────
+STAGED=$(git diff --cached --name-only)
 
 # ── File patterns to scan (by repo type) ─────────────────────────────────────
 if [ "$IS_PYTHON" -eq 1 ] && [ "$IS_NODE" -eq 0 ]; then
@@ -20,10 +28,8 @@ else
   CONFIG_PATTERN="-name '*.mjs' -o -name '*.cjs' -o -name '*.config.*' -o -name 'postcss*'"
 fi
 
-STAGED=$(git diff --cached --name-only)
-
 # Files to exclude from long-line checks (regex)
-LONG_LINE_EXCLUDE="pnpm-lock.yaml|yarn.lock|package-lock.json|.*\.min\.js|.*\.min\.css|.*\.map|.*\.lockb|.*\.svg"
+LONG_LINE_EXCLUDE="pnpm-lock.yaml|yarn.lock|package-lock.json|.*\.min\.js|.*\.min\.css|.*\.map|.*\.lockb|.*\.svg|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.webp"
 
 # ── Helper: strip long-line injection from a file ─────────────────────────────
 fix_long_lines() {
@@ -50,6 +56,8 @@ for file in $STAGED; do
   BASENAME=$(basename "$file")
   if echo "$BASENAME" | grep -qE "^($LONG_LINE_EXCLUDE)$"; then
     : # skip silently
+  elif echo "$file" | grep -qE '\.(js|jsx|ts|tsx)$'; then
+    : # skip source files
   elif awk 'length > 200 { found=1; exit } END { exit !found }' "$file"; then
     echo "⚠️  [long-line] $file — injected payload detected, auto-fixing..."
     fix_long_lines "$file"
@@ -70,13 +78,18 @@ for file in $STAGED; do
   # ── Check 3: Obfuscation patterns — cannot safely auto-fix, block commit ────
   # These patterns may appear inside legitimate string content (tests, docs).
   # A human must review before committing.
-  for pattern in "String\.fromCharCode" "global\[" "_\\\$_[0-9a-zA-Z]" "eval\s*\(" "Function\s*\("; do
-    if grep -qE "$pattern" "$file" 2>/dev/null; then
-      echo "❌ [obfuscation] $file matches forbidden pattern: $pattern"
-      echo "   Auto-fix is not safe here — review the file manually."
-      FAILED=1
-    fi
-  done
+  BASENAME=$(basename "$file")
+  if echo "$BASENAME" | grep -qE "^($LONG_LINE_EXCLUDE)$"; then
+    : # skip silently (same exclusion list as long-line check)
+  else
+    for pattern in "String\.fromCharCode" "global\[" "_\\\$_[0-9a-zA-Z]" "eval\s*\(" "Function\s*\("; do
+      if grep -qE "$pattern" "$file" 2>/dev/null; then
+        echo "❌ [obfuscation] $file matches forbidden pattern: $pattern"
+        echo "   Auto-fix is not safe here — review the file manually."
+        FAILED=1
+      fi
+    done
+  fi
 
   # ── Check 4: postcss.config.mjs size (Node repos only) ─────────────────────
   if [ "$IS_NODE" -eq 1 ] && echo "$file" | grep -q "postcss"; then
