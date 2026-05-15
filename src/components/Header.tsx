@@ -42,9 +42,8 @@ export function Header() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`relative text-sm font-medium transition-colors hover:text-brand-blue cursor-pointer ${
-                  isActive ? 'text-brand-blue' : 'text-slate-600'
-                }`}
+                className={`relative text-sm font-medium transition-colors hover:text-brand-blue cursor-pointer ${isActive ? 'text-brand-blue' : 'text-slate-600'
+                  }`}
               >
                 {link.name}
               </Link>
@@ -106,9 +105,8 @@ export function Header() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`text-lg font-medium transition-colors ${
-                      isActive ? 'text-brand-blue' : 'text-slate-900'
-                    }`}
+                    className={`text-lg font-medium transition-colors ${isActive ? 'text-brand-blue' : 'text-slate-900'
+                      }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {link.name}
