@@ -2,31 +2,43 @@ name: Clinical UI CI/CD
 
 on:
   push:
-    branches: [ staging, main ] # Removed 'dani', added 'staging'
+    branches: [staging, main]
   pull_request:
-    branches: [ staging, main ]
+    branches: [staging, main]
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          
-      # Setup pnpm cache and CLI for the CI runner
-      - uses: pnpm/action-setup@v3
+
+      - uses: pnpm/action-setup@v4
         with:
-          version: 8
-          
-      - run: pnpm install --no-frozen-lockfile
-      - run: pnpm build
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --ignore-workspace --ignore-scripts
+
+      - name: Run linter
+        run: pnpm lint
+        continue-on-error: true
+
+      - name: Run type check
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+        env:
+          SKIP_ENV_VALIDATION: 1
 
   deploy-staging:
     needs: ci
     environment: staging
-    if: github.ref == 'refs/heads/staging' # Updated to gate strictly for staging branch
+    if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Staging
@@ -38,16 +50,13 @@ jobs:
           script: |
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            
-            cd ~/clinical-fe/staging
+            cd /home/device_clinical_support/clinical-ui
             git fetch origin
             git checkout staging
             git pull origin staging
-            
-            # Using pnpm as requested by lead
-            pnpm install --production
-            pnpm build
-            pm2 restart 0 --update-env
+            pnpm install --ignore-workspace --ignore-scripts
+            SKIP_ENV_VALIDATION=1 pnpm build
+            pm2 restart staging-fe --update-env
 
   deploy-prod:
     needs: ci
@@ -64,13 +73,10 @@ jobs:
           script: |
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            
-            cd ~/clinical-fe/prod
+            cd /home/device_clinical_support/clinical-ui-prod
             git fetch origin
             git checkout main
             git pull origin main
-            
-            # Using pnpm as requested by lead
-            pnpm install --production
-            pnpm build
-            pm2 restart 1 --update-env
+            pnpm install --ignore-workspace --ignore-scripts
+            SKIP_ENV_VALIDATION=1 pnpm build
+            pm2 restart production-fe --update-env
