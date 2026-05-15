@@ -54,7 +54,11 @@ export function Header() {
 
         {/* Desktop Download Button */}
         <div className="hidden lg:flex items-center gap-4">
-          <button className="flex w-[226px] h-[46.1px] items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 transition-all h
+          <button className="flex w-[226px] 
+          h-[46.1px] items-center justify-center 
+          gap-4 rounded-[12px] border border-[#D0D0D0] 
+          bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 
+          transition-all hover:bg-slate-50">
             <div className="flex items-center gap-2">
               <Image
                 src="/assets/header-assets/google-play-icon.svg"
@@ -97,7 +101,8 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-20 left-0 right-0 z-40 border-b border-[#F5F5F5] bg-white p-6 shadow-xl lg:hidden"
+            className="absolute top-20 left-0 right-0 z-40 border-b 
+            border-[#F5F5F5] bg-white p-6 shadow-xl lg:hidden"
           >
             <nav className="flex flex-col gap-10">
               {NAV_LINKS.map((link) => {
@@ -115,7 +120,10 @@ export function Header() {
                   </Link>
                 );
               })}
-              <button className="flex w-full items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-sl
+              <button className="flex w-full items-center justify-center 
+              gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] 
+              px-4 py-3 text-sm font-bold text-slate-900 
+              transition-all hover:bg-slate-50">
                 <div className="flex items-center gap-2">
                   <Image
                     src="/assets/header-assets/google-play-icon.svg"
