@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { BUSINESS_REACH } from "@/lib/constants";
 import { motion, type Variants } from "motion/react";
 import Image from "next/image";
@@ -77,11 +79,13 @@ export default function ContactDetails() {
         transition={{ duration: 0.35, ease: "easeOut", delay: 0.35 }}
       >
         <Image
-          src="/assets/contact-assets/medical-emergency.png"
+          src="/assets/contact-assets/emergency.png"
           alt="emergency icon"
           height={50}
           width={50}
-          quality={75}
+          className="block h-12.5 w-12.5"
+          unoptimized
+          priority
         />
 
         <h3 className="font-semibold text-header-text md:text-xl">

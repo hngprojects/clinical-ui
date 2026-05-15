@@ -3,8 +3,8 @@
 import { sendMessageAction } from "@/actions/contact-form-actions";
 import InputFieldContainer from "@/components/ui/InputFieldContainer";
 import {
-    ContactFormDataType,
-    contactSchema,
+  ContactFormDataType,
+  contactSchema,
 } from "@/schemas/contact-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, type Variants } from "motion/react";
@@ -47,7 +47,7 @@ export default function ContactForm() {
   });
 
   function handleSendMessage(formData: ContactFormDataType) {
-    console.log(formData);
+    
 
     startSendMessageTransition(async () => {
       const response = await sendMessageAction(formData);

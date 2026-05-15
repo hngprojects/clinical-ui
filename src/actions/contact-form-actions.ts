@@ -30,9 +30,11 @@ export async function sendMessageAction(formData: ContactFormDataType) {
       throw new Error(`Failed to submit contact form: ${response.statusText}`);
     }
 
+    const responseData = await response.json();
+    
+
     return {
-      success:
-        "Contact form submitted successfully! We will get back to you shortly.",
+      success: responseData.message,
     };
   } catch (error) {
     console.error("Error submitting contact form:", error);
