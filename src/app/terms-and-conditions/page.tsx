@@ -56,12 +56,8 @@ export default function TermsAndConditions() {
               <h2 className="text-2xl font-semibold">{term.title}</h2>
               <div>
                 <p className="text-[#5E5E5E]">{term.content}</p>
-                {term.subcontent && (
-                  <p className="text-[#5E5E5E]">{term.subcontent}</p>
-                )}
-                {term.bulletTop && (
-                  <p className="text-[#5E5E5E]">{term.bulletTop}</p>
-                )}
+                {term.subcontent && <p className="text-[#5E5E5E]">{term.subcontent}</p>}
+                {term.bulletTop && <p className="text-[#5E5E5E]">{term.bulletTop}</p>}
               </div>
               {term.bullets && (
                 <ul className="list-inside list-disc">
@@ -72,9 +68,7 @@ export default function TermsAndConditions() {
                       ) : (
                         <>
                           {bullet.label}:{' '}
-                          <span className="font-semibold text-[#1B1B1B]">
-                            {bullet.value}
-                          </span>
+                          <span className="font-semibold text-[#1B1B1B]">{bullet.value}</span>
                         </>
                       )}
                     </li>
