@@ -13,7 +13,7 @@ IS_NODE=0
 
 # ── Auto-format staged source files via lint-staged ─────────────────────────
 if [ "$IS_NODE" -eq 1 ]; then
-  npx lint-staged --allow-empty 2>/dev/null || true
+  npx lint-staged --allow-empty
 fi
 
 # ── Re-capture staged files after formatting ──────────────────────────────
