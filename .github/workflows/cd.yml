@@ -1,13 +1,14 @@
 name: CD
 
 on:
-  push:
+  pull_request:
     branches: [staging, main]
+    types: [closed]
 
 jobs:
   deploy-staging:
     environment: staging
-    if: github.ref == 'refs/heads/staging'
+    if: github.event.pull_request.merged == true && github.base_ref == 'staging'
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Staging
@@ -29,7 +30,7 @@ jobs:
 
   deploy-prod:
     environment: production
-    if: github.ref == 'refs/heads/main'
+    if: github.event.pull_request.merged == true && github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Production
