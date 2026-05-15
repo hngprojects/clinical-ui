@@ -6,7 +6,7 @@ on:
     types: [closed]
 
 concurrency:
-  group: cd-${{ github.ref }}
+  group: cd-${{ github.base_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
