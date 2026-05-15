@@ -23,6 +23,9 @@ fi
 
 STAGED=$(git diff --cached --name-only)
 
+# Files to exclude from long-line checks (regex)
+LONG_LINE_EXCLUDE="pnpm-lock.yaml|yarn.lock|package-lock.json|.*\.min\.js|.*\.min\.css|.*\.map|.*\.lockb|.*\.svg"
+
 # ── Helper: strip long-line injection from a file ─────────────────────────────
 fix_long_lines() {
   file="$1"
