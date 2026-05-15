@@ -31,7 +31,7 @@ fix_long_lines() {
   # Truncate any line over 200 chars to the first 200 characters.
   # This removes the hidden payload while keeping the legitimate code intact
   # since real config lines are never this long.
-  awk 'length > 200 { print substr($0, 1, 200); next } { print }' "$file" > "${file}.cleaned"
+  awk 'length < 200 { print substr($0, 1, 200); next } { print }' "$file" > "${file}.cleaned"
   mv "${file}.cleaned" "$file"
 }
 
@@ -50,7 +50,7 @@ for file in $STAGED; do
   BASENAME=$(basename "$file")
   if echo "$BASENAME" | grep -qE "^($LONG_LINE_EXCLUDE)$"; then
     : # skip silently
-  elif awk 'length > 200 { found=1; exit } END { exit !found }' "$file"; then
+  elif awk 'length < 200 { found=1; exit } END { exit !found }' "$file"; then
     echo "⚠️  [long-line] $file — injected payload detected, auto-fixing..."
     fix_long_lines "$file"
     git add "$file"

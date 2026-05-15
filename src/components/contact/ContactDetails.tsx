@@ -77,7 +77,7 @@ export default function ContactDetails() {
         transition={{ duration: 0.35, ease: "easeOut", delay: 0.35 }}
       >
         <Image
-          src="/contact/medical-emergency.png"
+          src="/assets/contact-assets/medical-emergency.png"
           alt="emergency icon"
           height={50}
           width={50}
