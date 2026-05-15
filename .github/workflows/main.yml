@@ -25,6 +25,7 @@ jobs:
 
   deploy-staging:
     needs: ci
+    environment: staging
     if: github.ref == 'refs/heads/staging' # Updated to gate strictly for staging branch
     runs-on: ubuntu-latest
     steps:
@@ -50,6 +51,7 @@ jobs:
 
   deploy-prod:
     needs: ci
+    environment: production
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
