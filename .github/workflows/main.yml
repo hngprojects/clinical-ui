@@ -2,7 +2,9 @@ name: Clinical UI CI/CD
 
 on:
   push:
-    branches: [ dani, dev, main ]
+    branches: [ staging, main ] # Removed 'dani', added 'staging'
+  pull_request:
+    branches: [ staging, main ]
 
 jobs:
   ci:
@@ -12,12 +14,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm install
-      - run: npm run build
+          
+      # Setup pnpm cache and CLI for the CI runner
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm build
 
   deploy-staging:
     needs: ci
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/staging' # Updated to gate strictly for staging branch
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Staging
@@ -30,12 +38,14 @@ jobs:
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             
-            # Use the path confirmed by your 'pm2 env' output
             cd ~/clinical-fe/staging
-            git pull origin dev
+            git fetch origin
+            git checkout staging
+            git pull origin staging
             
-            npm install --production
-            npm run build
+            # Using pnpm as requested by lead
+            pnpm install --production
+            pnpm build
             pm2 restart 0 --update-env
 
   deploy-prod:
@@ -54,8 +64,11 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             
             cd ~/clinical-fe/prod
+            git fetch origin
+            git checkout main
             git pull origin main
             
-            npm install --production
-            npm run build
+            # Using pnpm as requested by lead
+            pnpm install --production
+            pnpm build
             pm2 restart 1 --update-env
