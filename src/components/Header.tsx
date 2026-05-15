@@ -42,9 +42,8 @@ export function Header() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`relative text-sm font-medium transition-colors hover:text-brand-blue cursor-pointer ${
-                  isActive ? "text-brand-blue" : "text-slate-600"
-                }`}
+                className={`relative text-sm font-medium transition-colors hover:text-brand-blue cursor-pointer ${isActive ? "text-brand-blue" : "text-slate-600"
+                  }`}
               >
                 {link.name}
               </Link>
@@ -111,19 +110,15 @@ export function Header() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`text-lg font-medium transition-colors ${
-                      isActive ? "text-brand-blue" : "text-slate-900"
-                    }`}
+                    className={`text-lg font-medium transition-colors ${isActive ? "text-brand-blue" : "text-slate-900"
+                      }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {link.name}
                   </Link>
                 );
               })}
-              <button className="flex w-full items-center justify-center 
-              gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] 
-              px-4 py-3 text-sm font-bold text-slate-900 
-              transition-all hover:bg-slate-50">
+              <button className="flex w-full items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-slate-50">
                 <div className="flex items-center gap-2">
                   <Image
                     src="/assets/header-assets/google-play-icon.svg"
