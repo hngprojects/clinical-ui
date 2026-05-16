@@ -45,18 +45,20 @@ export function WaitlistForm() {
       const response = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firstName, email }),
+        body: JSON.stringify({ email }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to join waitlist');
+        throw new Error(data.message || 'Failed to join waitlist');
       }
 
       // Success!
       setShowSuccess(true);
     } catch (err) {
       console.error(err);
-      setError('Something went wrong. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -78,21 +80,21 @@ export function WaitlistForm() {
             <div className="mx-auto flex w-fit items-center justify-center gap-2.5 rounded-full bg-[#E8F0F9] px-4 py-2 pl-2">
               <div className="-space-x-2 flex">
                 <Image
-                  src="/waitlist/first.jpg"
+                  src="/assets/waitlist-assets/first.jpg"
                   alt="User 1"
                   width={32}
                   height={32}
                   className="h-8 w-8 rounded-full object-cover ring-2 ring-white"
                 />
                 <Image
-                  src="/waitlist/second.jpg"
+                  src="/assets/waitlist-assets/second.jpg"
                   alt="User 2"
                   width={32}
                   height={32}
                   className="h-8 w-8 rounded-full object-cover ring-2 ring-white"
                 />
                 <Image
-                  src="/waitlist/third.jpg"
+                  src="/assets/waitlist-assets/third.jpg"
                   alt="User 3"
                   width={32}
                   height={32}
@@ -118,8 +120,8 @@ export function WaitlistForm() {
           {/* Description */}
           <div className="text-center">
             <p className="text-sm leading-relaxed text-gray-600 md:text-base">
-              Get early access to a simpler way to understand your lab results —
-              with clear insights and optional doctor review.
+              Get early access to a simpler way to understand your lab results — with clear insights
+              and optional doctor review.
             </p>
           </div>
         </div>
@@ -199,20 +201,12 @@ export function WaitlistForm() {
             {isLoading ? (
               <>
                 <span>Loading...</span>
-                <HugeiconsIcon
-                  icon={Loading03Icon}
-                  className="h-5 w-5 animate-spin"
-                  size={20}
-                />
+                <HugeiconsIcon icon={Loading03Icon} className="h-5 w-5 animate-spin" size={20} />
               </>
             ) : (
               <>
                 <span>Get Notified</span>
-                <HugeiconsIcon
-                  icon={SchoolBell02Icon}
-                  className="h-5 w-5"
-                  size={20}
-                />
+                <HugeiconsIcon icon={SchoolBell02Icon} className="h-5 w-5" size={20} />
               </>
             )}
           </button>
@@ -232,11 +226,7 @@ export function WaitlistForm() {
               }}
               className="absolute right-4 top-4 rounded-lg p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
             >
-              <HugeiconsIcon
-                icon={Cancel01Icon}
-                className="h-5 w-5"
-                size={20}
-              />
+              <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5" size={20} />
             </button>
 
             {/* Confetti decorations */}
@@ -258,11 +248,7 @@ export function WaitlistForm() {
                   viewBox="0 0 24 24"
                   strokeWidth={3}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
 
