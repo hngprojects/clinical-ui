@@ -10,7 +10,10 @@ export async function POST(request: Request) {
     }
 
     // Call backend
-    const response = await fetch('https://api.staging.clinsight.hng14.com/api/v1/waitlist', {
+    const backendUrl =
+      process.env.NEXT_PUBLIC_WAITLIST_API_URL ||
+      'https://api.staging.clinsight.hng14.com/api/v1/waitlist';
+    const response = await fetch(backendUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
