@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import { sendMessageAction } from "@/actions/contact-form-actions";
-import InputFieldContainer from "@/components/ui/InputFieldContainer";
-import {
-  ContactFormDataType,
-  contactSchema,
-} from "@/schemas/contact-form-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, type Variants } from "motion/react";
-import { useTransition } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { toast } from "sonner";
+import { sendMessageAction } from '@/actions/contact-form-actions';
+import InputFieldContainer from '@/components/ui/InputFieldContainer';
+import { ContactFormDataType, contactSchema } from '@/schemas/contact-form-schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { motion, type Variants } from 'motion/react';
+import { useTransition } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 const containerVariants: Variants = {
   hidden: {},
@@ -22,33 +19,30 @@ const itemVariants: Variants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const itemTransition = { duration: 0.3, ease: "easeOut" as const };
+const itemTransition = { duration: 0.3, ease: 'easeOut' as const };
 
 export default function ContactForm() {
   const [isSendingMessage, startSendMessageTransition] = useTransition();
 
-  const { register, handleSubmit, formState, control, reset } =
-    useForm<ContactFormDataType>({
-      resolver: zodResolver(contactSchema),
-      defaultValues: {
-        fullName: "",
-        email: "",
-        message: "",
-        termsAgreement: false,
-      },
-    });
+  const { register, handleSubmit, formState, control, reset } = useForm<ContactFormDataType>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      fullName: '',
+      email: '',
+      message: '',
+      termsAgreement: false,
+    },
+  });
 
   const { errors } = formState;
   const formValues = useWatch({ control });
 
   const isAllInputsFilled = Object.values(formValues).every((value) => {
-    if (typeof value === "boolean") return value === true;
-    return value.trim() !== "";
+    if (typeof value === 'boolean') return value === true;
+    return value.trim() !== '';
   });
 
   function handleSendMessage(formData: ContactFormDataType) {
-    
-
     startSendMessageTransition(async () => {
       const response = await sendMessageAction(formData);
 
@@ -68,23 +62,19 @@ export default function ContactForm() {
       className="border border-outline-border py-5 px-4 space-y-7.5 rounded-[12px] md:w-[60%]"
       initial={{ opacity: 0, x: -28 }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
     >
       <header className="text-left space-y-2.5 md:space-y-3.75 ">
         <h2 className="font-semibold text-2xl leading-[130%] tracking=[-2%] text-header-text md:font-semibold md:text-[40px] md:tracking-[-2%] md:leading-[120%]">
           Send us a message
         </h2>
         <p className="text-sm leading-[150%] tracking-[-1%] text-text-disabled md:text-base">
-          Fill out the form and we'll be in touch shortly
+          Fill out the form and we&apos;ll be in touch shortly
         </p>
       </header>
 
-      <form
-        action=""
-        autoComplete="on"
-        onSubmit={handleSubmit(handleSendMessage)}
-      >
+      <form action="" autoComplete="on" onSubmit={handleSubmit(handleSendMessage)}>
         <motion.div
           className="space-y-5"
           variants={containerVariants}
@@ -105,7 +95,7 @@ export default function ContactForm() {
                 autoComplete="given-name"
                 className="input__field"
                 placeholder="Enter first name"
-                {...register("fullName")}
+                {...register('fullName')}
               />
             </InputFieldContainer>
           </motion.div>
@@ -123,7 +113,7 @@ export default function ContactForm() {
                 autoComplete="email"
                 className="input__field"
                 placeholder="you@gmail.com"
-                {...register("email")}
+                {...register('email')}
               />
             </InputFieldContainer>
           </motion.div>
@@ -140,24 +130,27 @@ export default function ContactForm() {
                 className="input__field h-33 p-2.5"
                 disabled={isSendingMessage}
                 placeholder="Tell us a little about what you need."
-                {...register("message")}
+                {...register('message')}
               />
             </InputFieldContainer>
           </motion.div>
 
-          <motion.div variants={itemVariants} transition={itemTransition} className="flex items-center gap-3">
+          <motion.div
+            variants={itemVariants}
+            transition={itemTransition}
+            className="flex items-center gap-3"
+          >
             <input
               type="checkbox"
               id="termsAgreement"
               disabled={isSendingMessage}
-              {...register("termsAgreement")}
+              {...register('termsAgreement')}
             />
             <label
               htmlFor="termsAgreement"
               className="text-xs text-text-disabled leading-[150%] tracking-[-1%] md:text-sm"
             >
-              I agree that my information will be processed according to Clinsight
-              privacy policy
+              I agree that my information will be processed according to Clinsight privacy policy
             </label>
           </motion.div>
 
@@ -167,9 +160,9 @@ export default function ContactForm() {
               disabled={!isAllInputsFilled || isSendingMessage}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
-              {isSendingMessage ? "Sending message..." : "Send message"}
+              {isSendingMessage ? 'Sending message...' : 'Send message'}
             </motion.button>
           </motion.div>
         </motion.div>

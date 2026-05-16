@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Cancel01Icon } from "@hugeicons/core-free-icons";
-import { motion, AnimatePresence } from "motion/react";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Cancel01Icon } from '@hugeicons/core-free-icons';
+import { motion, AnimatePresence } from 'motion/react';
 
 const NAV_LINKS = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "How It Works", href: "/how-it-works" },
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about' },
+  { name: 'How It Works', href: '/how-it-works' },
 ];
 
 export function Header() {
@@ -43,7 +43,7 @@ export function Header() {
                 key={link.name}
                 href={link.href}
                 className={`relative text-sm font-medium transition-colors hover:text-brand-blue cursor-pointer ${
-                  isActive ? "text-brand-blue" : "text-slate-600"
+                  isActive ? 'text-brand-blue' : 'text-slate-600'
                 }`}
               >
                 {link.name}
@@ -54,11 +54,7 @@ export function Header() {
 
         {/* Desktop Download Button */}
         <div className="hidden lg:flex items-center gap-4">
-          <button className="flex w-[226px] 
-          h-[46.1px] items-center justify-center 
-          gap-4 rounded-[12px] border border-[#D0D0D0] 
-          bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 
-          transition-all hover:bg-slate-50">
+          <button className="flex w-[226px] h-[46.1px] items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 transition-all hover:bg-slate-50">
             <div className="flex items-center gap-2">
               <Image
                 src="/assets/header-assets/google-play-icon.svg"
@@ -112,7 +108,7 @@ export function Header() {
                     key={link.name}
                     href={link.href}
                     className={`text-lg font-medium transition-colors ${
-                      isActive ? "text-brand-blue" : "text-slate-900"
+                      isActive ? 'text-brand-blue' : 'text-slate-900'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -120,10 +116,7 @@ export function Header() {
                   </Link>
                 );
               })}
-              <button className="flex w-full items-center justify-center 
-              gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] 
-              px-4 py-3 text-sm font-bold text-slate-900 
-              transition-all hover:bg-slate-50">
+              <button className="flex w-full items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-slate-50">
                 <div className="flex items-center gap-2">
                   <Image
                     src="/assets/header-assets/google-play-icon.svg"
