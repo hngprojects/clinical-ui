@@ -6,7 +6,7 @@ const FEATURES = [
   {
     title: 'AI Analysis',
     description:
-      'Advanced intelligent models analyze your lab data with precision, identifying patterns, flagging abnormalities, and breaking down complex values into clear, structured insights you can easily understand.',
+      'Advanced intelligent models analyze your lab data with precision, identifying patterns, flagging abnormalities, and breaking down complex values into clear, structured insights you can easily understand and act on.',
     icon: '/assets/landing-page-assets/ai-scan-blue.svg',
     bgColor: 'bg-[#E8F0F9]',
     iconColor: 'text-[#1565C0]',

@@ -15,8 +15,10 @@ export function Hero() {
           <div className="flex-[1.4] flex flex-col items-start gap-6 text-left">
             <div className="flex items-center gap-2 rounded-full bg-[#F5F5F5] p-1 pr-4">
               <div className="flex -space-x-2 overflow-hidden">
-                <div className="relative h-6 w-6 rounded-full border-2 border-white 
-                bg-slate-200 overflow-hidden">
+                <div
+                  className="relative h-6 w-6 rounded-full border-2 border-white 
+                bg-slate-200 overflow-hidden"
+                >
                   <Image
                     src="/assets/landing-page-assets/handsome-man.jpg"
                     alt="User"
@@ -24,8 +26,10 @@ export function Hero() {
                     className="object-cover"
                   />
                 </div>
-                <div className="relative h-6 w-6 rounded-full border-2 border-white 
-                bg-slate-200 overflow-hidden">
+                <div
+                  className="relative h-6 w-6 rounded-full border-2 border-white 
+                bg-slate-200 overflow-hidden"
+                >
                   <Image
                     src="/assets/landing-page-assets/successful-entrepreneur.jpg"
                     alt="User"
@@ -33,8 +37,10 @@ export function Hero() {
                     className="object-cover"
                   />
                 </div>
-                <div className="relative h-6 w-6 rounded-full border-2 border-white 
-                bg-slate-200 overflow-hidden">
+                <div
+                  className="relative h-6 w-6 rounded-full border-2 border-white 
+                bg-slate-200 overflow-hidden"
+                >
                   <Image
                     src="/assets/landing-page-assets/curly-haired-woman.jpg"
                     alt="User"
@@ -49,12 +55,16 @@ export function Hero() {
             </div>
 
             <div className="flex flex-col gap-3">
-              <h1 className="text-[28px] lg:text-[48px] font-bold leading-[1.2] 
-              tracking-[-0.02em] text-[#1B1B1B] w-full lg:max-w-none">
+              <h1
+                className="text-[28px] lg:text-[48px] font-bold leading-[1.2] 
+              tracking-[-0.02em] text-[#1B1B1B] w-full lg:max-w-none"
+              >
                 Understand Your Lab Results Right Now.
               </h1>
-              <h1 className="text-[28px] lg:text-[48px] font-bold leading-[1.2] 
-              tracking-[-0.02em] text-[#1B1B1B]">
+              <h1
+                className="text-[28px] lg:text-[48px] font-bold leading-[1.2] 
+              tracking-[-0.02em] text-[#1B1B1B]"
+              >
                 <span className="relative inline-block px-3 text-white">
                   <span className="absolute inset-0 -skew-x-2 rounded bg-[#1565C0]" />
                   <span className="relative">No Waiting!</span>
@@ -62,12 +72,11 @@ export function Hero() {
               </h1>
             </div>
 
-            <div className="max-w-md text-[16px] lg:text-[18px] font-normal 
-            leading-[1.5] tracking-[-0.01em] text-[#5E5E5E] flex flex-col gap-4">
-              <p>
-                Upload your laboratory results and get a clear interpretation in
-                minutes.
-              </p>
+            <div
+              className="max-w-md text-[16px] lg:text-[18px] font-normal 
+            leading-[1.5] tracking-[-0.01em] text-[#5E5E5E] flex flex-col gap-4"
+            >
+              <p>Upload your laboratory results and get a clear interpretation in minutes.</p>
               <p className="italic text-[14px]">
                 AI-assisted interpretation, not a medical diagnosis.
               </p>
@@ -75,12 +84,16 @@ export function Hero() {
           </div>
 
           {/* Right Column: Dashboard Visual nested in Circle */}
-          <div className="relative w-full flex-1 min-h-[400px] lg:min-h-[600px] 
-          flex items-center justify-end -mr-6 lg:mr-0 -mt-8 lg:mt-0">
+          <div
+            className="relative w-full flex-1 min-h-[400px] lg:min-h-[600px] 
+          flex items-center justify-end -mr-6 lg:mr-0 -mt-8 lg:mt-0"
+          >
             {/* Circle Wrapper - Responsive size */}
-            <div className="relative h-[320px] w-[320px] lg:h-[600px] lg:w-[600px] 
+            <div
+              className="relative h-[320px] w-[320px] lg:h-[600px] lg:w-[600px] 
             flex items-center justify-center scale-90 sm:scale-100 lg:scale-100 
-            translate-x-6 lg:translate-x-0">
+            translate-x-6 lg:translate-x-0"
+            >
               {/* Background Circle Asset */}
               <div className="absolute inset-0 pointer-events-none">
                 <Image
@@ -91,13 +104,16 @@ export function Hero() {
                   priority
                 />
               </div>
-
               {/* Floating File Icon - Responsive size */}
-              <div className="absolute -bottom-10 -right-2 lg:bottom-[8%] lg:right-[5%] 
-              z-20 w-12 h-12 lg:w-20 lg:h-20 flex items-center justify-center">
-                <div className="relative w-full h-full p-2 bg-white rounded-full 
+              <div
+                className="absolute -bottom-10 -right-2 lg:bottom-[8%] lg:right-[5%] 
+              z-20 w-12 h-12 lg:w-20 lg:h-20 flex items-center justify-center"
+              >
+                <div
+                  className="relative w-full h-full p-2 bg-white rounded-full 
                 shadow-md border border-slate-100 lg:shadow-none lg:border-none flex 
-                items-center justify-center">
+                items-center justify-center"
+                >
                   <Image
                     src="/assets/landing-page-assets/docs.svg"
                     alt="Note icon"
@@ -108,12 +124,16 @@ export function Hero() {
                 </div>
               </div>
               {/* Dashboard Content - Centered in the circle */}{' '}
-              <div className="relative flex flex-col items-center gap-0 z-10 w-full 
-              max-w-[240px] lg:max-w-[380px]">
+              <div
+                className="relative flex flex-col items-center gap-0 z-10 w-full 
+              max-w-[240px] lg:max-w-[380px]"
+              >
                 {/* User Reports Sidebar - Hidden or adjusted on mobile */}
-                <div className="absolute -left-4 lg:-left-6 top-0 bottom-0 z-20 flex 
+                <div
+                  className="absolute -left-4 lg:-left-6 top-0 bottom-0 z-20 flex 
                 w-[50px] lg:w-[84px] flex-col gap-1.5 lg:gap-2 rounded-lg lg:rounded-xl 
-                bg-white p-1 lg:p-2 shadow-lg ring-1 ring-slate-100">
+                bg-white p-1 lg:p-2 shadow-lg ring-1 ring-slate-100"
+                >
                   {[
                     '/assets/landing-page-assets/woman-with-laptop.jpg',
                     '/assets/landing-page-assets/successful-entrepreneur.jpg',
@@ -123,17 +143,14 @@ export function Hero() {
                       key={i}
                       className="relative flex-1 w-full overflow-hidden rounded-md lg:rounded-lg"
                     >
-                      <Image
-                        src={src}
-                        alt="User"
-                        fill
-                        className="object-cover"
-                      />
+                      <Image src={src} alt="User" fill className="object-cover" />
                     </div>
                   ))}
-                  <div className="flex flex-1 w-full flex-col items-center justify-center 
+                  <div
+                    className="flex flex-1 w-full flex-col items-center justify-center 
                   rounded-md lg:rounded-lg bg-[#E8F0F9] text-center text-[8px] lg:text-[14px] 
-                  font-medium leading-tight text-brand-blue">
+                  font-medium leading-tight text-brand-blue"
+                  >
                     User
                     <br />
                     Reports
@@ -143,9 +160,11 @@ export function Hero() {
                 {/* Dashboard Card with Fading Bottom Edge */}
                 <div className="relative z-10 w-full">
                   {/* Container with fading gradient and mask for the border/bg */}
-                  <div className="rounded-t-[16px] lg:rounded-t-[24px] border-x border-t 
+                  <div
+                    className="rounded-t-[16px] lg:rounded-t-[24px] border-x border-t 
                   border-brand-blue bg-gradient-to-b from-white via-white to-transparent 
-                  p-4 lg:p-8 pb-8 lg:pb-12 flex flex-col gap-4 lg:gap-8">
+                  p-4 lg:p-8 pb-8 lg:pb-12 flex flex-col gap-4 lg:gap-8"
+                  >
                     <div className="flex items-center gap-2 lg:gap-3">
                       <div className="flex h-6 w-6 lg:h-10 lg:w-10 items-center justify-center">
                         <Image
@@ -172,37 +191,44 @@ export function Hero() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 rounded-[16px] 
+                    <div
+                      className="flex items-center gap-4 rounded-[16px] 
                     bg-[#FFFFFE33] pt-2 pr-2 pb-3 pl-2 h-[60px] border-b-2 
-                    border-[#1B1B1B14] text-[#F59E0B] w-full max-w-[352px]">
+                    border-[#1B1B1B14] text-[#F59E0B] w-full max-w-[352px]"
+                    >
                       <Image
                         src="/assets/landing-page-assets/key.svg"
                         alt="Key icon"
                         width={24}
                         height={24}
                       />
-                      <span className="text-[8px] lg:text-[12px] font-bold 
-                      uppercase tracking-[0.2em]">
+                      <span
+                        className="text-[8px] lg:text-[12px] font-bold 
+                      uppercase tracking-[0.2em]"
+                      >
                         Key Findings
                       </span>
                     </div>
 
                     {/* Recommendations inside the fading container flow */}
-                    <div className="flex items-center gap-4 rounded-[16px] bg-[#FFFFFE33] 
+                    <div
+                      className="flex items-center gap-4 rounded-[16px] bg-[#FFFFFE33] 
                     pt-2 pr-2 pb-3 pl-2 h-[60px] border-b-2 border-[#1B1B1B14] 
-                    text-emerald-500 w-full max-w-[352px]">
+                    text-emerald-500 w-full max-w-[352px]"
+                    >
                       <Image
                         src="/assets/landing-page-assets/recommendation.svg"
                         alt="Recommendation icon"
                         width={24}
                         height={24}
                       />
-                      <span className="text-[8px] lg:text-[12px] font-bold uppercase 
-                      tracking-[0.2em]">
+                      <span
+                        className="text-[8px] lg:text-[12px] font-bold uppercase 
+                      tracking-[0.2em]"
+                      >
                         Recommendations
                       </span>
                     </div>
-
                   </div>
                 </div>
 
