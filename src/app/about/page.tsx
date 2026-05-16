@@ -15,6 +15,7 @@ export default function AboutPage() {
         <AboutValues />
         <AboutTeam />
       </main>
+
       <Footer />
     </div>
   );
