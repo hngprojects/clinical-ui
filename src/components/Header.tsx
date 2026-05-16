@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Cancel01Icon } from "@hugeicons/core-free-icons";
-import { motion, AnimatePresence } from "motion/react";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Cancel01Icon } from '@hugeicons/core-free-icons';
+import { motion, AnimatePresence } from 'motion/react';
 
 const NAV_LINKS = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "How It Works", href: "/how-it-works" },
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about' },
+  { name: 'How It Works', href: '/how-it-works' },
 ];
 
 export function Header() {
@@ -42,8 +42,9 @@ export function Header() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`relative text-sm font-medium transition-colors hover:text-brand-blue cursor-pointer ${isActive ? "text-brand-blue" : "text-slate-600"
-                  }`}
+                className={`relative text-sm font-medium transition-colors hover:text-brand-blue cursor-pointer ${
+                  isActive ? 'text-brand-blue' : 'text-slate-600'
+                }`}
               >
                 {link.name}
               </Link>
@@ -106,8 +107,9 @@ export function Header() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`text-lg font-medium transition-colors ${isActive ? "text-brand-blue" : "text-slate-900"
-                      }`}
+                    className={`text-lg font-medium transition-colors ${
+                      isActive ? 'text-brand-blue' : 'text-slate-900'
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {link.name}
