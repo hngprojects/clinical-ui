@@ -1,27 +1,32 @@
 'use client';
 
 import React from 'react';
-import MissionImage from '../../../public/assets/about-page-assets/mission-image.svg';
-import VissionImage from '../../../public/assets/about-page-assets/vission-image.svg';
-import SpiralIcon from '../../../public/assets/about-page-assets/spiral-icon.svg';
-import EyeIcon from '../../../public/assets/about-page-assets/eye-icon.svg';
+import Image from 'next/image';
+import MissionImage from '@/public/assets/about-page-assets/mission-image.svg';
+import VissionImage from '@/public/assets/about-page-assets/vission-image.svg';
+import SpiralIcon from '@/public/assets/about-page-assets/spiral-icon.svg';
+import EyeIcon from '@/public/assets/about-page-assets/eye-icon.svg';
 
 const ImgBlock = ({
   style,
   image,
 }: {
   style?: React.CSSProperties;
-  image?: any;
+  image?: string;
   radius?: string;
-}) => (
-  <img
-    src={image?.src}
-    alt=""
-    style={{
-      ...style,
-    }}
-  />
-);
+}) => {
+  if (!image) return null;
+
+  return (
+    <Image
+      src={image}
+      alt=""
+      style={{
+        ...style,
+      }}
+    />
+  );
+};
 
 export default function AboutMissionVision() {
   return (
@@ -61,7 +66,7 @@ export default function AboutMissionVision() {
               className="flex items-center justify-center bg-[#E8F0F9]"
               style={{ width: '66px', height: '66px', borderRadius: '13px', padding: '13px' }}
             >
-              <img
+              <Image
                 src={SpiralIcon.src}
                 alt="Spiral icon"
                 style={{ width: '32.5px', height: '32.5px' }}
@@ -107,7 +112,11 @@ export default function AboutMissionVision() {
               className="flex items-center justify-center bg-[#DEF6E7]"
               style={{ width: '66px', height: '66px', borderRadius: '13px', padding: '13px' }}
             >
-              <img src={EyeIcon.src} alt="Eye icon" style={{ width: '32.5px', height: '32.5px' }} />
+              <Image
+                src={EyeIcon.src}
+                alt="Eye icon"
+                style={{ width: '32.5px', height: '32.5px' }}
+              />
             </div>
 
             {/* middleTagSmall */}

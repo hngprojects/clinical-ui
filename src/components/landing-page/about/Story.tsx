@@ -1,24 +1,29 @@
 'use client';
 
 import React from 'react';
-import StoryImage from '../../../public/assets/about-page-assets/story-image.svg';
+import Image from 'next/image';
+import StoryImage from '@/public/assets/about-page-assets/story-image.svg';
 
 const ImgBlock = ({
   style,
   image,
 }: {
   style?: React.CSSProperties;
-  image?: any;
+  image?: string;
   radius?: string;
-}) => (
-  <img
-    src={image?.src}
-    alt=""
-    style={{
-      ...style,
-    }}
-  />
-);
+}) => {
+  if (!image) return null;
+
+  return (
+    <Image
+      src={image}
+      alt=""
+      style={{
+        ...style,
+      }}
+    />
+  );
+};
 
 export default function AboutStory() {
   return (
@@ -72,7 +77,8 @@ export default function AboutStory() {
             style={{ fontSize: '16px', lineHeight: '150%', letterSpacing: '-1%' }}
           >
             Clinsights started after our founders watched family members leave clinics holding lab
-            printouts they couldn't read. Doctors were stretched thin. Patients were left guessing.
+            printouts they couldn&apos;t read. Doctors were stretched thin. Patients were left
+            guessing.
           </p>
           <p
             className="font-normal text-[#5E5E5E]"

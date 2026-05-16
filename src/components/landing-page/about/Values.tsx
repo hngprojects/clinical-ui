@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
-import ValuesIcon from '../../../public/assets/about-page-assets/values-icon.svg';
-import HeartIcon from '../../../public/assets/about-page-assets/heart-icon.svg';
-import ShieldIcon from '../../../public/assets/about-page-assets/shield-icon.svg';
-import StarIcon from '../../../public/assets/about-page-assets/star-icon.svg';
-import CheckIcon from '../../../public/assets/about-page-assets/check-icon.svg';
+import Image from 'next/image';
+import ValuesIcon from '@/public/assets/about-page-assets/values-icon.svg';
+import HeartIcon from '@/public/assets/about-page-assets/heart-icon.svg';
+import ShieldIcon from '@/public/assets/about-page-assets/shield-icon.svg';
+import StarIcon from '@/public/assets/about-page-assets/star-icon.svg';
+import CheckIcon from '@/public/assets/about-page-assets/check-icon.svg';
 
 const values = [
   {
@@ -71,7 +71,7 @@ export default function AboutValues() {
               letterSpacing: '-2%',
             }}
           >
-            <img src={ValuesIcon.src} alt="icon" style={{ transform: 'translateY(-20px)' }} />
+            <Image src={ValuesIcon.src} alt="icon" style={{ transform: 'translateY(-20px)' }} />
             What guides every decision made
           </h2>
         </div>
@@ -104,7 +104,7 @@ export default function AboutValues() {
                   backgroundColor: v.bg,
                 }}
               >
-                <img src={v.icon.src} alt={v.title} style={{ width: '25px', height: '25px' }} />
+                <Image src={v.icon.src} alt={v.title} style={{ width: '25px', height: '25px' }} />
               </div>
 
               {/* valueTitle */}

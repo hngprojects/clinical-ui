@@ -1,8 +1,8 @@
-import AboutHero from '@/components/about/Hero';
-import AboutMissionVision from '@/components/about/MissionVission';
-import AboutStory from '@/components/about/Story';
-import AboutValues from '@/components/about/Values';
-import AboutTeam from '@/components/about/Team';
+import AboutHero from '@/components/landing-page/about/Hero';
+import AboutMissionVision from '@/components/landing-page/about/MissionVission';
+import AboutStory from '@/components/landing-page/about/Story';
+import AboutValues from '@/components/landing-page/about/Values';
+import AboutTeam from '@/components/landing-page/about/Team';
 import { Footer } from '@/components/Footer';
 
 export default function AboutPage() {

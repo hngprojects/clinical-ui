@@ -1,29 +1,34 @@
 'use client';
 
 import React from 'react';
-import TeamImage1 from '../../../public/assets/about-page-assets/team-image1.svg';
-import TeamImage2 from '../../../public/assets/about-page-assets/team-image2.png';
-import TeamImage3 from '../../../public/assets/about-page-assets/team-image3.png';
-import TeamImage4 from '../../../public/assets/about-page-assets/team-image4.png';
-import Profile5 from '../../../public/assets/about-page-assets/team-image5.png';
-import Profile6 from '../../../public/assets/about-page-assets/team-image6.png';
+import Image from 'next/image';
+import TeamImage1 from '@/public/assets/about-page-assets/team-image1.svg';
+import TeamImage2 from '@/public/assets/about-page-assets/team-image2.png';
+import TeamImage3 from '@/public/assets/about-page-assets/team-image3.png';
+import TeamImage4 from '@/public/assets/about-page-assets/team-image4.png';
+import Profile5 from '@/public/assets/about-page-assets/team-image5.png';
+import Profile6 from '@/public/assets/about-page-assets/team-image6.png';
 
 const ImgBlock = ({
   style,
   image,
 }: {
   style?: React.CSSProperties;
-  image?: any;
+  image?: string;
   radius?: string;
-}) => (
-  <img
-    src={image?.src}
-    alt=""
-    style={{
-      ...style,
-    }}
-  />
-);
+}) => {
+  if (!image) return null;
+
+  return (
+    <Image
+      src={image}
+      alt=""
+      style={{
+        ...style,
+      }}
+    />
+  );
+};
 
 const team = [
   { name: 'Dr. Amara Okafor', role: 'Chief Medical Officer', pic: TeamImage1 },
