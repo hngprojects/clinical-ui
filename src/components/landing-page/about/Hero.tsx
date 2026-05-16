@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import HeroIcon from '../../../../public/assets/about-page-assets/hero-icon.svg';
+import HeroIcon from '/assets/about-page-assets/hero-icon.svg';
 
 const ResponsiveStyle = () => (
   <style>{`
