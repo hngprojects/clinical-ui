@@ -203,7 +203,7 @@ export function Hero() {
                   <div className="size-14 lg:size-20 bg-white rounded-full shadow-2xl flex items-center justify-center border border-slate-50">
                     <div className="size-[85%] bg-[#FFF7ED] rounded-full flex items-center justify-center">
                       <Image
-                        src="/assets/landing-page-assets/docs.svg"
+                        src="/assets/how-it-works/contracts.svg"
                         alt="doc"
                         width={32}
                         height={32}
