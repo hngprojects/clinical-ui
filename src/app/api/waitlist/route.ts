@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email } = body;
 
-    if (!email || !EMAIL_REGEX.test(email)) {
+    if (!email || !EMAIL_REGEX.test(email.trim())) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
     }
 

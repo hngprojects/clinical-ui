@@ -230,7 +230,12 @@ export function WaitlistForm() {
       {/* Success Modal */}
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 px-4">
-          <div className="relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="waitlist-success-title"
+            className="relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl"
+          >
             {/* Close button */}
             <button
               onClick={() => {
@@ -266,7 +271,7 @@ export function WaitlistForm() {
                 </svg>
               </div>
 
-              <h3 className="mb-3 text-2xl font-bold text-gray-900">
+              <h3 id="waitlist-success-title" className="mb-3 text-2xl font-bold text-gray-900">
                 {`${firstName} you're on the list.`}
               </h3>
               <p className="text-sm text-gray-600">
