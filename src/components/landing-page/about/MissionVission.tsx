@@ -2,10 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import MissionImage from '/assets/about-page-assets/mission-image.svg';
-import VissionImage from '/assets/about-page-assets/vission-image.svg';
-import SpiralIcon from '/assets/about-page-assets/spiral-icon.svg';
-import EyeIcon from '/assets/about-page-assets/eye-icon.svg';
 
 const ImgBlock = ({
   style,
@@ -52,7 +48,7 @@ export default function AboutMissionVision() {
           <div className="middle-image-box" style={{ flex: '1 1 500px', height: '500px' }}>
             <ImgBlock
               style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-              image={MissionImage}
+              image={`/assets/about-page-assets/mission-image.svg`}
             />
           </div>
 
@@ -67,7 +63,7 @@ export default function AboutMissionVision() {
               style={{ width: '66px', height: '66px', borderRadius: '13px', padding: '13px' }}
             >
               <Image
-                src={SpiralIcon.src}
+                src={`/assets/about-page-assets/spiral-icon.svg`}
                 alt="Spiral icon"
                 style={{ width: '32.5px', height: '32.5px' }}
               />
@@ -113,7 +109,7 @@ export default function AboutMissionVision() {
               style={{ width: '66px', height: '66px', borderRadius: '13px', padding: '13px' }}
             >
               <Image
-                src={EyeIcon.src}
+                src={`/assets/about-page-assets/eye-icon.svg`}
                 alt="Eye icon"
                 style={{ width: '32.5px', height: '32.5px' }}
               />
@@ -148,7 +144,7 @@ export default function AboutMissionVision() {
           <div className="vision-image-box" style={{ flex: '1 1 500px', height: '500px' }}>
             <ImgBlock
               style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-              image={VissionImage}
+              image={`/assets/about-page-assets/vission-image.svg`}
             />
           </div>
         </section>

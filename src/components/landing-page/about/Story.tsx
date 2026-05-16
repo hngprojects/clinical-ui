@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import StoryImage from '/assets/about-page-assets/story-image.svg';
 
 const ImgBlock = ({
   style,
@@ -101,7 +100,7 @@ export default function AboutStory() {
         <div style={{ flex: '1 1 450px', height: '450px' }}>
           <ImgBlock
             style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-            image={StoryImage}
+            image={`/assets/about-page-assets/story-image.svg`}
           />
         </div>
       </section>

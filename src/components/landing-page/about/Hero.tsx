@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import HeroIcon from '/assets/about-page-assets/hero-icon.svg';
 
 const ResponsiveStyle = () => (
   <style>{`
@@ -44,7 +43,7 @@ export default function AboutHero() {
             </span>
           </h1>
 
-          <Image src={HeroIcon.src} alt="Hero icon" />
+          <Image src={`/assets/about-page-assets/hero-icon.svg`} alt="Hero icon" />
         </div>
 
         {/* heroSubtext */}

@@ -2,12 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import TeamImage1 from '/assets/about-page-assets/team-image1.svg';
-import TeamImage2 from '/assets/about-page-assets/team-image2.png';
-import TeamImage3 from '/assets/about-page-assets/team-image3.png';
-import TeamImage4 from '/assets/about-page-assets/team-image4.png';
-import Profile5 from '/assets/about-page-assets/team-image5.png';
-import Profile6 from '/assets/about-page-assets/team-image6.png';
 
 const ImgBlock = ({
   style,
@@ -31,12 +25,28 @@ const ImgBlock = ({
 };
 
 const team = [
-  { name: 'Dr. Amara Okafor', role: 'Chief Medical Officer', pic: TeamImage1 },
-  { name: 'Dr. Sandra Jordan', role: 'CEO & Co-founder', pic: TeamImage2 },
-  { name: 'Dr. John Fidelis', role: 'Head of Engineering', pic: TeamImage3 },
-  { name: 'Sadiq Usman', role: 'Head of Design', pic: TeamImage4 },
-  { name: 'Dr. Farouk Sadiq', role: 'Clinical Lead', pic: Profile5 },
-  { name: 'Fatima Gowon', role: 'Head of AI', pic: Profile6 },
+  {
+    name: 'Dr. Amara Okafor',
+    role: 'Chief Medical Officer',
+    pic: `/assets/about-page-assets/team-image1.svg`,
+  },
+  {
+    name: 'Dr. Sandra Jordan',
+    role: 'CEO & Co-founder',
+    pic: `/assets/about-page-assets/team-image2.png`,
+  },
+  {
+    name: 'Dr. John Fidelis',
+    role: 'Head of Engineering',
+    pic: `/assets/about-page-assets/team-image3.png`,
+  },
+  { name: 'Sadiq Usman', role: 'Head of Design', pic: `/assets/about-page-assets/team-image4.png` },
+  {
+    name: 'Dr. Farouk Sadiq',
+    role: 'Clinical Lead',
+    pic: `/assets/about-page-assets/team-image5.png`,
+  },
+  { name: 'Fatima Gowon', role: 'Head of AI', pic: `/assets/about-page-assets/team-image6.png` },
 ];
 
 export default function AboutTeam() {

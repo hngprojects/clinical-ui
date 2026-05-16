@@ -1,33 +1,28 @@
 'use client';
 
 import Image from 'next/image';
-import ValuesIcon from '/assets/about-page-assets/values-icon.svg';
-import HeartIcon from '/assets/about-page-assets/heart-icon.svg';
-import ShieldIcon from '/assets/about-page-assets/shield-icon.svg';
-import StarIcon from '/assets/about-page-assets/star-icon.svg';
-import CheckIcon from '/assets/about-page-assets/check-icon.svg';
 
 const values = [
   {
-    icon: HeartIcon,
+    icon: `/assets/about-page-assets/heart-icon.svg`,
     title: 'Empathy',
     desc: 'We design for the worried patient, not the spec sheet.',
     bg: '#E8F0F9',
   },
   {
-    icon: ShieldIcon,
+    icon: `/assets/about-page-assets/shield-icon.svg`,
     title: 'Privacy',
     desc: 'Your medical data stays yours, encrypted and safe.',
     bg: '#DEF6E7',
   },
   {
-    icon: StarIcon,
+    icon: `/assets/about-page-assets/star-icon.svg`,
     title: 'Clarity',
     desc: 'Plain language always wins over medical jargon.',
     bg: '#CC34FF1A',
   },
   {
-    icon: CheckIcon,
+    icon: `/assets/about-page-assets/check-icon.svg`,
     title: 'Rigor',
     desc: 'Every workflow is reviewed by licensed clinicians.',
     bg: '#F5F5F5',
@@ -71,7 +66,11 @@ export default function AboutValues() {
               letterSpacing: '-2%',
             }}
           >
-            <Image src={ValuesIcon.src} alt="icon" style={{ transform: 'translateY(-20px)' }} />
+            <Image
+              src={`/assets/about-page-assets/values-icon.svg`}
+              alt="icon"
+              style={{ transform: 'translateY(-20px)' }}
+            />
             What guides every decision made
           </h2>
         </div>
@@ -104,7 +103,7 @@ export default function AboutValues() {
                   backgroundColor: v.bg,
                 }}
               >
-                <Image src={v.icon.src} alt={v.title} style={{ width: '25px', height: '25px' }} />
+                <Image src={v.icon} alt={v.title} style={{ width: '25px', height: '25px' }} />
               </div>
 
               {/* valueTitle */}
