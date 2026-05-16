@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import StoryImage from '../../../public/assets/about-page-assets/story-image.svg';
+import StoryImage from '../../../../public/assets/about-page-assets/story-image.svg';
 
 const ImgBlock = ({
   style,

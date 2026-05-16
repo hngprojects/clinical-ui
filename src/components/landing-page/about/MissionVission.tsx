@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Image from 'next/image';
-import MissionImage from '../../../public/assets/about-page-assets/mission-image.svg';
-import VissionImage from '../../../public/assets/about-page-assets/vision-image.svg';
-import SpiralIcon from '../../../public/assets/about-page-assets/spiral-icon.svg';
-import EyeIcon from '../../../public/assets/about-page-assets/eye-icon.svg';
+import MissionImage from '../../../../public/assets/about-page-assets/mission-image.svg';
+import VissionImage from '../../../../public/assets/about-page-assets/vission-image.svg';
+import SpiralIcon from '../../../../public/assets/about-page-assets/spiral-icon.svg';
+import EyeIcon from '../../../../public/assets/about-page-assets/eye-icon.svg';
 
 const ImgBlock = ({
   style,

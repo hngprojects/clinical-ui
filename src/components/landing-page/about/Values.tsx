@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import ValuesIcon from '../../../public/assets/about-page-assets/values-icon.svg';
-import HeartIcon from '../../../public/assets/about-page-assets/heart-icon.svg';
-import ShieldIcon from '../../../public/assets/about-page-assets/shield-icon.svg';
-import StarIcon from '../../../public/assets/about-page-assets/star-icon.svg';
-import CheckIcon from '../../../public/assets/about-page-assets/check-icon.svg';
+import ValuesIcon from '../../../../public/assets/about-page-assets/values-icon.svg';
+import HeartIcon from '../../../../public/assets/about-page-assets/heart-icon.svg';
+import ShieldIcon from '../../../../public/assets/about-page-assets/shield-icon.svg';
+import StarIcon from '../../../../public/assets/about-page-assets/star-icon.svg';
+import CheckIcon from '../../../../public/assets/about-page-assets/check-icon.svg';
 
 const values = [
   {
