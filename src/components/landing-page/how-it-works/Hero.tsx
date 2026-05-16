@@ -70,7 +70,7 @@ export function Hero() {
                     transition={{ delay: 0.6, duration: 0.4 }}
                     className="absolute inset-0 -skew-x-2 rounded bg-[#1565C0] origin-left"
                   />
-                  <span className="relative">Here's How</span>
+                  <span className="relative">Here&apos;s How</span>
                 </span>
               </motion.h1>
             </div>
