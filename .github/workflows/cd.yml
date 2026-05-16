@@ -11,33 +11,11 @@ concurrency:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --ignore-workspace --ignore-scripts
-
-      - name: Run linter
-        run: pnpm lint
-        continue-on-error: true
-
-      - name: Run type check
-        run: pnpm typecheck
-
-      - name: Build
-        run: pnpm build
-        env:
-          SKIP_ENV_VALIDATION: 1
+    name: CI
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+      security-events: write
 
   deploy-staging:
     needs: ci
