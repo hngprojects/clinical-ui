@@ -11,6 +11,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import Image from 'next/image';
 import MyIcon from '@/components/icons/MyIcon';
+import { isValidEmail } from '@/lib/validation';
 
 export function WaitlistForm() {
   const [firstName, setFirstName] = useState('');
@@ -20,16 +21,15 @@ export function WaitlistForm() {
   const [error, setError] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  // Email validation
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
   // Check if button should be enabled
   const isButtonEnabled = firstName.trim() !== '' && email.trim() !== '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Guard against double submission
+    if (isLoading) return;
+
     setError('');
 
     // Validate email
@@ -40,25 +40,39 @@ export function WaitlistForm() {
 
     setIsLoading(true);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     try {
-      // API call
+      // API call with timeout
       const response = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, firstName }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to join waitlist');
+        throw new Error(data.error || 'Failed to join waitlist');
       }
 
       // Success!
       setShowSuccess(true);
     } catch (err) {
-      console.error(err);
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      clearTimeout(timeoutId);
+
+      if (err instanceof Error && err.name === 'AbortError') {
+        console.error('WaitlistForm submission error: Request timeout');
+        setError('Request took too long. Please try again.');
+      } else {
+        const error = err as Error;
+        console.error('WaitlistForm submission error:', error.message);
+        setError(error.message || 'Something went wrong. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
