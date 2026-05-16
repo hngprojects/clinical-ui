@@ -27,7 +27,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --ignore-workspace --ignore-scripts
+        run: pnpm install --no-frozen-lockfile --ignore-workspace --ignore-scripts
 
       - name: Run linter
         run: pnpm lint
