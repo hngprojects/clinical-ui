@@ -1,0 +1,68 @@
+name: CD
+
+on:
+  pull_request:
+    branches: [staging, main]
+    types: [closed]
+
+concurrency:
+  group: cd-${{ github.base_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+      security-events: write
+
+  deploy-staging:
+    needs: ci
+    environment: staging
+    if: github.event.pull_request.merged == true && github.base_ref == 'staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Staging
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -euo pipefail
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            cd /home/device_clinical_support/clinical-ui
+            git fetch origin
+            git checkout staging
+            git reset --hard origin/staging
+            git clean -fd
+            pnpm install --ignore-workspace --ignore-scripts
+            SKIP_ENV_VALIDATION=1 pnpm build
+            pm2 restart staging-fe --update-env
+
+  deploy-prod:
+    needs: ci
+    environment: production
+    if: github.event.pull_request.merged == true && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Production
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -euo pipefail
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            cd /home/device_clinical_support/clinical-ui-prod
+            git fetch origin
+            git checkout main
+            git reset --hard origin/main
+            git clean -fd
+            pnpm install --ignore-workspace --ignore-scripts
+            SKIP_ENV_VALIDATION=1 pnpm build
+            pm2 restart production-fe --update-env

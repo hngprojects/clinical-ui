@@ -3,7 +3,7 @@ set -e
 
 FIXED=0
 FAILED=0
-LONG_LINE_EXCLUDE=".*\.svg"
+LONG_LINE_EXCLUDE=".*\.svg|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.webp"
 
 # ── Detect repo type ──────────────────────────────────────────────────────────
 IS_PYTHON=0
@@ -13,7 +13,7 @@ IS_NODE=0
 
 # ── Auto-format staged source files via lint-staged ─────────────────────────
 if [ "$IS_NODE" -eq 1 ]; then
-  npx lint-staged --allow-empty 2>/dev/null || true
+  npx lint-staged --allow-empty
 fi
 
 # ── Re-capture staged files after formatting ──────────────────────────────
@@ -29,7 +29,7 @@ else
 fi
 
 # Files to exclude from long-line checks (regex)
-LONG_LINE_EXCLUDE="pnpm-lock.yaml|yarn.lock|package-lock.json|.*\.min\.js|.*\.min\.css|.*\.map|.*\.lockb|.*\.svg"
+LONG_LINE_EXCLUDE="pnpm-lock.yaml|yarn.lock|package-lock.json|.*\.min\.js|.*\.min\.css|.*\.map|.*\.lockb|.*\.svg|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.webp"
 
 # ── Helper: strip long-line injection from a file ─────────────────────────────
 fix_long_lines() {
