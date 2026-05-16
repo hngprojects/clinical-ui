@@ -38,7 +38,7 @@ jobs:
             git checkout staging
             git reset --hard origin/staging
             git clean -fd
-            pnpm install --ignore-workspace --ignore-scripts
+            pnpm install --ignore-workspace
             SKIP_ENV_VALIDATION=1 pnpm build
             pm2 restart staging-fe --update-env
 
@@ -63,6 +63,6 @@ jobs:
             git checkout main
             git reset --hard origin/main
             git clean -fd
-            pnpm install --ignore-workspace --ignore-scripts
+            pnpm install --ignore-workspace
             SKIP_ENV_VALIDATION=1 pnpm build
             pm2 restart production-fe --update-env
