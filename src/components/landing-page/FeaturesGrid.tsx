@@ -5,14 +5,12 @@ import Image from 'next/image';
 const GRID_FEATURES = [
   {
     title: 'Simple Summaries',
-    description:
-      'Get the bottom line in one sentence',
+    description: 'Get the bottom line in one sentence',
     icon: '/assets/landing-page-assets/note.svg',
   },
   {
     title: 'Next Steps You Can Act On',
-    description:
-      'Know exactly whether to make lifestyle changes or monitor at home.',
+    description: 'Know exactly whether to make lifestyle changes or monitor at home.',
     icon: '/assets/landing-page-assets/step-into-rounded.svg',
   },
   {
@@ -29,8 +27,7 @@ const GRID_FEATURES = [
   },
   {
     title: 'Detailed Explanation (no jargon)',
-    description:
-      'Understand what each abnormal value means for your body, without medical school.',
+    description: 'Understand what each abnormal value means for your body, without medical school.',
     icon: '/assets/landing-page-assets/alert.svg',
   },
   {
@@ -66,14 +63,12 @@ export function FeaturesGrid() {
           </div>
 
           <h2 className="mb-4 lg:mb-6 max-w-[380px] lg:max-w-[560px] text-[26px] lg:text-[48px] font-bold leading-tight tracking-tight">
-            Everything You Need to{' '}
-            <span className="text-[#F59E0B]">Understand</span> Your Results
+            Everything You Need to <span className="text-[#F59E0B]">Understand</span> Your Results
           </h2>
 
           <p className="max-w-2xl text-[16px] lg:text-[18px] font-normal leading-[1.5] tracking-[-0.01em] text-[#FFFFFE]">
-            Clinsight transforms complex laboratory data into structured,
-            easy-to-understand insights using AI, with optional doctor
-            validation for added confidence.
+            Clinsight transforms complex laboratory data into structured, easy-to-understand
+            insights using AI, with optional doctor validation for added confidence.
           </p>
         </div>
 
@@ -85,17 +80,10 @@ export function FeaturesGrid() {
               className="flex h-auto min-h-[180px] lg:h-[231px] flex-col gap-4 lg:gap-5 border-l-2 border-[#FFFFFE] bg-[#1B1B1B52] p-6 lg:p-8"
             >
               <div className="flex h-6 w-6 items-center justify-center">
-                <Image
-                  src={feature.icon}
-                  alt={feature.title}
-                  width={24}
-                  height={24}
-                />
+                <Image src={feature.icon} alt={feature.title} width={24} height={24} />
               </div>
               <div className="flex flex-col gap-2 lg:gap-3">
-                <h3 className="text-lg lg:text-xl font-bold">
-                  {feature.title}
-                </h3>
+                <h3 className="text-lg lg:text-xl font-bold">{feature.title}</h3>
                 <p className="text-[13px] lg:text-sm leading-relaxed opacity-70">
                   {feature.description}
                 </p>

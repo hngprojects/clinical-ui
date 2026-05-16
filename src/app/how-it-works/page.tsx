@@ -1,4 +1,3 @@
-import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import HowItWorks from '@/components/landing-page/HowItWorks';
 

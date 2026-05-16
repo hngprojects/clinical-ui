@@ -1,4 +1,4 @@
-"use client";
+'use client';
 export interface StepCardProps {
   number: string;
   title: string;
@@ -8,8 +8,8 @@ export interface StepCardProps {
 
 export function StepCard({ number, title, description, index }: StepCardProps) {
   const isEven = index % 2 === 0;
-  const rotationClass = isEven 
-    ? 'rotate-[-2.5deg] lg:-rotate-[7deg]' 
+  const rotationClass = isEven
+    ? 'rotate-[-2.5deg] lg:-rotate-[7deg]'
     : 'rotate-[2.5deg] lg:rotate-[7deg]';
 
   return (
@@ -28,7 +28,6 @@ export function StepCard({ number, title, description, index }: StepCardProps) {
       </div>
 
       <div className="w-full bg-[#F1F6FB] rounded-[24px] px-6 py-8 lg:px-9 lg:py-11 flex flex-col items-start min-h-[300px] lg:min-h-[400px]">
-        
         <div className="bg-[#1B1B1B] rounded-[4px] px-3 py-1 mb-6">
           <span className="text-white text-3xl lg:text-5xl font-medium font-['Inter'] leading-none">
             {number}
