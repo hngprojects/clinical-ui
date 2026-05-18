@@ -46,15 +46,21 @@ function AccordionTrigger({
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger relative flex flex-1 items-center justify-between gap-6 p-4 text-left transition-all outline-none disabled:pointer-events-none disabled:opacity-50 **:data-[slot=acco
+          "group/accordion-trigger relative flex flex-1 items-center justify-between gap-6 p-4 text-left transition-all outline-none disabled:pointer-events-none disabled:opacity-50",
           className
         )}
         {...props}
       >
         {children}
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all group-aria-expanded/accordion-trigger:bg-white group-aria-expanded/accordion-trigger:shadow-sm">
-          <HugeiconsIcon icon={ArrowDown01Icon} data-slot="accordion-trigger-icon" className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" />
-          <HugeiconsIcon icon={ArrowUp01Icon} data-slot="accordion-trigger-icon" className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" />
+        <div className="flex h-8 w-8 shrink-0 items-center 
+        justify-center rounded-full transition-all 
+        group-aria-expanded/accordion-trigger:bg-white 
+        group-aria-expanded/accordion-trigger:shadow-sm">
+          <HugeiconsIcon icon={ArrowDown01Icon} data-slot="accordion-trigger-icon" 
+          className="pointer-events-none 
+          shrink-0 group-aria-expanded/accordion-trigger:hidden" />
+          <HugeiconsIcon icon={ArrowUp01Icon} data-slot="accordion-trigger-icon" 
+          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" />
         </div>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

@@ -36,21 +36,24 @@ export function Features() {
         {/* Section Header */}
         <div className="mb-12 lg:mb-16 grid grid-cols-1 gap-8 lg:grid-cols-2">
           <div className="flex flex-col items-start gap-8 lg:gap-20">
-            <div className="flex w-fit items-center gap-2 rounded-full bg-[#FFFFFE] px-4 py-2 border border-slate-50">
+            <div className="flex w-fit items-center gap-2 rounded-full bg-[#FFFFFE] 
+            px-4 py-2 border border-slate-50">
               <span className="h-2 w-2 rounded-sm bg-[#F59E0B]" />
               <span className="text-xs font-bold text-[#F59E0B] uppercase tracking-wider">
                 Clarity, simplified
               </span>
             </div>
             {/* Allow natural two-line wrap on mobile; keep single/tight on desktop */}
-            <h2 className="text-[24px] lg:text-[40px] font-bold leading-[1.1] tracking-tight text-[#1B1B1B] text-left max-w-[260px] lg:max-w-none">
+            <h2 className="text-[24px] lg:text-[40px] font-bold leading-[1.1] tracking-tight 
+            text-[#1B1B1B] text-left max-w-[260px] lg:max-w-none">
               Structured <span className="text-brand-blue">Insights</span> for
               Every Lab Result
             </h2>
           </div>
 
           <div className="flex flex-col gap-6 items-start lg:justify-between">
-            <p className="text-[16px] lg:text-[18px] font-normal leading-[1.5] tracking-[-0.01em] text-[#5E5E5E] text-left">
+            <p className="text-[16px] lg:text-[18px] font-normal leading-[1.5] 
+            tracking-[-0.01em] text-[#5E5E5E] text-left">
               Clinsight transforms complex laboratory data into structured,
               easy-to-understand insights using AI, with optional doctor
               validation for added confidence.
@@ -58,7 +61,9 @@ export function Features() {
 
             <div className="flex items-center justify-start gap-3 w-full lg:justify-start">
               {/* App Store Button */}
-              <button className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white transition-opacity hover:opacity
+              <button className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
+              items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white 
+              transition-opacity hover:opacity-80">
                 <Image
                   src="/assets/header-assets/apple-app-store.svg"
                   alt="App Store"
@@ -76,7 +81,9 @@ export function Features() {
                 </div>
               </button>
               {/* Google Play Button */}
-              <button className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white transition-opacity hover:opacity
+              <button className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
+              items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white 
+              transition-opacity hover:opacity-80">
                 <Image
                   src="/assets/header-assets/google-play-icon.svg"
                   alt="Google Play"
@@ -102,10 +109,12 @@ export function Features() {
           {FEATURES.map((feature) => (
             <div
               key={feature.title}
-              className="flex flex-col gap-6 rounded-[24px] border border-slate-50 bg-white p-4 shadow-sm transition-shadow hover:shadow-md h-auto lg:h-[375px]"
+              className="flex flex-col gap-6 rounded-[24px] border border-slate-50 bg-white 
+              p-4 shadow-sm transition-shadow hover:shadow-md h-auto lg:h-[375px]"
             >
               <div
-                className={`flex h-[148px] w-full items-center justify-center rounded-2xl ${feature.bgColor} p-8`}
+                className={`flex h-[148px] w-full items-center justify-center 
+                  rounded-2xl ${feature.bgColor} p-8`}
               >
                 <div className="relative w-12 h-12 flex items-center justify-center">
                   <Image
