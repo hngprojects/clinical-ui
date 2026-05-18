@@ -3,7 +3,6 @@ import AboutMissionVision from '@/components/landing-page/about/MissionVission';
 import AboutStory from '@/components/landing-page/about/Story';
 import AboutValues from '@/components/landing-page/about/Values';
 import AboutTeam from '@/components/landing-page/about/Team';
-import { Footer } from '@/components/Footer';
 
 export default function AboutPage() {
   return (
@@ -15,8 +14,6 @@ export default function AboutPage() {
         <AboutValues />
         <AboutTeam />
       </main>
-
-      <Footer />
     </div>
   );
 }
