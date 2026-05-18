@@ -14,13 +14,9 @@ const ImgBlock = ({
   if (!image) return null;
 
   return (
-    <Image
-      src={image}
-      alt=""
-      style={{
-        ...style,
-      }}
-    />
+    <div className="relative" style={style}>
+      <Image src={image} alt="" fill className="object-contain" />
+    </div>
   );
 };
 
@@ -65,7 +61,8 @@ export default function AboutMissionVision() {
               <Image
                 src={`/assets/about-page-assets/spiral-icon.svg`}
                 alt="Spiral icon"
-                style={{ width: '32.5px', height: '32.5px' }}
+                width={33}
+                height={33}
               />
             </div>
 
@@ -111,7 +108,8 @@ export default function AboutMissionVision() {
               <Image
                 src={`/assets/about-page-assets/eye-icon.svg`}
                 alt="Eye icon"
-                style={{ width: '32.5px', height: '32.5px' }}
+                width={33}
+                height={33}
               />
             </div>
 
