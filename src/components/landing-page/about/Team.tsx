@@ -14,13 +14,9 @@ const ImgBlock = ({
   if (!image) return null;
 
   return (
-    <Image
-      src={image}
-      alt=""
-      style={{
-        ...style,
-      }}
-    />
+    <div className="relative" style={style}>
+      <Image src={image} alt="" fill className="object-cover" />
+    </div>
   );
 };
 

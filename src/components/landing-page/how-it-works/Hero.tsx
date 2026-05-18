@@ -103,39 +103,40 @@ export function Hero() {
                 />
               </div>
 
+              {/* User Reports Sidebar - Moved out of the dashboard container */}
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="absolute left-[-10px] lg:left-[-30px] top-[15%] lg:top-[12%] z-30 flex w-[65px] lg:w-[88px] h-[240px] lg:h-[360px] flex-col gap-2.5 lg:gap-3 rounded-[24px] bg-white p-2 shadow-[0px_8px_30px_rgba(0,0,0,0.06)] border border-slate-50"
+              >
+                {['Rectangle 34624412', 'Rectangle 34624413', 'Rectangle 34624414'].map(
+                  (name, i) => (
+                    <div
+                      key={i}
+                      className="relative aspect-square w-full overflow-hidden rounded-xl lg:rounded-2xl"
+                    >
+                      <Image
+                        src={`/assets/how-it-works/${name}.png`}
+                        alt="User"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ),
+                )}
+                <div className="flex aspect-square w-full flex-col items-center justify-center rounded-xl lg:rounded-2xl bg-[#F0F7FF]">
+                  <span className="text-[9px] lg:text-[12px] font-bold text-[#1565C0] leading-tight text-center">
+                    User
+                    <br />
+                    Reports
+                  </span>
+                </div>
+              </motion.div>
+
               {/* Dashboard Content Container */}
               <div className="relative flex flex-col items-center z-10 w-full max-w-[300px] lg:max-w-[384px]">
-                <motion.div
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.8 }}
-                  className="absolute -left-8 lg:-left-28 top-0 lg:top-0 z-30 flex w-[65px] lg:w-[88px] flex-col gap-2.5 lg:gap-3 rounded-[24px] bg-white p-2 shadow-[0px_8px_30px_rgba(0,0,0,0.06)] border border-slate-50"
-                >
-                  {['Rectangle 34624412', 'Rectangle 34624413', 'Rectangle 34624414'].map(
-                    (name, i) => (
-                      <div
-                        key={i}
-                        className="relative aspect-square w-full overflow-hidden rounded-xl lg:rounded-2xl"
-                      >
-                        <Image
-                          src={`/assets/how-it-works/${name}.png`}
-                          alt="User"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ),
-                  )}
-                  <div className="flex aspect-square w-full flex-col items-center justify-center rounded-xl lg:rounded-2xl bg-[#F0F7FF]">
-                    <span className="text-[9px] lg:text-[12px] font-bold text-[#1565C0] leading-tight text-center">
-                      User
-                      <br />
-                      Reports
-                    </span>
-                  </div>
-                </motion.div>
-
-                <div className="w-full p-6 lg:p-8 bg-gradient-to-b from-white from-20% to-zinc-50 to-80% rounded-[32px] shadow-[0px_20px_40px_rgba(0,0,0,0.08)] border-l-[3px] border-r-[3px] border-t-[3px] border-[#1565C0] flex flex-col gap-6 overflow-hidden relative">
+                <div className="w-full p-6 lg:p-8 bg-gradient-to-b from-white from-20% to-zinc-50 to-80% rounded-[32px] shadow-[0px_20px_40px_rgba(0,0,0,0.08)] border-l-[3px] border-r-[3px] border-t-[3px] border-[#1565C0] flex flex-col gap-6 overflow-hidden relative min-h-[240px] lg:min-h-[360px]">
                   {/* Header */}
                   <div className="flex justify-start items-center gap-3">
                     <div className="size-6 lg:size-7 relative">
