@@ -6,8 +6,8 @@ on:
     types: [closed]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: cd-${{ github.base_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   ci:
