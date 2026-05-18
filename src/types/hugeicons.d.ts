@@ -1,10 +1,10 @@
 import '@hugeicons/react';
 
 declare module '@hugeicons/react' {
-  import { ReactElement, SVGProps } from 'react';
+  import { ReactElement, SVGProps, ElementType } from 'react';
 
   export interface HugeiconsIconProps extends SVGProps<SVGSVGElement> {
-    icon: any;
+    icon: ElementType;
     size?: number | string;
     color?: string;
     variant?: 'stroke' | 'twotone' | 'solid' | 'bulk' | 'duotone';
