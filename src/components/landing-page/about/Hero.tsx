@@ -6,8 +6,7 @@ const ResponsiveStyle = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap');
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Source Sans 3', sans-serif; }
+    .about-hero-section { font-family: 'Source Sans 3', sans-serif; }
 
     @media (max-width: 700px) {
       .hero-heading { font-size: 1.75rem !important; }
@@ -17,7 +16,7 @@ const ResponsiveStyle = () => (
 
 export default function AboutHero() {
   return (
-    <>
+    <div className="about-hero-section w-full flex flex-col items-center justify-center">
       <ResponsiveStyle />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
@@ -43,7 +42,12 @@ export default function AboutHero() {
             </span>
           </h1>
 
-          <Image src={`/assets/about-page-assets/hero-icon.svg`} alt="Hero icon" />
+          <Image
+            src={`/assets/about-page-assets/hero-icon.svg`}
+            alt="Hero icon"
+            width={100}
+            height={40}
+          />
         </div>
 
         {/* heroSubtext */}
@@ -60,6 +64,6 @@ export default function AboutHero() {
           understand the
         </p>
       </section>
-    </>
+    </div>
   );
 }

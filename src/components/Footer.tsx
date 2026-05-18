@@ -24,7 +24,7 @@ export function Footer() {
       {/* Background Image Asset - Responsive Positioning */}
       <div className="absolute top-0 left-0 lg:left-auto lg:right-0 h-full w-full lg:w-1/2 pointer-events-none z-0 opacity-40 lg:opacity-100">
         <Image
-          src="/assets/footer-bg-image.svg"
+          src="/assets/header-assets/footer-bg-image.svg"
           alt=""
           fill
           sizes="100vw"

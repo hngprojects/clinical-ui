@@ -51,10 +51,10 @@ export function MedicalProfessional() {
 
           {/* Right Visual (side-image) */}
           <div className="flex flex-1 items-center justify-center lg:justify-end">
-            <div className="w-full max-w-[500px] lg:rotate-[-13.19deg] lg:scale-110">
+            <div className="w-full max-w-[500px]  lg:scale-110">
               {/* Desktop Image */}
               <Image
-                src="/assets/landing-page-assets/join.png"
+                src="/assets/landing-page-assets/join1.png"
                 alt="Medical professional visual"
                 width={500}
                 height={400}
@@ -63,7 +63,7 @@ export function MedicalProfessional() {
               />
               {/* Mobile Image */}
               <Image
-                src="/assets/landing-page-assets/join-mobile.png"
+                src="/assets/landing-page-assets/join-mobile1.png"
                 alt="Medical professional visual"
                 width={500}
                 height={400}

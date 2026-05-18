@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from "motion/react";
-import { PropsWithChildren } from "react";
+import { AnimatePresence, motion } from 'motion/react';
+import { PropsWithChildren } from 'react';
 
 interface InputFieldContainerProps extends PropsWithChildren {
   label: string;
@@ -29,7 +29,7 @@ export default function InputFieldContainer({
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -6 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
             className="text-xs italic text-red-500 font-medium text-right"
           >
             {error}
@@ -39,5 +39,3 @@ export default function InputFieldContainer({
     </div>
   );
 }
-
-

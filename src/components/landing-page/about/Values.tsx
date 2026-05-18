@@ -69,6 +69,8 @@ export default function AboutValues() {
             <Image
               src={`/assets/about-page-assets/values-icon.svg`}
               alt="icon"
+              width={32}
+              height={32}
               style={{ transform: 'translateY(-20px)' }}
             />
             What guides every decision made
@@ -103,7 +105,7 @@ export default function AboutValues() {
                   backgroundColor: v.bg,
                 }}
               >
-                <Image src={v.icon} alt={v.title} style={{ width: '25px', height: '25px' }} />
+                <Image src={v.icon} alt={v.title} width={25} height={25} />
               </div>
 
               {/* valueTitle */}
