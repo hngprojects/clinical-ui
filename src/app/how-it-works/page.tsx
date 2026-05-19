@@ -1,4 +1,4 @@
-import { HowItWorks } from '@/components/landing-page/HowItWorks';
+import HowItWorks from '@/components/landing-page/HowItWorks';
 
 export default function HowItWorksStandalonePage() {
   return (
