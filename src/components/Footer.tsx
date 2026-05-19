@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 const FOOTER_LINKS = {
   platform: [
@@ -19,6 +20,17 @@ const FOOTER_LINKS = {
 };
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (
+    pathname === '/waitlist' ||
+    pathname === '/signup' ||
+    pathname === '/login' ||
+    pathname === '/forgot-password' ||
+    pathname === '/verify-otp'
+  )
+    return null;
+
   return (
     <footer className="relative overflow-hidden bg-[#11519A] pt-12 pb-10 text-white">
       {/* Background Image Asset - Responsive Positioning */}

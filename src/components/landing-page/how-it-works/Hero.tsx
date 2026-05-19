@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { motion } from 'motion/react';
 
@@ -189,15 +190,17 @@ export function Hero() {
                 </div>
 
                 <motion.div whileTap={{ scale: 0.98 }} className="z-20 -mt-7 w-[90%]">
-                  <Button className="w-full h-14 lg:h-16 bg-[#1565C0] hover:bg-[#0D47A1] rounded-2xl text-white font-bold shadow-[0px_10px_20px_rgba(21,101,192,0.3)] flex items-center justify-center gap-3 transition-colors duration-200">
-                    Get Started
-                    <Image
-                      src="/assets/how-it-works/arrow_forward.svg"
-                      alt="arrow"
-                      width={20}
-                      height={20}
-                    />
-                  </Button>
+                  <Link href="/signup">
+                    <Button className="w-full h-14 lg:h-16 bg-[#1565C0] hover:bg-[#0D47A1] rounded-2xl text-white font-bold shadow-[0px_10px_20px_rgba(21,101,192,0.3)] flex items-center justify-center gap-3 transition-colors duration-200">
+                      Get Started
+                      <Image
+                        src="/assets/how-it-works/arrow_forward.svg"
+                        alt="arrow"
+                        width={20}
+                        height={20}
+                      />
+                    </Button>
+                  </Link>
                 </motion.div>
 
                 <div className="absolute -bottom-12 -right-2 lg:-right-12 z-40">
