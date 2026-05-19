@@ -138,6 +138,8 @@
   html {
     @apply font-sans;
   }
+
+  /* Remove autofill background */
 }
 
 @layer components{
