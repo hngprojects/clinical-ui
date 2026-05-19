@@ -18,6 +18,19 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  const hideOnRoutes = [
+    '/waitlist',
+    '/signup',
+    '/login',
+    '/forgot-password',
+    '/verify-otp',
+    '/reset-password',
+  ];
+
+  if (hideOnRoutes.includes(pathname)) {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#F5F5F5] bg-white">
       <div className="container mx-auto flex h-20 items-center justify-between px-6 lg:px-12">

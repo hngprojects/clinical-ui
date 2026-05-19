@@ -75,7 +75,6 @@ export default function ForgotPasswordPage() {
     setOtp(new Array(6).fill(''));
     setErrorMessage('');
     setIsLoading(true);
-
     try {
       const res = await fetch('/api/auth/resend-otp', {
         method: 'POST',
@@ -97,8 +96,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    // Fixed Viewport setup prevents accidental body bouncing or scrolling
-    <main className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[#FFFFFE]">
+    <main className="relative min-h-screen w-full flex flex-col overflow-y-auto bg-[#FFFFFE]">
       <div className="absolute inset-0 z-0 h-full w-full">
         <Image
           src="/assets/forgot-password/BG.png"
@@ -107,11 +105,10 @@ export default function ForgotPasswordPage() {
           priority
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
       </div>
-
-      <header className="absolute top-0 left-0 z-10 flex items-center gap-3 pl-8 pt-8 md:pl-12 md:pt-12 select-none">
-        <div className="relative size-8">
+      <header className="absolute top-10 left-8 md:left-20 z-10 flex items-center gap-2.5 select-none">
+        <div className="relative size-8 md:size-10">
           <Image
             src="/assets/forgot-password/Subtract.svg"
             alt="Clinsights Icon"
@@ -119,70 +116,67 @@ export default function ForgotPasswordPage() {
             className="object-contain"
           />
         </div>
-        <span className="text-white text-3xl font-medium font-['Playfair_Display'] tracking-wide">
+        <span className="text-white text-2xl md:text-3xl font-medium font-['Playfair_Display'] tracking-tight leading-8">
           Clinsights
         </span>
       </header>
+      <div className="relative z-10 w-full flex-1 flex items-center justify-center px-4 pt-28 pb-12 md:pt-36 md:pb-16">
+        <div className="w-full md:w-[661px] md:h-[800px] bg-white rounded-[32px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-10 md:px-[70px] md:pt-[90px] md:pb-[64px] flex flex-col items-center justify-between transition-all duration-300">
+          <div className="w-full flex flex-col items-center flex-1 justify-start">
+            {step === 'email' && (
+              <EmailForm
+                email={email}
+                setEmail={setEmail}
+                onSubmit={handleEmailSubmit}
+                isLoading={isLoading}
+                onBackToLogin={() => router.push('/login')}
+                errorMsg={errorMessage}
+              />
+            )}
 
-      {/* Centerpiece Layout Content Well */}
-      <div className="relative z-10 w-full flex items-center justify-center px-4">
-        <div className="w-full max-w-[661px] bg-white rounded-[32px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-10 sm:px-16 flex flex-col items-center justify-between transition-all duration-300">
-          {step === 'email' && (
-            <EmailForm
-              email={email}
-              setEmail={setEmail}
-              onSubmit={handleEmailSubmit}
-              isLoading={isLoading}
-              onBackToLogin={() => router.push('/login')}
-              errorMsg={errorMessage}
-            />
-          )}
+            {step === 'otp' && (
+              <OtpForm
+                email={email}
+                otp={otp}
+                setOtp={setOtp}
+                onSubmit={handleOtpSubmit}
+                isLoading={isLoading}
+                timeLeft={timeLeft}
+                formatTime={formatTime}
+                onResend={handleResendOtpCode}
+                errorMsg={errorMessage}
+              />
+            )}
 
-          {step === 'otp' && (
-            <OtpForm
-              email={email}
-              otp={otp}
-              setOtp={setOtp}
-              onSubmit={handleOtpSubmit}
-              isLoading={isLoading}
-              timeLeft={timeLeft}
-              formatTime={formatTime}
-              onResend={handleResendOtpCode}
-              errorMsg={errorMessage}
-            />
-          )}
-
-          {step === 'failed' && (
-            <FailedView
-              isLoading={isLoading}
-              onRetry={() => {
-                setOtp(new Array(6).fill(''));
-                setErrorMessage('');
-                setStep('otp');
-                startTimer();
-              }}
-              onContactSupport={() => router.push('/contact-us')}
-            />
-          )}
-
-          {/* Bottom Dynamic Space Blocks */}
-          <div className="w-full flex flex-col items-center gap-4 mt-8">
-            {/* Conditional Check: Hides the Lab Support line completely during the Verification Failed view */}
-            {step !== 'failed' && (
-              <footer className="w-full max-w-[521px] pt-6 border-t border-[#E1E2EA] flex items-center justify-center mx-auto animate-fadeIn">
-                <p className="text-center text-[#424752] text-sm font-medium font-['Inter']">
-                  Need immediate assistance? Contact{' '}
+            {step === 'failed' && (
+              <FailedView
+                isLoading={isLoading}
+                onRetry={() => {
+                  setOtp(new Array(6).fill(''));
+                  setErrorMessage('');
+                  setStep('otp');
+                  startTimer();
+                }}
+                onContactSupport={() => router.push('/contact-us')}
+              />
+            )}
+          </div>
+          <div className="w-full flex flex-col items-center mt-6">
+            {step === 'email' && (
+              <footer className="w-full pt-6 border-t border-zinc-200 flex items-center justify-center mx-auto animate-fadeIn">
+                <p className="text-center text-gray-700 text-base font-medium font-['Inter'] leading-6">
+                  Need immediate assistance? <br className="sm:hidden" />
+                  Contact{' '}
                   <button
                     type="button"
                     onClick={() => router.push('/contact-us')}
-                    className="text-[#1565C0] hover:text-[#0D47A1] font-semibold underline underline-offset-4 transition-colors"
+                    className="text-blue-700 hover:text-blue-900 font-medium transition-colors inline"
                   >
                     Lab Support
                   </button>
                 </p>
               </footer>
             )}
-
             {step === 'otp' && (
               <div className="w-full flex flex-row items-center justify-center gap-2 text-xs font-['Inter'] tracking-wider select-none animate-fadeIn">
                 <div className="relative size-4 flex-shrink-0">

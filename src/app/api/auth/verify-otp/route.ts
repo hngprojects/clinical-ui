@@ -23,8 +23,6 @@ export async function POST(request: Request) {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        // Check if backend expects "otp" or "code" based on Swagger request body.
-        // Using "code" here as it is standard, adjust if it expects "otp".
         body: JSON.stringify({ email: email.trim(), code: otp }),
         signal: controller.signal,
       });
