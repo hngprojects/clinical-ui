@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export function MedicalProfessional() {
@@ -40,13 +41,15 @@ export function MedicalProfessional() {
               </p>
             </div>
 
-            <Button
-              className="w-fit h-[42px] lg:h-[48px] rounded-[12px] 
-            bg-[#1565C0] px-4 lg:px-6 py-2 lg:py-3 text-[13px] lg:text-sm font-bold 
-            text-white hover:bg-[#1565C0]/90 transition-all shadow-lg"
-            >
-              Get Started as a Doctor
-            </Button>
+            <Link href="/signup">
+              <Button
+                className="w-fit h-[42px] lg:h-[48px] rounded-[12px] 
+              bg-[#1565C0] px-4 lg:px-6 py-2 lg:py-3 text-[13px] lg:text-sm font-bold 
+              text-white hover:bg-[#1565C0]/90 transition-all shadow-lg"
+              >
+                Get Started as a Doctor
+              </Button>
+            </Link>
           </div>
 
           {/* Right Visual (side-image) */}

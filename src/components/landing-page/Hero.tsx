@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
@@ -195,15 +196,17 @@ export function Hero() {
 
                 {/* CTA Button */}
                 <div className="z-20 -mt-3 lg:-mt-4 w-full">
-                  <Button
-                    variant="brand"
-                    className="w-full rounded-lg lg:rounded-xl py-3 lg:py-7 text-[9px]
+                  <Link href="/signup">
+                    <Button
+                      variant="brand"
+                      className="w-full rounded-lg lg:rounded-xl py-3 lg:py-7 text-[9px]
                     lg:text-sm font-bold shadow-lg transition-all bg-[#1565C0] text-white
                     hover:bg-[#1565C0]/90"
-                  >
-                    Get Started
-                    <HugeiconsIcon icon={ArrowRight01Icon} size={12} className="ml-1 lg:ml-2" />
-                  </Button>
+                    >
+                      Get Started
+                      <HugeiconsIcon icon={ArrowRight01Icon} size={12} className="ml-1 lg:ml-2" />
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
