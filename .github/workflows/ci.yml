@@ -27,20 +27,20 @@ jobs:
   quality:
     name: Lint, Typecheck, Build
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 11.1.2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -55,23 +55,3 @@ jobs:
         env:
           SKIP_ENV_VALIDATION: "1"
         run: pnpm build
-
-      - name: Package deployable artifact
-        if: github.event_name == 'push' && (github.ref_name == 'staging' || github.ref_name == 'main')
-        shell: bash
-        run: |
-          tar -czf release.tgz \
-            .next \
-            public \
-            package.json \
-            pnpm-lock.yaml \
-            pnpm-workspace.yaml \
-            next.config.ts
-
-      - name: Upload deploy artifact
-        if: github.event_name == 'push' && (github.ref_name == 'staging' || github.ref_name == 'main')
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-release-${{ github.sha }}
-          path: release.tgz
-          retention-days: 7
