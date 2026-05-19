@@ -6,7 +6,8 @@ const FEATURES = [
   {
     title: 'AI Analysis',
     description:
-      'Advanced intelligent models analyze your lab data with precision, identifying patterns, flagging abnormalities, and breaking down complex values into clear, structured insights you can easily u
+      'Advanced intelligent models analyze your lab data with precision, identifying patterns, flagging abnormalities,' + 
+      ' and breaking down complex values into clear, structured insights you can easily understand.',
     icon: '/assets/landing-page-assets/ai-scan-blue.svg',
     bgColor: 'bg-[#E8F0F9]',
     iconColor: 'text-[#1565C0]',
@@ -14,7 +15,8 @@ const FEATURES = [
   {
     title: 'Medical Expert Support',
     description:
-      'Get guidance from qualified healthcare professionals who help interpret your results, answer your questions, and provide clarity so you can make informed health decisions with confidence.',
+      'Get guidance from qualified healthcare professionals who help interpret your results, answer your questions, ' + 
+      'and provide clarity so you can make informed health decisions with confidence.',
     icon: '/assets/landing-page-assets/analytics-up.svg',
     bgColor: 'bg-[#FEF0DA]',
     iconColor: 'text-[#F59E0B]',
@@ -22,7 +24,8 @@ const FEATURES = [
   {
     title: 'Actionable Insights',
     description:
-      'Move beyond confusing laboratory data with insights specifically tailored to your results. This would include what each value means, what requires attention, and practical next steps to support
+      'Move beyond confusing laboratory data with insights specifically tailored to your results. ' + 
+      'This would include what each value means, what requires attention, and practical next steps to support your health journey.',
     icon: '/assets/landing-page-assets/notepad.svg',
     bgColor: 'bg-[#DEF6E7]',
     iconColor: 'text-[#10B981]',
