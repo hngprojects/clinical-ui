@@ -66,7 +66,7 @@ export function VerifyOtpForm() {
         toast.success('Email verified successfully!');
         router.push('/signin'); // Or dashboard if logged in
       }
-    } catch (err) {
+    } catch {
       toast.error('An unexpected error occurred');
     } finally {
       setIsVerifying(false);
@@ -87,7 +87,7 @@ export function VerifyOtpForm() {
       } else {
         toast.success('OTP resent successfully! Please check your email.');
       }
-    } catch (err) {
+    } catch {
       toast.error('An unexpected error occurred');
     } finally {
       setIsResending(false);
