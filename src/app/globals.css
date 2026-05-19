@@ -9,9 +9,9 @@
   --color-primary-blue: #1565c0;
   --color-text-disabled: #767676;
   --color-text-primary: #1b1b1b;
-  --color-outline-border: #f0f0f0;
+  --color-outline-border: #F0F0F0;
   --color-text-secondary: #494949;
-  --color-primary-subtle: #e8f0f9;
+  --color-primary-subtle: #E8F0F9;
 }
 
 @theme inline {
@@ -142,12 +142,12 @@
   /* Remove autofill background */
 }
 
-@layer components {
+@layer components{
   .input__field {
-    @apply border border-outline-border py-2.5 px-4 rounded-[8px] placeholder:text-text-disabled text-text-primary text-sm;
+    @apply border border-outline-border py-2.5 px-4 rounded-[8px] placeholder:text-text-disabled text-text-primary text-sm
   }
 
-  button {
-    @apply cursor-pointer;
+  button{
+    @apply cursor-pointer
   }
 }
