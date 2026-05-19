@@ -1,76 +1,77 @@
 name: CI
 
 on:
-  push:
-    branches: [dev, staging, main]
   pull_request:
-    branches: [dev, staging, main]
+    branches:
+      - dev
+      - staging
+      - main
+  push:
+    branches:
+      - dev
+      - staging
+      - main
   workflow_call:
 
+permissions:
+  contents: read
+
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  CI: true
+
 jobs:
-  lint:
-    name: CI / Lint
+  quality:
+    name: Lint, Typecheck, Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '22'
-          cache: 'pnpm'
+          version: 11.1.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --ignore-scripts
+        run: pnpm install --frozen-lockfile
 
       - name: Run linter
         run: pnpm lint
 
-  test:
-    name: CI / Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --ignore-scripts
-
-      - name: Run type check
+      - name: Run typecheck
         run: pnpm typecheck
 
-      - name: Build
-        run: pnpm build
+      - name: Build application
         env:
-          SKIP_ENV_VALIDATION: 1
+          SKIP_ENV_VALIDATION: "1"
+        run: pnpm build
 
-  ci:
-    name: CI / Status
-    needs: [lint, test]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Verify all checks passed
+      - name: Package deployable artifact
+        if: github.event_name == 'push' && (github.ref_name == 'staging' || github.ref_name == 'main')
+        shell: bash
         run: |
-          echo "✓ Linter: ${{ needs.lint.result }}"
-          echo "✓ Test & Build: ${{ needs.test.result }}"
-          if [ "${{ needs.lint.result }}" != "success" ]; then
-            echo "❌ Lint checks failed"
-            exit 1
-          fi
-          if [ "${{ needs.test.result }}" != "success" ]; then
-            echo "❌ Critical checks failed"
-            exit 1
-          fi
-          echo "✅ All CI checks passed successfully"
+          tar -czf release.tgz \
+            .next \
+            public \
+            package.json \
+            pnpm-lock.yaml \
+            pnpm-workspace.yaml \
+            next.config.ts
+
+      - name: Upload deploy artifact
+        if: github.event_name == 'push' && (github.ref_name == 'staging' || github.ref_name == 'main')
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-release-${{ github.sha }}
+          path: release.tgz
+          retention-days: 7

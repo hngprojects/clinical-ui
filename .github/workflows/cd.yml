@@ -1,29 +1,31 @@
 name: CD
 
 on:
-  pull_request:
-    branches: [staging, main]
-    types: [closed]
+  push:
+    branches:
+      - staging
+      - main
+
+permissions:
+  contents: read
 
 concurrency:
-  group: cd-${{ github.base_ref || github.ref }}
+  group: deploy-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
-  ci:
-    name: CI
+  validate:
     uses: ./.github/workflows/ci.yml
-    permissions:
-      contents: read
-      security-events: write
+    secrets: inherit
 
   deploy-staging:
-    needs: ci
-    environment: staging
-    if: github.event.pull_request.merged == true && github.base_ref == 'staging'
+    name: Deploy Staging
+    needs: validate
+    if: github.ref_name == 'staging'
     runs-on: ubuntu-latest
+    environment: staging
     steps:
-      - name: Deploy Staging
+      - name: Deploy to staging server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -32,23 +34,25 @@ jobs:
           script: |
             set -euo pipefail
             export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd /home/device_clinical_support/clinical-ui
             git fetch origin
             git checkout staging
             git reset --hard origin/staging
-            printf 'allowBuilds:\n  msw: true\n  sharp: true\n  unrs-resolver: true\nminimumReleaseAgeExclude:\n  - postcss@8.5.10\noverrides:\n  postcss@<8.5.10: ^8.5.10\n' > pnpm-workspace.yaml
-            pnpm install --ignore-workspace --ignore-scripts
+            corepack enable
+            corepack prepare pnpm@11.1.2 --activate
+            pnpm install --frozen-lockfile
             SKIP_ENV_VALIDATION=1 pnpm build
             pm2 restart staging-fe --update-env
 
-  deploy-prod:
-    needs: ci
-    environment: production
-    if: github.event.pull_request.merged == true && github.base_ref == 'main'
+  deploy-production:
+    name: Deploy Production
+    needs: validate
+    if: github.ref_name == 'main'
     runs-on: ubuntu-latest
+    environment: production
     steps:
-      - name: Deploy Production
+      - name: Deploy to production server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -57,12 +61,13 @@ jobs:
           script: |
             set -euo pipefail
             export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd /home/device_clinical_support/clinical-ui-prod
             git fetch origin
             git checkout main
             git reset --hard origin/main
-            printf 'allowBuilds:\n  msw: true\n  sharp: true\n  unrs-resolver: true\nminimumReleaseAgeExclude:\n  - postcss@8.5.10\noverrides:\n  postcss@<8.5.10: ^8.5.10\n' > pnpm-workspace.yaml
-            pnpm install --ignore-workspace --ignore-scripts
+            corepack enable
+            corepack prepare pnpm@11.1.2 --activate
+            pnpm install --frozen-lockfile
             SKIP_ENV_VALIDATION=1 pnpm build
             pm2 restart production-fe --update-env
