@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 const FOOTER_LINKS = {
   platform: [
@@ -19,12 +20,23 @@ const FOOTER_LINKS = {
 };
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (
+    pathname === '/waitlist' ||
+    pathname === '/signup' ||
+    pathname === '/login' ||
+    pathname === '/forgot-password' ||
+    pathname === '/verify-otp'
+  )
+    return null;
+
   return (
     <footer className="relative overflow-hidden bg-[#11519A] pt-12 pb-10 text-white">
       {/* Background Image Asset - Responsive Positioning */}
       <div className="absolute top-0 left-0 lg:left-auto lg:right-0 h-full w-full lg:w-1/2 pointer-events-none z-0 opacity-40 lg:opacity-100">
         <Image
-          src="/assets/footer-bg-image.svg"
+          src="/assets/header-assets/footer-bg-image.svg"
           alt=""
           fill
           sizes="100vw"
@@ -54,8 +66,8 @@ export function Footer() {
           {/* Left: Brand Description */}
           <div className="flex flex-col gap-6 max-w-sm">
             <p className="text-[14px] leading-relaxed opacity-80">
-              Clinsight helps you turns complex medical reports into clear,
-              simple explanations you can actually understand.
+              Clinsight helps you turns complex medical reports into clear, simple explanations you
+              can actually understand.
             </p>
           </div>
 
@@ -65,9 +77,7 @@ export function Footer() {
           {/* Right: Links Grid (3 Columns) - 40px gap */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 lg:gap-10 w-full lg:w-auto">
             <div className="flex flex-col gap-4 lg:gap-6">
-              <h4 className="text-sm font-bold uppercase tracking-wider">
-                Platform
-              </h4>
+              <h4 className="text-sm font-bold uppercase tracking-wider">Platform</h4>
               <ul className="flex flex-col gap-3 lg:gap-6">
                 {FOOTER_LINKS.platform.map((link) => (
                   <li key={link.name}>
@@ -82,9 +92,7 @@ export function Footer() {
               </ul>
             </div>
             <div className="flex flex-col gap-4 lg:gap-6">
-              <h4 className="text-sm font-bold uppercase tracking-wider">
-                Company
-              </h4>
+              <h4 className="text-sm font-bold uppercase tracking-wider">Company</h4>
               <ul className="flex flex-col gap-3 lg:gap-6">
                 {FOOTER_LINKS.company.map((link) => (
                   <li key={link.name}>
@@ -99,9 +107,7 @@ export function Footer() {
               </ul>
             </div>
             <div className="flex flex-col gap-4 lg:gap-6">
-              <h4 className="text-sm font-bold uppercase tracking-wider">
-                Legal
-              </h4>
+              <h4 className="text-sm font-bold uppercase tracking-wider">Legal</h4>
               <ul className="flex flex-col gap-3 lg:gap-6">
                 {FOOTER_LINKS.legal.map((link) => (
                   <li key={link.name}>
