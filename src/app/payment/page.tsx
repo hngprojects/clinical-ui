@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { PaymentForm } from '@/components/payment/payment-form';
 import { PaymentProcessing } from '@/components/payment/payment-processing';
@@ -15,9 +16,9 @@ export default function PaymentPage() {
   const handleFormSubmit = () => {
     setPageState('processing');
 
-    // TODO: Replace with real payment API call
+    // Please, I will replace with real payment API call later
     setTimeout(() => {
-      setPageState('success');
+      setPageState('success'); // Test success state
       // setPageState('failed'); // Test failed state
     }, 3000);
   };
@@ -25,10 +26,20 @@ export default function PaymentPage() {
   return (
     <main className="min-h-screen bg-[#F5F5F5]">
       {/* Header */}
-      <header className="px-8 py-5">
-        <div className="flex items-center gap-2">
-          <Image src="/clinsights-logo.png" alt="Clinsights" width={32} height={32} />
-          <span className="text-lg font-semibold text-[#1565C0]">Clinsights</span>
+      <header className="sticky top-0 z-50 w-full">
+        <div className="container mx-auto flex h-20 items-center justify-between px-6 lg:px-12">
+          <Link href="/" className="flex items-center gap-2 cursor-pointer">
+            <div className="relative h-8 w-[120px] lg:h-10 lg:w-[140px]">
+              <Image
+                src="/assets/header-assets/clinsight-logo.svg"
+                alt="Clinsight Logo"
+                fill
+                sizes="(max-width: 1024px) 120px, 140px"
+                className="object-contain object-left"
+                priority
+              />
+            </div>
+          </Link>
         </div>
       </header>
 
