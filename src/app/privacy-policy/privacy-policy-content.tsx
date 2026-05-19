@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import { HugeiconsIcon } from "@hugeicons/react";
+import type { ReactNode } from 'react';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
   AiBrain03Icon,
   CookieIcon,
@@ -9,9 +9,9 @@ import {
   MailAtSign01Icon,
   ShieldUserIcon,
   UserCheck01Icon,
-} from "@hugeicons/core-free-icons";
-import { motion } from "motion/react";
-import type { Variants } from "motion/react";
+} from '@hugeicons/core-free-icons';
+import { motion } from 'motion/react';
+import type { Variants } from 'motion/react';
 import {
   CONTACT_US,
   COOKIES,
@@ -19,16 +19,16 @@ import {
   DATA_USE,
   INTRODUCTION,
   YOUR_RIGHTS,
-} from "@/lib/privacy-policy-constants";
+} from '@/lib/privacy-policy-constants';
 
-type Hugeicon = React.ComponentProps<typeof HugeiconsIcon>["icon"];
+type Hugeicon = React.ComponentProps<typeof HugeiconsIcon>['icon'];
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
+    transition: { duration: 0.5, ease: 'easeOut' },
   },
 };
 
@@ -42,32 +42,21 @@ const listItemVariants: Variants = {
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.35, ease: "easeOut" },
+    transition: { duration: 0.35, ease: 'easeOut' },
   },
 };
 
-function AnimatedSection({
-  children,
-  icon,
-}: {
-  children: ReactNode;
-  icon: Hugeicon;
-}) {
+function AnimatedSection({ children, icon }: { children: ReactNode; icon: Hugeicon }) {
   return (
     <motion.section
       className="grid gap-4 sm:grid-cols-[2.75rem_1fr] sm:gap-5"
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-8%" }}
+      viewport={{ once: true, margin: '-8%' }}
     >
       <div className="flex size-11 items-center justify-center rounded-lg border bg-secondary text-foreground">
-        <HugeiconsIcon
-          icon={icon}
-          size={22}
-          strokeWidth={1.7}
-          aria-hidden="true"
-        />
+        <HugeiconsIcon icon={icon} size={22} strokeWidth={1.7} aria-hidden="true" />
       </div>
       <div className="space-y-4">{children}</div>
     </motion.section>
@@ -81,7 +70,7 @@ function AnimatedList({ items }: { items: string[] }) {
       variants={listVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-8%" }}
+      viewport={{ once: true, margin: '-8%' }}
     >
       {items.map((item) => (
         <motion.li key={item} className="flex gap-3" variants={listItemVariants}>
@@ -93,11 +82,7 @@ function AnimatedList({ items }: { items: string[] }) {
   );
 }
 
-function ContactInfoList({
-  items,
-}: {
-  items: { label: string; value: string }[];
-}) {
+function ContactInfoList({ items }: { items: { label: string; value: string }[] }) {
   const availableItems = items.filter((item) => item.value.trim().length > 0);
 
   if (availableItems.length === 0) {
@@ -110,12 +95,11 @@ function ContactInfoList({
       variants={listVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-8%" }}
+      viewport={{ once: true, margin: '-8%' }}
     >
       {availableItems.map((item) => (
         <motion.li key={item.label} variants={listItemVariants}>
-          <span className="font-medium text-foreground">{item.label}:</span>{" "}
-          {item.value}
+          <span className="font-medium text-foreground">{item.label}:</span> {item.value}
         </motion.li>
       ))}
     </motion.ul>
@@ -123,11 +107,7 @@ function ContactInfoList({
 }
 
 function SectionHeading({ children }: { children: ReactNode }) {
-  return (
-    <h2 className="text-xl font-semibold tracking-tight text-foreground">
-      {children}
-    </h2>
-  );
+  return <h2 className="text-xl font-semibold tracking-tight text-foreground">{children}</h2>;
 }
 
 function SectionText({ children }: { children: ReactNode }) {
@@ -138,7 +118,7 @@ function AnimatedSeparator() {
   return (
     <motion.div
       className="h-px w-full bg-border"
-      style={{ transformOrigin: "left" }}
+      style={{ transformOrigin: 'left' }}
       initial={{ scaleX: 0 }}
       whileInView={{ scaleX: 1 }}
       viewport={{ once: true }}
@@ -157,7 +137,7 @@ export default function PrivacyPolicyContent() {
         className="mx-auto flex max-w-5xl flex-col gap-8 rounded-xl border bg-background px-5 py-7 shadow-sm sm:px-8 md:px-10 md:py-10"
         initial={{ opacity: 0, y: 32 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease: "easeOut", delay: 0.15 }}
+        transition={{ duration: 0.55, ease: 'easeOut', delay: 0.15 }}
       >
         <header className="space-y-3 border-b pb-7">
           <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
@@ -167,8 +147,8 @@ export default function PrivacyPolicyContent() {
             Privacy Policy
           </h1>
           <p className="max-w-3xl leading-7 text-muted-foreground">
-            How we collect, use, and protect the information needed to support
-            your lab insights and doctor consultations.
+            How we collect, use, and protect the information needed to support your lab insights and
+            doctor consultations.
           </p>
         </header>
 
@@ -189,9 +169,7 @@ export default function PrivacyPolicyContent() {
                 key={dataType.title}
                 className="rounded-lg border bg-card p-4 text-card-foreground"
               >
-                <h3 className="mb-2 font-semibold text-foreground">
-                  {dataType.title}
-                </h3>
+                <h3 className="mb-2 font-semibold text-foreground">{dataType.title}</h3>
                 <AnimatedList items={dataType.content} />
               </div>
             ))}
@@ -229,9 +207,7 @@ export default function PrivacyPolicyContent() {
 
         <AnimatedSection icon={MailAtSign01Icon}>
           <SectionHeading>{CONTACT_US.title}</SectionHeading>
-          {CONTACT_US.content ? (
-            <SectionText>{CONTACT_US.content}</SectionText>
-          ) : null}
+          {CONTACT_US.content ? <SectionText>{CONTACT_US.content}</SectionText> : null}
           <ContactInfoList items={CONTACT_US.contactInfo} />
         </AnimatedSection>
       </motion.article>
