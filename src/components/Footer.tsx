@@ -10,7 +10,7 @@ const FOOTER_LINKS = {
     { name: 'Join Waitlist', href: '/waitlist' },
   ],
   company: [
-    { name: 'About', href: '#' },
+    { name: 'About', href: '/about' },
     { name: 'Contact Us', href: '/contact-us' },
   ],
   legal: [
