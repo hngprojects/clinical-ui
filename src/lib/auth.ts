@@ -1,16 +1,15 @@
 export async function getCurrentUser() {
   try {
-    // const token = document.cookie
-    //   .split('; ')
-    //   .find((row) => row.startsWith('token='))
-    //   ?.split('=')[1];
+    const token = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('token='))
+      ?.split('=')[1];
 
-    // const response = await fetch('/api/auth/me', {
-    //   headers: {
-    //     ...(token && { Authorization: `Bearer ${token}` }),
-    //   },
-    // });
-    const response = await fetch('/api/auth/me');
+    const response = await fetch('/api/auth/me', {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
 
     if (!response.ok) return null;
     const result = await response.json();
@@ -19,5 +18,3 @@ export async function getCurrentUser() {
     return null;
   }
 }
-
-// TODO: Add Authorization header once token storage is confirmed
