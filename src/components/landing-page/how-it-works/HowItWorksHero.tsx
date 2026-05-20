@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { motion } from 'motion/react';
 
-export function Hero() {
+export function HowItWorksHero() {
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -58,7 +58,7 @@ export function Hero() {
                 variants={fadeInUp}
                 className="text-[28px] lg:text-[48px] font-bold leading-[1.2] tracking-[-0.02em] text-[#1B1B1B]"
               >
-                Understand Your Lab Results Right Now.
+                From Upload to Insight.
               </motion.h1>
               <motion.h1
                 variants={fadeInUp}

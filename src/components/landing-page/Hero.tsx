@@ -102,7 +102,7 @@ export function Hero() {
                 {[
                   '/assets/landing-page-assets/woman-with-laptop1.jpg',
                   '/assets/landing-page-assets/successful-entrepreneur1.jpg',
-                  '/assets/landing-page-assets/african-american-student11.jpg',
+                  '/assets/landing-page-assets/african-american-student1.jpg',
                 ].map((src, i) => (
                   <div
                     key={i}
