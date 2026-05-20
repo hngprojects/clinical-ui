@@ -61,7 +61,15 @@ export default function ForgotPasswordPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Token authorization rejected');
+      if (!res.ok) {
+        const message = data.error || 'Token authorization rejected';
+        if ([400, 401, 422].includes(res.status)) {
+          setErrorMessage(message);
+          setStep('failed');
+          return;
+        }
+        throw new Error(message);
+      }
 
       router.push('/reset-password');
     } catch (err) {

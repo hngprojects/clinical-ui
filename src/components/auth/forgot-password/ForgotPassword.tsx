@@ -124,7 +124,7 @@ export default function ForgotPassword() {
                       className="object-contain"
                     />
                   </div>
-                  Back to Login
+                  Back to Sign In
                 </button>
               </div>
             </form>

@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const { email } = body;
 
     if (typeof email !== 'string' || !EMAIL_REGEX.test(email.trim())) {
-      return NextResponse.json({ error: 'Email required' }, { status: 400 });
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
     }
 
     const BACKEND_URL =

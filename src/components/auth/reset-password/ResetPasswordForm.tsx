@@ -6,13 +6,18 @@ import { useRouter } from 'next/navigation';
 
 interface ResetPasswordFormProps {
   onSuccess: () => void;
+  token?: string;
 }
 
-export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
+export function ResetPasswordForm({
+  onSuccess,
+  token = 'active_session_token',
+}: ResetPasswordFormProps) {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccessState, setIsSuccessState] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ password: '', confirmPassword: '' });
   const [visibility, setVisibility] = useState({ password: false, confirm: false });
 
@@ -35,27 +40,33 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
     if (!isFormValid || isLoading) return;
 
     setIsLoading(true);
+    setError(null);
 
     try {
       const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          token: 'active_session_token',
+          token: token,
           new_password: form.password,
         }),
       });
 
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(
+          data.error || 'Failed to update credentials. Please check your link and try again.',
+        );
+      }
 
       setIsSuccessState(true);
       setTimeout(() => {
         onSuccess();
       }, 3000);
-    } catch {
-      // Keep user on form and surface an error message instead.
-      // Do not transition to success on failure.
-      return;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.',
+      );
     } finally {
       setIsLoading(false);
     }
@@ -111,6 +122,7 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
             Please create a secure password for your Clinical Lab Insight account.
           </p>
         </div>
+
         <div className="space-y-5 w-full">
           {(
             [
@@ -192,6 +204,7 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
               </div>
             </div>
           ))}
+
           <div className="w-full flex flex-col gap-1.5 pt-1">
             <div className="w-full flex justify-between items-center text-xs font-semibold font-['Inter'] tracking-wide">
               <span className="text-gray-700">Password Strength</span>
@@ -216,6 +229,7 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
               ))}
             </div>
           </div>
+
           <div className="w-full p-4 bg-[#F2F3FB] rounded-xl flex flex-col gap-3.5">
             <span className="text-[#424752] text-xs font-semibold font-['Inter'] tracking-wide">
               Password must contain:
@@ -250,7 +264,14 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
             </div>
           </div>
         </div>
-        <div className="w-full flex flex-col gap-3.5 pt-6 shrink-0">
+
+        {error && (
+          <div className="w-full p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-medium font-['Inter'] rounded-lg tracking-wide animate-fadeIn">
+            {error}
+          </div>
+        )}
+
+        <div className="w-full flex flex-col gap-3.5 pt-2 shrink-0">
           <button
             type="submit"
             disabled={!isFormValid || isLoading}
