@@ -19,7 +19,7 @@ export default function SignupPage() {
 
       {/* Logo - Top Left */}
       <div className="absolute top-6 left-6 md:top-10 md:left-12 z-10">
-        <div className="relative w-[140px] h-[40px] md:w-[180px] md:h-[50px]">
+        <div className="relative w-35 h-10 md:w-45 md:h-12.5">
           <Image
             src="/assets/signup-page-assets/auth-logo.svg"
             alt="Clinsights Logo"
