@@ -8,13 +8,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  Mail01Icon,
-  LockPasswordIcon,
-  ViewIcon,
-  ViewOffIcon,
-  ArrowRight02Icon,
-} from '@hugeicons/core-free-icons';
+import { Mail01Icon, LockPasswordIcon, ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
 import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { cn } from '@/lib/utils';
@@ -189,7 +183,18 @@ export function SignInForm() {
             className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
           >
             {isSubmitting ? 'Sending...' : 'Sign me in'}
-            <HugeiconsIcon icon={ArrowRight02Icon} size={20} className="ml-2" />
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11 7L9.6 8.4L12.2 11H2V13H12.2L9.6 15.6L11 17L16 12L11 7ZM20 19H12V21H20C21.1 21 22 20.1 22 19V5C22 3.9 21.1 3 20 3H12V5H20V19Z"
+                fill="white"
+              />
+            </svg>
           </Button>
 
           {/* Footer Link */}
