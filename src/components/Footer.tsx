@@ -29,6 +29,7 @@ export function Footer() {
     '/forgot-password',
     '/verify-otp',
     '/reset-password',
+    '/payment',
   ];
 
   if (hideOnRoutes.includes(pathname)) {
