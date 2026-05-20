@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email.trim()) return;
     setIsLoading(true);
     setErrorMessage('');
 
@@ -65,7 +65,9 @@ export default function ForgotPasswordPage() {
 
       router.push('/reset-password');
     } catch (err) {
-      setStep('failed');
+      const error = err as Error;
+      setErrorMessage(error.message || 'Unable to verify code right now. Please try again.');
+      setStep('otp');
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +131,7 @@ export default function ForgotPasswordPage() {
                 setEmail={setEmail}
                 onSubmit={handleEmailSubmit}
                 isLoading={isLoading}
-                onBackToLogin={() => router.push('/login')}
+                onBackToSignin={() => router.push('/signin')}
                 errorMsg={errorMessage}
               />
             )}

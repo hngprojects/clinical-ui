@@ -41,7 +41,7 @@ export function SuccessView() {
 
       <button
         type="button"
-        onClick={() => router.push('/login')}
+        onClick={() => router.push('/signin')}
         className="w-full h-14 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-medium font-['Inter'] text-sm tracking-tight transition-all flex items-center justify-center gap-2"
       >
         <div className="relative size-4">

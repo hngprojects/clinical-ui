@@ -22,7 +22,7 @@ export interface ForgotPasswordSuccessResponse {
 
 export interface VerifyOtpRequest {
   email: string;
-  code: string;
+  otp: string;
 }
 
 export interface UserProfile {

@@ -76,6 +76,7 @@ export function OtpForm({
             <input
               key={index}
               type="text"
+              aria-label={`OTP digit ${index + 1} of 6`}
               inputMode="numeric"
               maxLength={1}
               disabled={isLoading}

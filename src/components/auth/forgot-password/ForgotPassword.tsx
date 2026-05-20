@@ -15,8 +15,6 @@ export default function ForgotPassword() {
 
     setIsLoading(true);
     try {
-      // API call placeholder: POST your endpoint here
-      // await axios.post('/api/auth/forgot-password', { email });
       console.log('Submitting reset code request for:', email);
     } catch (error) {
       console.error('Error sending reset code:', error);
@@ -29,7 +27,7 @@ export default function ForgotPassword() {
     <main className="relative min-h-screen w-full flex flex-col items-start justify-start overflow-x-hidden bg-[#FFFFFE]">
       <div className="absolute inset-0 z-0 h-full w-full">
         <Image
-          src="/assets/forgot-password/BG.png" // Path to your 1440x1024 background asset
+          src="/assets/forgot-password/BG.png"
           alt="Lab Background"
           fill
           priority
@@ -38,7 +36,6 @@ export default function ForgotPassword() {
         <div className="absolute inset-0 bg-black/35 backdrop-blur-[1px]" />
       </div>
 
-      {/* 2. Top-Left Branding Header */}
       <header className="relative z-10 flex items-center gap-3 pl-8 pt-8 md:pl-12 md:pt-12 select-none">
         <div className="relative size-8 flex items-center justify-center">
           <Image
@@ -116,7 +113,7 @@ export default function ForgotPassword() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => router.push('/login')}
+                  onClick={() => router.push('/signin')}
                   className="w-full flex items-center justify-center gap-2 py-2 text-[#006B5F] hover:text-[#004D44] text-sm sm:text-base font-medium font-['Inter'] transition-colors duration-150 group"
                 >
                   <div className="size-4 relative transition-transform duration-200 group-hover:-translate-x-1">

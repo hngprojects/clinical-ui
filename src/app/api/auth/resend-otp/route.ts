@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
+import { EMAIL_REGEX } from '@/lib/validation';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email } = body;
 
-    if (!email) {
+    if (typeof email !== 'string' || !EMAIL_REGEX.test(email.trim())) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 });
     }
 
@@ -62,6 +63,10 @@ export async function POST(request: Request) {
   } catch (error) {
     const err = error as Error;
     console.error('Resend OTP proxy trace error:', err.message);
-    return NextResponse.json({ error: err.message || 'Internal proxy failure' }, { status: 500 });
+    const isDev = process.env.NODE_ENV === 'development';
+    return NextResponse.json(
+      { error: isDev ? err.message : 'Internal proxy failure' },
+      { status: 500 },
+    );
   }
 }

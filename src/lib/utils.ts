@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function maskEmail(email: string): string {
   if (!email) return '';
   const [localPart, domain] = email.split('@');
-  if (!domain) return email;
+  if (!localPart || !domain) return email;
 
   if (localPart.length <= 2) {
     return `${localPart[0]}***@${domain}`;

@@ -8,7 +8,7 @@ interface EmailFormProps {
   setEmail: (val: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
-  onBackToLogin: () => void;
+  onBackToSignin: () => void; // Renamed prop for accuracy
   errorMsg: string;
 }
 
@@ -17,7 +17,7 @@ export function EmailForm({
   setEmail,
   onSubmit,
   isLoading,
-  onBackToLogin,
+  onBackToSignin, // Renamed prop for accuracy
   errorMsg,
 }: EmailFormProps) {
   return (
@@ -96,7 +96,7 @@ export function EmailForm({
 
           <button
             type="button"
-            onClick={onBackToLogin}
+            onClick={onBackToSignin} // Trigger the renamed prop
             disabled={isLoading}
             className="w-full flex items-center justify-center gap-2 py-2 text-[#006B5F] hover:text-[#004D44] text-sm sm:text-base font-medium font-['Inter'] transition-colors duration-150 group"
           >
@@ -108,7 +108,8 @@ export function EmailForm({
                 className="object-contain"
               />
             </div>
-            <span>Back to Login</span>
+            {/* Text updated to match your routing context */}
+            <span>Back to Sign in</span>
           </button>
         </div>
       </form>

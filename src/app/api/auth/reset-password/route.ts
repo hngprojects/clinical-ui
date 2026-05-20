@@ -9,10 +9,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Token and new password are required' }, { status: 400 });
     }
 
-    const RESET_PASSWORD_API_URL =
-      process.env.RESET_PASSWORD_API_URL ||
-      'https://api.staging.clinsight.hng14.com/api/v1/auth/reset-password';
-
+    const RESET_PASSWORD_API_URL = process.env.RESET_PASSWORD_API_URL;
+    if (!RESET_PASSWORD_API_URL) {
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    }
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000);
 

@@ -53,16 +53,14 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
         onSuccess();
       }, 3000);
     } catch {
-      setIsSuccessState(true);
-      setTimeout(() => {
-        onSuccess();
-      }, 2500);
+      // Keep user on form and surface an error message instead.
+      // Do not transition to success on failure.
+      return;
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Success Confirmation State UI Card View
   if (isSuccessState) {
     return (
       <div className="w-full max-w-[390px] mx-auto flex flex-col items-center justify-center text-center px-4 pb-10 min-h-[520px] animate-fadeIn">
@@ -96,7 +94,6 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
         onSubmit={handleSubmit}
         className="w-full h-full flex flex-col justify-start gap-8 px-4 pb-10 bg-transparent"
       >
-        {/* Header branding Module context */}
         <div className="w-full flex flex-col items-center text-center pt-2 mb-1">
           <div className="relative size-8 mb-3">
             <Image
@@ -107,7 +104,6 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
               priority
             />
           </div>
-          {/* Added tracking-wide to expand the layout typography cleanly */}
           <h1 className="text-zinc-900 text-xl font-bold font-['Inter'] tracking-wide mb-1.5">
             Set New Password
           </h1>
@@ -115,8 +111,6 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
             Please create a secure password for your Clinical Lab Insight account.
           </p>
         </div>
-
-        {/* Input Interactive Fields complex */}
         <div className="space-y-5 w-full">
           {(
             [
@@ -156,6 +150,8 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
                 <button
                   type="button"
                   onClick={field.toggle}
+                  aria-label={field.visible ? `Hide ${field.label}` : `Show ${field.label}`}
+                  aria-pressed={field.visible}
                   className="text-zinc-400 hover:text-zinc-600 transition-colors ml-1 focus:outline-none"
                 >
                   {field.visible ? (
@@ -196,8 +192,6 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
               </div>
             </div>
           ))}
-
-          {/* Password Dynamic Strength Tracker */}
           <div className="w-full flex flex-col gap-1.5 pt-1">
             <div className="w-full flex justify-between items-center text-xs font-semibold font-['Inter'] tracking-wide">
               <span className="text-gray-700">Password Strength</span>
@@ -222,13 +216,10 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
               ))}
             </div>
           </div>
-
-          {/* Rules Checklist Box (Configured to a clean, straight vertical column line layout) */}
           <div className="w-full p-4 bg-[#F2F3FB] rounded-xl flex flex-col gap-3.5">
             <span className="text-[#424752] text-xs font-semibold font-['Inter'] tracking-wide">
               Password must contain:
             </span>
-            {/* Switched to flex flex-col line distribution to enforce straight top-to-bottom grid flow structure */}
             <div className="flex flex-col gap-2.5">
               {requirements.map((req, idx) => (
                 <div key={idx} className="flex items-center gap-2">
@@ -259,8 +250,6 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
             </div>
           </div>
         </div>
-
-        {/* Action Button Section Block Complex */}
         <div className="w-full flex flex-col gap-3.5 pt-6 shrink-0">
           <button
             type="submit"
@@ -280,10 +269,10 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
 
           <button
             type="button"
-            onClick={() => router.push('/login')}
+            onClick={() => router.push('/signin')}
             className="w-full py-1 text-center text-[#004D99] hover:text-sky-900 font-semibold font-['Inter'] text-xs tracking-wide transition-colors flex items-center justify-center gap-1 focus:outline-none"
           >
-            <span>Return to Login</span>
+            <span>Return to Sign In</span>
           </button>
         </div>
       </form>

@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
+import { EMAIL_REGEX } from '@/lib/validation';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email, otp } = body;
 
-    if (!email || !otp || otp.length !== 6) {
+    if (
+      typeof email !== 'string' ||
+      typeof otp !== 'string' ||
+      !EMAIL_REGEX.test(email.trim()) ||
+      !/^\d{6}$/.test(otp)
+    ) {
       return NextResponse.json({ error: 'Invalid verification payload' }, { status: 400 });
     }
 
@@ -36,7 +42,6 @@ export async function POST(request: Request) {
         if (contentType?.includes('application/json')) {
           const err = await response.json();
 
-          // FastAPI 422 Parser
           if (response.status === 422 && Array.isArray(err.detail) && err.detail.length > 0) {
             errorMessage = err.detail[0].msg;
           } else {
@@ -45,10 +50,9 @@ export async function POST(request: Request) {
         } else {
           errorMessage = await response.text();
         }
-        throw new Error(errorMessage);
+        return NextResponse.json({ error: errorMessage }, { status: response.status });
       }
 
-      // 200 Success - Returns access_token and user object
       const data = await response.json();
       return NextResponse.json(data, { status: 200 });
     } catch (fetchError) {
@@ -61,8 +65,9 @@ export async function POST(request: Request) {
   } catch (error) {
     const err = error as Error;
     console.error('Verify OTP proxy trace error:', err.message);
+    const isDev = process.env.NODE_ENV === 'development';
     return NextResponse.json(
-      { error: err.message || 'Internal verification token error' },
+      { error: isDev ? err.message : 'Internal verification token error' },
       { status: 500 },
     );
   }

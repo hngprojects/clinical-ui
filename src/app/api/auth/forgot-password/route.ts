@@ -30,8 +30,6 @@ export async function POST(request: Request) {
       });
 
       clearTimeout(timeoutId);
-
-      // 3. Handle Exceptions & FastAPI 422 errors
       if (!response.ok) {
         let errorMessage = 'Authentication service failure';
         const contentType = response.headers.get('content-type');
@@ -39,7 +37,6 @@ export async function POST(request: Request) {
         if (contentType && contentType.includes('application/json')) {
           try {
             const err = await response.json();
-            // Fallback chain matching FastAPI error schemas
             errorMessage = err.detail || err.message || err.error || JSON.stringify(err);
           } catch {
             errorMessage = await response.text();
@@ -47,11 +44,10 @@ export async function POST(request: Request) {
         } else {
           errorMessage = await response.text();
         }
-
-        throw new Error(errorMessage);
+        return NextResponse.json({ error: errorMessage }, { status: response.status });
       }
 
-      // 4. Return Success Stream back to Client
+      // Return Success Stream back to Client
       const data = await response.json();
       return NextResponse.json(data, { status: 200 });
     } catch (fetchError) {
