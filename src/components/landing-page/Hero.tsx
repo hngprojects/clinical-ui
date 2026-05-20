@@ -95,7 +95,7 @@ export function Hero() {
 
               {/* User Reports Sidebar */}
               <div
-                className="absolute left-[-50px] lg:left-[10px] top-[50%] -translate-y-1/2 lg:translate-y-0 lg:top-[16%] z-30 flex
+                className="absolute left-[-50px] lg:left-[10px] top-[50%] -translate-y-1/2 lg:translate-y-0 lg:top-[20%] z-30 flex
               w-[50px] lg:w-[84px] h-[210px] lg:h-[320px] flex-col gap-1.5 lg:gap-2 rounded-lg lg:rounded-xl
               bg-white p-1 lg:p-2 shadow-lg ring-1 ring-slate-100"
               >
