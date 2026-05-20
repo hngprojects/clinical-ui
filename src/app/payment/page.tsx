@@ -25,16 +25,16 @@ export default function PaymentPage() {
       });
   }, []);
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async () => {
     setPageState('processing');
 
-    // TODO: Replace with real payment API call
-    // Expected: POST /api/v1/payments or similar
-    // On success → setPageState('success')
-    // On failure → setPageState('failed')
-    setTimeout(() => {
+    try {
+      // TODO: replace with real payment API call
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       setPageState('success');
-    }, 3000);
+    } catch {
+      setPageState('failed');
+    }
   };
 
   return (
