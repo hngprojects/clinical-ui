@@ -8,37 +8,21 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  User02Icon,
-  SmartPhone01Icon,
-  Mail01Icon,
-  LockPasswordIcon,
-  ViewIcon,
-  ViewOffIcon,
-  ArrowRight02Icon,
-} from '@hugeicons/core-free-icons';
+import { Mail01Icon, LockPasswordIcon, ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
 import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { cn } from '@/lib/utils';
-import { signupAction } from '@/actions/auth-actions';
+import { signinAction } from '@/actions/auth-actions';
 import { toast } from 'sonner';
 
-const signupSchema = z.object({
-  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
-  phone: z
-    .string()
-    .min(1, 'Phone number is required')
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Enter a valid phone number (e.g., +1234567890)'),
+const signinSchema = z.object({
   email: z.string().email('Enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  agreed: z.boolean().refine((val) => val === true, {
-    message: 'You must agree to the terms',
-  }),
 });
 
-type SignupValues = z.infer<typeof signupSchema>;
+type SigninValues = z.infer<typeof signinSchema>;
 
-export function SignupForm() {
+export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
@@ -47,21 +31,17 @@ export function SignupForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignupValues>({
-    resolver: zodResolver(signupSchema),
+  } = useForm<SigninValues>({
+    resolver: zodResolver(signinSchema),
     mode: 'onBlur',
     defaultValues: {
-      fullName: '',
-      phone: '',
       email: '',
       password: '',
-      agreed: false,
     },
   });
 
-  const onSubmit = async (data: SignupValues) => {
-    const result = await signupAction({
-      fullName: data.fullName,
+  const onSubmit = async (data: SigninValues) => {
+    const result = await signinAction({
       email: data.email,
       password: data.password,
     });
@@ -69,8 +49,8 @@ export function SignupForm() {
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success('Account created! Please check your email for the OTP.');
-      router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+      toast.success('Signed in successfully!');
+      router.push('/dashboard');
     }
   };
 
@@ -84,20 +64,20 @@ export function SignupForm() {
       <div className="flex flex-col h-full gap-6 md:gap-8">
         {/* Header */}
         <div className="flex flex-col gap-1">
-          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[38px] leading-[130%] tracking-[-0.02em] whitespace-nowrap">
-            Create your doctor account
+          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[38px] leading-[130%] tracking-[-0.02em] whitespace-nowrap text-center">
+            Welcome Back
           </h1>
-          <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em]">
-            Start your verification to begin reviewing cases
+          <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em] text-center">
+            Log in to reveiw cases and manage your activities
           </p>
         </div>
 
-        {/* Social Sign up */}
+        {/* Social Sign in */}
         <button
           type="button"
           className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl border border-[#E0E0E0] bg-white text-base font-medium text-[#313131] transition-colors hover:bg-slate-50"
         >
-          <span>Sign up with Google</span>
+          <span>Sign in with Google</span>
           <svg
             width="24"
             height="24"
@@ -127,7 +107,7 @@ export function SignupForm() {
         {/* Divider */}
         <div className="flex items-center gap-4">
           <div className="h-px flex-1 bg-[#E0E0E0]" />
-          <span className="text-sm font-medium text-[#313131]">or Sign up with Email</span>
+          <span className="text-sm font-medium text-[#313131]">or Sign in with Email</span>
           <div className="h-px flex-1 bg-[#E0E0E0]" />
         </div>
 
@@ -139,50 +119,6 @@ export function SignupForm() {
           noValidate
         >
           <div className="flex flex-col gap-4">
-            {/* Full Name */}
-            <InputFieldContainer
-              label="Full name"
-              htmlFor="fullName"
-              error={errors.fullName?.message}
-            >
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={User02Icon} size={20} />
-                </div>
-                <input
-                  id="fullName"
-                  {...register('fullName')}
-                  type="text"
-                  placeholder="Enter full name"
-                  autoComplete="off"
-                  className={cn(
-                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
-                    errors.fullName && 'border-red-500',
-                  )}
-                />
-              </div>
-            </InputFieldContainer>
-
-            {/* Phone No */}
-            <InputFieldContainer label="Phone no." htmlFor="phone" error={errors.phone?.message}>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={SmartPhone01Icon} size={20} />
-                </div>
-                <input
-                  id="phone"
-                  {...register('phone')}
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  autoComplete="off"
-                  className={cn(
-                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
-                    errors.phone && 'border-red-500',
-                  )}
-                />
-              </div>
-            </InputFieldContainer>
-
             {/* Email */}
             <InputFieldContainer
               label="Email address"
@@ -222,7 +158,7 @@ export function SignupForm() {
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="At least 8 characters"
-                  autoComplete="new-password"
+                  autoComplete="current-password"
                   className={cn(
                     'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
                     errors.password && 'border-red-500',
@@ -239,36 +175,6 @@ export function SignupForm() {
             </InputFieldContainer>
           </div>
 
-          {/* Terms & Privacy */}
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-3">
-              <input
-                id="agreed"
-                {...register('agreed')}
-                type="checkbox"
-                className="h-5 w-5 rounded-md border-[#E0E0E0] text-brand-blue accent-brand-blue cursor-pointer"
-              />
-              <label
-                htmlFor="agreed"
-                className="text-xs md:text-base text-[#5E5E5E] cursor-pointer"
-              >
-                I agree to the{' '}
-                <Link href="/terms-and-conditions" className="font-bold underline">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link href="/privacy-policy" className="font-bold underline">
-                  Privacy Policy
-                </Link>
-              </label>
-            </div>
-            {errors.agreed && (
-              <p className="text-xs italic text-red-500 font-medium text-right">
-                {errors.agreed.message}
-              </p>
-            )}
-          </div>
-
           {/* Submit */}
           <Button
             variant="brand"
@@ -276,15 +182,26 @@ export function SignupForm() {
             disabled={isSubmitting}
             className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
           >
-            {isSubmitting ? 'Sending...' : 'Send me OTP'}
-            <HugeiconsIcon icon={ArrowRight02Icon} size={20} className="ml-2" />
+            {isSubmitting ? 'Sending...' : 'Sign me in'}
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11 7L9.6 8.4L12.2 11H2V13H12.2L9.6 15.6L11 17L16 12L11 7ZM20 19H12V21H20C21.1 21 22 20.1 22 19V5C22 3.9 21.1 3 20 3H12V5H20V19Z"
+                fill="white"
+              />
+            </svg>
           </Button>
 
           {/* Footer Link */}
           <div className="text-center text-base text-[#5E5E5E]">
-            Already verified?{' '}
-            <Link href="/signin" className="font-bold text-[#1565C0] hover:underline">
-              Sign in
+            Don&apos;t have an account?{' '}
+            <Link href="/signup" className="font-bold text-[#1565C0] hover:underline">
+              Sign up
             </Link>
           </div>
         </form>
