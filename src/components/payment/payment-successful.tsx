@@ -47,12 +47,14 @@ export function PaymentSuccessful({
         <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
       </button>
 
-      <button
-        onClick={onDownloadReceipt}
-        className="mt-4 text-sm font-medium text-[#1565C0] hover:underline"
-      >
-        Download Receipt
-      </button>
+      {onDownloadReceipt && (
+        <button
+          onClick={onDownloadReceipt}
+          className="mt-4 text-sm font-medium text-[`#1565C0`] hover:underline"
+        >
+          Download Receipt
+        </button>
+      )}
     </div>
   );
 }
