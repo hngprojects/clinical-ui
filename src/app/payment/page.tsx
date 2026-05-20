@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getCurrentUser } from '@/lib/auth';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PaymentForm } from '@/components/payment/payment-form';
@@ -12,14 +13,27 @@ type PageState = 'form' | 'processing' | 'success' | 'failed';
 
 export default function PaymentPage() {
   const [pageState, setPageState] = useState<PageState>('form');
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    getCurrentUser()
+      .then((user) => {
+        if (user?.email) setUserEmail(user.email);
+      })
+      .catch(() => {
+        // silently fail - fallback email will be used
+      });
+  }, []);
 
   const handleFormSubmit = () => {
     setPageState('processing');
 
-    // Please, I will replace with real payment API call later
+    // TODO: Replace with real payment API call
+    // Expected: POST /api/v1/payments or similar
+    // On success → setPageState('success')
+    // On failure → setPageState('failed')
     setTimeout(() => {
-      setPageState('success'); // Test success state
-      // setPageState('failed'); // Test failed state
+      setPageState('success');
     }, 3000);
   };
 
@@ -55,9 +69,11 @@ export default function PaymentPage() {
         )}
         {pageState === 'success' && (
           <PaymentSuccessful
-            email="customer@example.com"
+            email={userEmail || 'customer@example.com'}
             onContinue={() => (window.location.href = '/')}
-            onDownloadReceipt={() => console.log('Download receipt')}
+            onDownloadReceipt={() => {
+              // TODO: implement receipt download
+            }}
           />
         )}
       </div>
