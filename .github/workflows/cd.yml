@@ -25,7 +25,7 @@ jobs:
     environment: staging
     steps:
       - name: Deploy to staging server
-        uses: appleboy/ssh-action@7077fd99a24ae72b4f9f0bcfdf83e0f8e9c5f28
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
@@ -52,7 +52,7 @@ jobs:
     environment: production
     steps:
       - name: Deploy to production server
-        uses: appleboy/ssh-action@7077fd99a24ae72b4f9f0bcfdf83e0f8e9c5f28
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
