@@ -13,6 +13,7 @@ import { pageMetadata } from '@/lib/pageMetadata';
 export const metadata = pageMetadata(
   'Payment — Clinsight',
   'Complete your payment to access personalized lab insights and doctor consultations.',
+  '/payment',
 );
 
 type PageState = 'form' | 'processing' | 'success' | 'failed';

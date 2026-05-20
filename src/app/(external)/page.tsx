@@ -9,6 +9,7 @@ import { pageMetadata } from '@/lib/pageMetadata';
 export const metadata = pageMetadata(
   'Clinsight — Home',
   'Understand your lab results with clear insights and optional doctor review.',
+  '/',
 );
 
 export default function Home() {

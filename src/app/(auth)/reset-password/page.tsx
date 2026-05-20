@@ -9,6 +9,7 @@ import { pageMetadata } from '@/lib/pageMetadata';
 export const metadata = pageMetadata(
   'Reset Password — Clinsight',
   'Reset your Clinsight account password by entering your email address.',
+  '/reset-password',
 );
 
 type ResetStep = 'form' | 'success';

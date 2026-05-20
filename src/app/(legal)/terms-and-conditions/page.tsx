@@ -7,6 +7,7 @@ import { pageMetadata } from '@/lib/pageMetadata';
 export const metadata = pageMetadata(
   'Terms and Conditions — Clinsight',
   'Read the terms and conditions for using Clinsight.',
+  '/terms-and-conditions',
 );
 
 export default function TermsAndConditions() {

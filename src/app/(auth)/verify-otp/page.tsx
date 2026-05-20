@@ -5,6 +5,7 @@ import { pageMetadata } from '@/lib/pageMetadata';
 export const metadata = pageMetadata(
   'Verify OTP — Clinsight',
   'Enter the one-time password sent to your email to verify your account.',
+  '/verify-otp',
 );
 
 export default function VerifyOtpPage() {

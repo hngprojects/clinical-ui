@@ -8,6 +8,7 @@ import { pageMetadata } from '@/lib/pageMetadata';
 export const metadata = pageMetadata(
   'About — Clinsight',
   'Learn about Clinsight, our mission, team, and values.',
+  '/about',
 );
 
 export default function AboutPage() {

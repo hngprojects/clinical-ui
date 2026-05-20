@@ -12,6 +12,7 @@ import { pageMetadata } from '@/lib/pageMetadata';
 export const metadata = pageMetadata(
   'Forgot Password — Clinsight',
   'Reset your Clinsight account password by entering your email address and verifying the OTP sent to you.',
+  '/forgot-password',
 );
 
 type FlowStep = 'email' | 'otp' | 'failed';
