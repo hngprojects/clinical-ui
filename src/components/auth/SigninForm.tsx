@@ -174,6 +174,26 @@ export function SignInForm() {
               </div>
             </InputFieldContainer>
           </div>
+          <div className="flex flex-col gap-3 mt-3 mb-5">
+            {/* Forgot Password */}
+            <Link
+              href="/forgot-password"
+              className="text-sm text-[#1565C0] hover:underline text-right"
+            >
+              Forgot your password?
+            </Link>
+            {/* Remember me */}
+            <div className="flex items-center gap-2">
+              <input
+                id="remember"
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue cursor-pointer"
+              />
+              <label htmlFor="remember" className="text-sm text-[#5E5E5E]">
+                Remember me
+              </label>
+            </div>
+          </div>
 
           {/* Submit */}
           <Button
