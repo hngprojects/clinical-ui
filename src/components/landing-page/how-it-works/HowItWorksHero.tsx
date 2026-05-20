@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
 
-export function Hero() {
+export function HowItWorksHero() {
   return (
     <section className="relative overflow-hidden bg-white pt-10 pb-16 lg:pt-16 lg:pb-24">
       <div className="container mx-auto px-6 lg:px-12">
@@ -47,20 +47,20 @@ export function Hero() {
 
             <div className="flex flex-col gap-3">
               <h1 className="text-[28px] lg:text-[48px] font-bold leading-[1.2] tracking-[-0.02em] text-[#1B1B1B] w-full lg:max-w-none">
-                Understand Your Lab Results Right Now.
+                From Upload to Insight
               </h1>
               <h1 className="text-[28px] lg:text-[48px] font-bold leading-[1.2] tracking-[-0.02em] text-[#1B1B1B]">
                 <span className="relative inline-block px-3 text-white">
                   <span className="absolute inset-0 -skew-x-2 rounded bg-[#1565C0]" />
-                  <span className="relative">No Waiting!</span>
+                  <span className="relative">Here&apos;s How!</span>
                 </span>
               </h1>
             </div>
 
             <div className="max-w-md text-[16px] lg:text-[18px] font-normal leading-[1.5] tracking-[-0.01em] text-[#5E5E5E] flex flex-col gap-4">
-              <p>Upload your laboratory results and get a clear interpretation in minutes.</p>
-              <p className="italic text-[14px]">
-                AI-assisted interpretation, not a medical diagnosis.
+              <p>
+                Clinsight helps you turns complex medical reports into clear, simple explanations
+                using AI-assisted interpretation.
               </p>
             </div>
           </div>
