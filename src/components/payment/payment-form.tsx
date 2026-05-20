@@ -63,7 +63,7 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
                   onChange={() => setMethod(m)}
                 />
 
-                <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 ...">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-gray-300">
                   {method === m && <span className="h-2 w-2 rounded-full bg-green-500" />}
                 </span>
                 <span className="text-sm capitalize text-gray-700">{m}</span>
@@ -116,7 +116,7 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
                 checked={saveCard}
                 onChange={(e) => setSaveCard(e.target.checked)}
               />
-              <span className="flex h-4 w-4 items-center justify-center rounded border ...">
+              <span className="flex h-4 w-4 items-center justify-center rounded border border-gray-300">
                 {saveCard && (
                   <svg
                     className="h-3 w-3 text-white"
