@@ -4,6 +4,12 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { ResetPasswordForm } from '@/components/auth/reset-password/ResetPasswordForm';
 import { SuccessView } from '@/components/auth/reset-password/SuccessView';
+import { pageMetadata } from '@/lib/pageMetadata';
+
+export const metadata = pageMetadata(
+  'Reset Password — Clinsight',
+  'Reset your Clinsight account password by entering your email address.',
+);
 
 type ResetStep = 'form' | 'success';
 
@@ -38,7 +44,7 @@ export default function ResetPasswordPage() {
       </header>
 
       <div className="relative z-10 w-full flex-1 flex items-center justify-center px-4 pt-28 pb-12 md:pt-36 md:pb-16">
-        <div className="w-full md:w-[661px] min-h-[720px] md:h-[800px] bg-white rounded-[32px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-10 md:px-[70px] md:py-[64px] flex flex-col justify-between transition-all duration-300">
+        <div className="w-full md:w-165.25 min-h-180 md:h-200 bg-white rounded-[32px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-10 md:px-17.5 md:py-16 flex flex-col justify-between transition-all duration-300">
           {step === 'form' ? (
             <ResetPasswordForm onSuccess={() => setStep('success')} />
           ) : (

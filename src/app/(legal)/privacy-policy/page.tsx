@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import PrivacyPolicyContent from './privacy-policy-content';
+import { pageMetadata } from '@/lib/pageMetadata';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description:
-    'Read how Clinsight collects, uses, and protects information for lab insights and doctor consultations.',
-};
+export const metadata: Metadata = pageMetadata(
+  'Privacy Policy',
+  'Read how Clinsight collects, uses, and protects information for lab insights and doctor consultations.',
+);
 
 export default function PrivacyPolicyPage() {
   return <PrivacyPolicyContent />;

@@ -1,5 +1,11 @@
 import Image from 'next/image';
 import { VerifyOtpForm } from '@/components/auth/VerifyOtpForm';
+import { pageMetadata } from '@/lib/pageMetadata';
+
+export const metadata = pageMetadata(
+  'Verify OTP — Clinsight',
+  'Enter the one-time password sent to your email to verify your account.',
+);
 
 export default function VerifyOtpPage() {
   return (

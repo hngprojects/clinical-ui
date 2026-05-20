@@ -8,6 +8,12 @@ import { PaymentForm } from '@/components/payment/payment-form';
 import { PaymentProcessing } from '@/components/payment/payment-processing';
 import { PaymentFailed } from '@/components/payment/payment-failed';
 import { PaymentSuccessful } from '@/components/payment/payment-successful';
+import { pageMetadata } from '@/lib/pageMetadata';
+
+export const metadata = pageMetadata(
+  'Payment — Clinsight',
+  'Complete your payment to access personalized lab insights and doctor consultations.',
+);
 
 type PageState = 'form' | 'processing' | 'success' | 'failed';
 
@@ -43,7 +49,7 @@ export default function PaymentPage() {
       <header className="sticky top-0 z-50 w-full">
         <div className="container mx-auto flex h-20 items-center justify-between px-6 lg:px-12">
           <Link href="/" className="flex items-center gap-2 cursor-pointer">
-            <div className="relative h-8 w-[120px] lg:h-10 lg:w-[140px]">
+            <div className="relative h-8 w-30 lg:h-10 lg:w-35">
               <Image
                 src="/assets/header-assets/clinsight-logo.svg"
                 alt="Clinsight Logo"

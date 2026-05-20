@@ -2,6 +2,12 @@
 
 import { motion } from 'motion/react';
 import { terms } from './terms';
+import { pageMetadata } from '@/lib/pageMetadata';
+
+export const metadata = pageMetadata(
+  'Terms and Conditions — Clinsight',
+  'Read the terms and conditions for using Clinsight.',
+);
 
 export default function TermsAndConditions() {
   return (

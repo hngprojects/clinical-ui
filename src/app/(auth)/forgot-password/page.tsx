@@ -7,6 +7,12 @@ import { useCountdown } from '@/hooks/useCountdown';
 import { EmailForm } from '@/components/auth/forgot-password/EmailForm';
 import { OtpForm } from '@/components/auth/forgot-password/OtpForm';
 import { FailedView } from '@/components/auth/forgot-password/FailedView';
+import { pageMetadata } from '@/lib/pageMetadata';
+
+export const metadata = pageMetadata(
+  'Forgot Password — Clinsight',
+  'Reset your Clinsight account password by entering your email address and verifying the OTP sent to you.',
+);
 
 type FlowStep = 'email' | 'otp' | 'failed';
 
@@ -131,7 +137,7 @@ export default function ForgotPasswordPage() {
         </span>
       </header>
       <div className="relative z-10 w-full flex-1 flex items-center justify-center px-4 pt-28 pb-12 md:pt-36 md:pb-16">
-        <div className="w-full md:w-[661px] md:h-[800px] bg-white rounded-[32px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-10 md:px-[70px] md:pt-[90px] md:pb-[64px] flex flex-col items-center justify-between transition-all duration-300">
+        <div className="w-full md:w-165.25 md:h-200 bg-white rounded-[32px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-10 md:px-17.5 md:pt-22.5 md:pb-16 flex flex-col items-center justify-between transition-all duration-300">
           <div className="w-full flex flex-col items-center flex-1 justify-start">
             {step === 'email' && (
               <EmailForm
@@ -189,7 +195,7 @@ export default function ForgotPasswordPage() {
             )}
             {step === 'otp' && (
               <div className="w-full flex flex-row items-center justify-center gap-2 text-xs font-['Inter'] tracking-wider select-none animate-fadeIn">
-                <div className="relative size-4 flex-shrink-0">
+                <div className="relative size-4 shrink-0">
                   <Image
                     src="/assets/forgot-password/shield-icon.svg"
                     alt="Security Shield"

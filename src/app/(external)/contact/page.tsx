@@ -1,11 +1,12 @@
 import ContactDetails from '@/components/contact/ContactDetails';
 import ContactForm from '@/components/contact/ContactForm';
 import ContactPageHeader from '@/components/contact/ContactPageHeader';
-import { Metadata } from 'next';
+import { pageMetadata } from '@/lib/pageMetadata';
 
-export const metadata: Metadata = {
-  title: 'Contact Us',
-};
+export const metadata = pageMetadata(
+  'Contact — Clinsight',
+  'Get in touch with the Clinsight team for support, partnerships, or inquiries.',
+);
 
 export default function Page() {
   return (

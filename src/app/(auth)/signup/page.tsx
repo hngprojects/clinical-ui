@@ -1,5 +1,11 @@
 import Image from 'next/image';
 import { SignupForm } from '@/components/auth/SignupForm';
+import { pageMetadata } from '@/lib/pageMetadata';
+
+export const metadata = pageMetadata(
+  'Sign up — Clinsight',
+  'Create a Clinsight account to get personalized lab insights.',
+);
 
 export default function SignupPage() {
   return (
