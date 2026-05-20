@@ -64,10 +64,10 @@ export function SignInForm() {
       <div className="flex flex-col h-full gap-6 md:gap-8">
         {/* Header */}
         <div className="flex flex-col gap-1">
-          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[38px] leading-[130%] tracking-[-0.02em] whitespace-nowrap">
+          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[38px] leading-[130%] tracking-[-0.02em] whitespace-nowrap text-center">
             Welcome Back
           </h1>
-          <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em]">
+          <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em] text-center">
             Login to reveiw cases and manage your activties
           </p>
         </div>
