@@ -168,12 +168,12 @@
   .button__text {
     @apply font-semibold text-sm leading-[150%] tracking-[-1%];
   }
+}
 
-  /* forms */
+/* forms */
 
 @layer components {
   .input__field {
-    @apply border border-outline-border py-2.5 px-4 rounded-[8px] placeholder:text-text-disabled text-text-primary text-sm;
     @apply border border-outline-border py-2.5 px-4 rounded-[8px] placeholder:text-text-disabled text-text-primary text-sm;
   }
 
@@ -183,6 +183,7 @@
 
   .btn__primary {
     @apply flex items-center justify-center rounded-[8px] gap-3 px-4 py-4 hover:opacity-90 transition-all;
+  }
   button {
     @apply cursor-pointer;
   }
