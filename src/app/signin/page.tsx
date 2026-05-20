@@ -30,7 +30,7 @@ export default function SignInPage() {
         </div>
       </div>
 
-      {/* Signup Form Card */}
+      {/* Signin Form Card */}
       <div className="relative z-10 w-full flex justify-center py-12">
         <SignInForm />
       </div>
