@@ -1,15 +1,5 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  AiBrain03Icon,
-  CookieIcon,
-  DatabaseLockedIcon,
-  MailAtSign01Icon,
-  ShieldUserIcon,
-  UserCheck01Icon,
-} from '@hugeicons/core-free-icons';
 import { motion } from 'motion/react';
 import type { Variants } from 'motion/react';
 import {
@@ -21,60 +11,74 @@ import {
   YOUR_RIGHTS,
 } from '@/lib/privacy-policy-constants';
 
-type Hugeicon = React.ComponentProps<typeof HugeiconsIcon>['icon'];
-
 const sectionVariants: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: 'easeOut' },
+    transition: { duration: 0.45, ease: 'easeOut' },
   },
 };
 
 const listVariants: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.07 } },
+  visible: { transition: { staggerChildren: 0.06 } },
 };
 
 const listItemVariants: Variants = {
-  hidden: { opacity: 0, x: -10 },
+  hidden: { opacity: 0, x: -8 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.35, ease: 'easeOut' },
+    transition: { duration: 0.3, ease: 'easeOut' },
   },
 };
 
-function AnimatedSection({ children, icon }: { children: ReactNode; icon: Hugeicon }) {
+function AnimatedSection({
+  index,
+  title,
+  children,
+}: {
+  index: number;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <motion.section
-      className="grid gap-4 sm:grid-cols-[2.75rem_1fr] sm:gap-5"
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: '-8%' }}
+      viewport={{ once: true, margin: '-6%' }}
+      className="border-b border-border pb-8 last:border-0 last:pb-0"
     >
-      <div className="flex size-11 items-center justify-center rounded-lg border bg-secondary text-foreground">
-        <HugeiconsIcon icon={icon} size={22} strokeWidth={1.7} aria-hidden="true" />
-      </div>
-      <div className="space-y-4">{children}</div>
+      <h2 className="mb-3 text-base font-semibold text-foreground">
+        {index}. {title}
+      </h2>
+      {children}
     </motion.section>
   );
 }
 
-function AnimatedList({ items }: { items: string[] }) {
+function BodyText({ children }: { children: React.ReactNode }) {
+  return <p className="text-sm leading-6 text-muted-foreground">{children}</p>;
+}
+
+function BulletList({ items }: { items: string[] }) {
   return (
     <motion.ul
-      className="space-y-2 text-sm leading-7 text-muted-foreground sm:text-base"
+      className="mt-2 space-y-1"
       variants={listVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: '-8%' }}
+      viewport={{ once: true, margin: '-6%' }}
     >
       {items.map((item) => (
-        <motion.li key={item} className="flex gap-3" variants={listItemVariants}>
-          <span className="mt-3 size-1.5 shrink-0 rounded-full bg-foreground/70" />
+        <motion.li
+          key={item}
+          variants={listItemVariants}
+          className="flex items-start gap-2 text-sm leading-6 text-muted-foreground"
+        >
+          <span className="mt-2.5 size-1 shrink-0 rounded-full bg-muted-foreground/60" />
           <span>{item}</span>
         </motion.li>
       ))}
@@ -82,135 +86,125 @@ function AnimatedList({ items }: { items: string[] }) {
   );
 }
 
-function ContactInfoList({ items }: { items: { label: string; value: string }[] }) {
-  const availableItems = items.filter((item) => item.value.trim().length > 0);
-
-  if (availableItems.length === 0) {
-    return null;
-  }
-
-  return (
-    <motion.ul
-      className="space-y-2 text-sm leading-7 text-muted-foreground sm:text-base"
-      variants={listVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-8%' }}
-    >
-      {availableItems.map((item) => (
-        <motion.li key={item.label} variants={listItemVariants}>
-          <span className="font-medium text-foreground">{item.label}:</span> {item.value}
-        </motion.li>
-      ))}
-    </motion.ul>
-  );
-}
-
-function SectionHeading({ children }: { children: ReactNode }) {
-  return <h2 className="text-xl font-semibold tracking-tight text-foreground">{children}</h2>;
-}
-
-function SectionText({ children }: { children: ReactNode }) {
-  return <p className="leading-7 text-muted-foreground">{children}</p>;
-}
-
-function AnimatedSeparator() {
-  return (
-    <motion.div
-      className="h-px w-full bg-border"
-      style={{ transformOrigin: 'left' }}
-      initial={{ scaleX: 0 }}
-      whileInView={{ scaleX: 1 }}
-      viewport={{ once: true }}
-      transition={{
-        duration: 0.7,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-    />
-  );
-}
-
 export default function PrivacyPolicyContent() {
   return (
-    <main className="flex-1 bg-secondary/40 px-4 py-12 sm:px-6 md:py-18">
-      <motion.article
-        className="mx-auto flex max-w-5xl flex-col gap-8 rounded-xl border bg-background px-5 py-7 shadow-sm sm:px-8 md:px-10 md:py-10"
-        initial={{ opacity: 0, y: 32 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease: 'easeOut', delay: 0.15 }}
-      >
-        <header className="space-y-3 border-b pb-7">
-          <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
-            Clinsight
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Privacy Policy
-          </h1>
-          <p className="max-w-3xl leading-7 text-muted-foreground">
-            How we collect, use, and protect the information needed to support your lab insights and
-            doctor consultations.
-          </p>
-        </header>
+    <main className="flex-1">
+      {/* Blue hero header */}
+      <div className="bg-[#2B5BA8] px-4 py-12 text-center sm:py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
+          <h1 className="text-2xl font-semibold text-white sm:text-3xl">Privacy Policy</h1>
+          <p className="mt-2 text-sm text-blue-200">Last Updated, May 2026</p>
+        </motion.div>
+      </div>
 
-        <AnimatedSection icon={ShieldUserIcon}>
-          <SectionHeading>{INTRODUCTION.title}</SectionHeading>
-          <SectionText>{INTRODUCTION.content}</SectionText>
-          <SectionText>{INTRODUCTION.footerContent}</SectionText>
-        </AnimatedSection>
+      {/* Content card */}
+      <div className="bg-muted/30 px-4 py-8 sm:px-6">
+        <motion.article
+          className="mx-auto max-w-2xl space-y-8 rounded-lg border border-border bg-background px-6 py-8 shadow-sm sm:px-8"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
+        >
+          {/* 1. Introduction */}
+          <AnimatedSection index={1} title={INTRODUCTION.title}>
+            <BodyText>{INTRODUCTION.content}</BodyText>
+            {INTRODUCTION.footerContent && (
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                {INTRODUCTION.footerContent}
+              </p>
+            )}
+          </AnimatedSection>
 
-        <AnimatedSeparator />
+          {/* 2. Data Collection */}
+          <AnimatedSection index={2} title={DATA_COLLECTED.title}>
+            <BodyText>{DATA_COLLECTED.content}</BodyText>
+            <div className="mt-3 space-y-4">
+              {DATA_COLLECTED.dataCollectedType.map((dataType) => (
+                <div key={dataType.title}>
+                  <p className="text-sm font-semibold text-foreground">{dataType.title}</p>
+                  <BulletList items={dataType.content} />
+                </div>
+              ))}
+            </div>
+          </AnimatedSection>
 
-        <AnimatedSection icon={DatabaseLockedIcon}>
-          <SectionHeading>{DATA_COLLECTED.title}</SectionHeading>
-          <SectionText>{DATA_COLLECTED.content}</SectionText>
-          <div className="grid gap-5 md:grid-cols-3">
-            {DATA_COLLECTED.dataCollectedType.map((dataType) => (
-              <div
-                key={dataType.title}
-                className="rounded-lg border bg-card p-4 text-card-foreground"
-              >
-                <h3 className="mb-2 font-semibold text-foreground">{dataType.title}</h3>
-                <AnimatedList items={dataType.content} />
-              </div>
-            ))}
-          </div>
-        </AnimatedSection>
+          {/* 3. Uses of Data */}
+          <AnimatedSection index={3} title={DATA_USE.title}>
+            <BodyText>{DATA_USE.content}</BodyText>
+            <BulletList items={DATA_USE.uses} />
+            {DATA_USE.footerContent && (
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                {DATA_USE.footerContent}
+              </p>
+            )}
+          </AnimatedSection>
 
-        <AnimatedSeparator />
+          {/* 4. Cookies */}
+          <AnimatedSection index={4} title={COOKIES.title}>
+            <BodyText>{COOKIES.content}</BodyText>
+            <BulletList items={COOKIES.uses} />
+            {COOKIES.footerContent && (
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                {COOKIES.footerContent}
+              </p>
+            )}
+          </AnimatedSection>
 
-        <AnimatedSection icon={AiBrain03Icon}>
-          <SectionHeading>{DATA_USE.title}</SectionHeading>
-          <SectionText>{DATA_USE.content}</SectionText>
-          <AnimatedList items={DATA_USE.uses} />
-          <SectionText>{DATA_USE.footerContent}</SectionText>
-        </AnimatedSection>
+          {/* 5. Your Rights */}
+          <AnimatedSection index={5} title={YOUR_RIGHTS.title}>
+            <BodyText>{YOUR_RIGHTS.content}</BodyText>
+            <BulletList items={YOUR_RIGHTS.rights} />
+            {YOUR_RIGHTS.footerContent && (
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                {YOUR_RIGHTS.footerContent}
+              </p>
+            )}
+          </AnimatedSection>
 
-        <AnimatedSeparator />
-
-        <AnimatedSection icon={CookieIcon}>
-          <SectionHeading>{COOKIES.title}</SectionHeading>
-          <SectionText>{COOKIES.content}</SectionText>
-          <AnimatedList items={COOKIES.uses} />
-          <SectionText>{COOKIES.footerContent}</SectionText>
-        </AnimatedSection>
-
-        <AnimatedSeparator />
-
-        <AnimatedSection icon={UserCheck01Icon}>
-          <SectionHeading>{YOUR_RIGHTS.title}</SectionHeading>
-          <SectionText>{YOUR_RIGHTS.content}</SectionText>
-          <AnimatedList items={YOUR_RIGHTS.rights} />
-          <SectionText>{YOUR_RIGHTS.footerContent}</SectionText>
-        </AnimatedSection>
-
-        <AnimatedSeparator />
-
-        <AnimatedSection icon={MailAtSign01Icon}>
-          <SectionHeading>{CONTACT_US.title}</SectionHeading>
-          {CONTACT_US.content ? <SectionText>{CONTACT_US.content}</SectionText> : null}
-          <ContactInfoList items={CONTACT_US.contactInfo} />
-        </AnimatedSection>
-      </motion.article>
+          {/* 6. Contact Us */}
+          <AnimatedSection index={6} title={CONTACT_US.title}>
+            {CONTACT_US.content && <BodyText>{CONTACT_US.content}</BodyText>}
+            <motion.ul
+              className="mt-2 space-y-1"
+              variants={listVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-6%' }}
+            >
+              {CONTACT_US.contactInfo
+                .filter((item) => item.value.trim().length > 0)
+                .map((item) => (
+                  <motion.li
+                    key={item.label}
+                    variants={listItemVariants}
+                    className="flex items-start gap-2 text-sm leading-6 text-muted-foreground"
+                  >
+                    <span className="mt-2.5 size-1 shrink-0 rounded-full bg-muted-foreground/60" />
+                    <span>
+                      <span className="text-muted-foreground">{item.label}:</span>{' '}
+                      {item.label.toLowerCase() === 'email' ? (
+                        <a
+                          href={`mailto:${item.value}`}
+                          className="font-semibold text-foreground underline-offset-2 hover:underline"
+                        >
+                          {item.value}
+                        </a>
+                      ) : item.label.toLowerCase() === 'phone' ? (
+                        <span className="font-semibold text-foreground">{item.value}</span>
+                      ) : (
+                        item.value
+                      )}
+                    </span>
+                  </motion.li>
+                ))}
+            </motion.ul>
+          </AnimatedSection>
+        </motion.article>
+      </div>
     </main>
   );
 }

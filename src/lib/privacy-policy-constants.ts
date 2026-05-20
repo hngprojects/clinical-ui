@@ -77,7 +77,7 @@ export const CONTACT_US = {
     },
     {
       label: 'Phone',
-      value: '',
+      value: '+234 (555) 123-4567',
     },
   ],
 };
