@@ -68,7 +68,7 @@ export function SignInForm() {
             Welcome Back
           </h1>
           <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em] text-center">
-            Login to reveiw cases and manage your activties
+            Log in to reveiw cases and manage your activties
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export function SignInForm() {
                   id="email"
                   {...register('email')}
                   type="email"
-                  placeholder="Enter email adress"
+                  placeholder="Enter email address"
                   autoComplete="off"
                   className={cn(
                     'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',

@@ -79,7 +79,7 @@ export function SignupForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-[661px] rounded-[32px] bg-white shadow-2xl flex flex-col p-6 md:px-20 md:py-10"
+      className="w-full max-w-165.25 rounded-[32px] bg-white shadow-2xl flex flex-col p-6 md:px-20 md:py-10"
     >
       <div className="flex flex-col h-full gap-6 md:gap-8">
         {/* Header */}
@@ -95,7 +95,7 @@ export function SignupForm() {
         {/* Social Sign up */}
         <button
           type="button"
-          className="flex h-[56px] w-full items-center justify-center gap-3 rounded-2xl border border-[#E0E0E0] bg-white text-base font-medium text-[#313131] transition-colors hover:bg-slate-50"
+          className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl border border-[#E0E0E0] bg-white text-base font-medium text-[#313131] transition-colors hover:bg-slate-50"
         >
           <span>Sign up with Google</span>
           <svg
@@ -126,9 +126,9 @@ export function SignupForm() {
 
         {/* Divider */}
         <div className="flex items-center gap-4">
-          <div className="h-[1px] flex-1 bg-[#E0E0E0]" />
+          <div className="h-px flex-1 bg-[#E0E0E0]" />
           <span className="text-sm font-medium text-[#313131]">or Sign up with Email</span>
-          <div className="h-[1px] flex-1 bg-[#E0E0E0]" />
+          <div className="h-px flex-1 bg-[#E0E0E0]" />
         </div>
 
         {/* Form */}
@@ -156,7 +156,7 @@ export function SignupForm() {
                   placeholder="Enter full name"
                   autoComplete="off"
                   className={cn(
-                    'h-[56px] w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
                     errors.fullName && 'border-red-500',
                   )}
                 />
@@ -176,7 +176,7 @@ export function SignupForm() {
                   placeholder="Enter your phone number"
                   autoComplete="off"
                   className={cn(
-                    'h-[56px] w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
                     errors.phone && 'border-red-500',
                   )}
                 />
@@ -197,10 +197,10 @@ export function SignupForm() {
                   id="email"
                   {...register('email')}
                   type="email"
-                  placeholder="Enter email adress"
+                  placeholder="Enter email address"
                   autoComplete="off"
                   className={cn(
-                    'h-[56px] w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
                     errors.email && 'border-red-500',
                   )}
                 />
@@ -224,7 +224,7 @@ export function SignupForm() {
                   placeholder="At least 8 characters"
                   autoComplete="new-password"
                   className={cn(
-                    'h-[56px] w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
                     errors.password && 'border-red-500',
                   )}
                 />
@@ -274,7 +274,7 @@ export function SignupForm() {
             variant="brand"
             type="submit"
             disabled={isSubmitting}
-            className="h-[60px] w-full rounded-2xl text-base font-bold shadow-lg text-white"
+            className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
           >
             {isSubmitting ? 'Sending...' : 'Send me OTP'}
             <HugeiconsIcon icon={ArrowRight02Icon} size={20} className="ml-2" />
