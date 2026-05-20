@@ -22,16 +22,19 @@ const FOOTER_LINKS = {
 export function Footer() {
   const pathname = usePathname();
 
-  if (
-    pathname === '/waitlist' ||
-    pathname === '/signup' ||
-    pathname === '/login' ||
-    pathname === '/forgot-password' ||
-    pathname === '/verify-otp' ||
-    pathname === '/payment'
-  )
-    return null;
+  const hideOnRoutes = [
+    '/waitlist',
+    '/signup',
+    '/signin',
+    '/forgot-password',
+    '/verify-otp',
+    '/reset-password',
+    '/payment',
+  ];
 
+  if (hideOnRoutes.includes(pathname)) {
+    return null;
+  }
   return (
     <footer className="relative overflow-hidden bg-[#11519A] pt-12 pb-10 text-white">
       {/* Background Image Asset - Responsive Positioning */}
