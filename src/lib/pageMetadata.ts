@@ -2,15 +2,11 @@ import type { Metadata } from 'next';
 
 export function pageMetadata(title: string, description: string, endpoint: string): Metadata {
   return {
-    title: title ? title : 'Clinsight — Understand your lab results',
-    description: description
-      ? description
-      : 'Clinsight helps you understand your lab results with clear insights and optional doctor review.',
+    title: title,
+    description: description,
     openGraph: {
-      title: title ? title : 'Clinsight — Understand your lab results',
-      description: description
-        ? description
-        : 'Clinsight helps you understand your lab results with clear insights and optional doctor review.',
+      title: title,
+      description: description,
       url: `https://clinsight.hng14.com${endpoint}`,
       images: [
         {
