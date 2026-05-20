@@ -6,9 +6,9 @@ export async function GET(request: Request) {
       headers: {
         // Forward the auth header from the client
         Authorization: request.headers.get('Authorization') || '',
+        Cookie: request.headers.get('cookie') || '',
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
     });
 
     if (!response.ok) return Response.json(null, { status: response.status });
