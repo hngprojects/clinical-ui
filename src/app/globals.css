@@ -7,11 +7,14 @@
 @theme {
   --color-header-text: #272727;
   --color-primary-blue: #1565c0;
+  --color-success-green: #22c55e;
   --color-text-disabled: #767676;
   --color-text-primary: #1b1b1b;
-  --color-outline-border: #F0F0F0;
+  --color-outline-border: #f0f0f0;
   --color-text-secondary: #494949;
-  --color-primary-subtle: #E8F0F9;
+  --color-primary-subtle: #e8f0f9;
+  --color-secondary-3: #5e5e5e;
+  --color-neutral-color: #979c9c;
 }
 
 @theme inline {
@@ -142,12 +145,39 @@
   /* Remove autofill background */
 }
 
-@layer components{
-  .input__field {
-    @apply border border-outline-border py-2.5 px-4 rounded-[8px] placeholder:text-text-disabled text-text-primary text-sm
+@layer components {
+  /* text */
+  .heading__medium {
+    @apply text-[32px] leading-[130%] tracking-[-2%] text-center font-semibold;
   }
 
-  button{
-    @apply cursor-pointer
+  .body__medium {
+    @apply font-medium leading-[150%] tracking-[-1%] text-center;
+  }
+
+  .body__small {
+    @apply text-sm leading-[150%] tracking-[-1%];
+  }
+
+  .body__large {
+    @apply text-lg leading-[150%] tracking-[-1%];
+  }
+
+  .button__text {
+    @apply font-semibold text-sm leading-[150%] tracking-[-1%];
+  }
+
+  /* forms */
+
+  .input__field {
+    @apply border border-outline-border py-2.5 px-4 rounded-[8px] placeholder:text-text-disabled text-text-primary text-sm;
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
+
+  .btn__primary {
+    @apply flex items-center justify-center rounded-[8px] gap-3 px-4 py-4 hover:opacity-90 transition-all;
   }
 }
