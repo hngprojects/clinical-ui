@@ -30,8 +30,16 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
     return digits.length >= 3 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
   };
 
+  const [selectedBank, setSelectedBank] = useState('');
+  const normalizedCard = cardNumber.replace(/\s/g, '');
+  const isCardValid =
+    normalizedCard.length === 16 &&
+    /^\d{2}\/\d{2}$/.test(expiry) &&
+    (cvv.length === 3 || cvv.length === 4);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isCardValid) return;
     onSubmit();
   };
 
@@ -139,7 +147,11 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
         {method === 'bank' && (
           <div className="flex flex-col gap-4">
             <p className="text-sm text-gray-500">Select your bank to proceed with payment.</p>
-            <select className="h-[48px] w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-[#1565C0]">
+            <select
+              value={selectedBank}
+              onChange={(e) => setSelectedBank(e.target.value)}
+              className="h-[48px] w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-[#1565C0]"
+            >
               <option value="">Select Bank</option>
               <option>First Bank</option>
               <option>GTBank</option>
@@ -148,7 +160,7 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
               <option>UBA</option>
             </select>
             <button
-              onClick={onSubmit}
+              onClick={() => selectedBank && onSubmit()}
               className="flex h-[52px] w-full items-center justify-center gap-2 rounded-lg bg-[#1565C0] text-white transition hover:bg-[#0F5BB3]"
             >
               <span className="font-medium">Pay ₦{amount.toLocaleString()}</span>
