@@ -158,7 +158,7 @@ export function SignInForm() {
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="At least 8 characters"
-                  autoComplete="new-password"
+                  autoComplete="current-password"
                   className={cn(
                     'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
                     errors.password && 'border-red-500',
@@ -199,7 +199,7 @@ export function SignInForm() {
 
           {/* Footer Link */}
           <div className="text-center text-base text-[#5E5E5E]">
-            Already have an account?{' '}
+            Don&apos;t have an account??{' '}
             <Link href="/signup" className="font-bold text-[#1565C0] hover:underline">
               Sign up
             </Link>
