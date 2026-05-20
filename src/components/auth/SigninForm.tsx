@@ -68,7 +68,7 @@ export function SignInForm() {
             Welcome Back
           </h1>
           <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em] text-center">
-            Log in to reveiw cases and manage your activties
+            Log in to reveiw cases and manage your activities
           </p>
         </div>
 
@@ -199,7 +199,7 @@ export function SignInForm() {
 
           {/* Footer Link */}
           <div className="text-center text-base text-[#5E5E5E]">
-            Don&apos;t have an account??{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="font-bold text-[#1565C0] hover:underline">
               Sign up
             </Link>
