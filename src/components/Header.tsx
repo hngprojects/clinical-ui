@@ -23,7 +23,8 @@ export function Header() {
     pathname === '/signup' ||
     pathname === '/login' ||
     pathname === '/forgot-password' ||
-    pathname === '/verify-otp'
+    pathname === '/verify-otp' ||
+    pathname === '/payment'
   )
     return null;
 
