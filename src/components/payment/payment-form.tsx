@@ -55,14 +55,17 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
           <div className="flex items-center gap-6">
             {(['card', 'bank', 'transfer'] as PaymentMethod[]).map((m) => (
               <label key={m} className="flex cursor-pointer items-center gap-2">
-                <div
-                  onClick={() => setMethod(m)}
-                  className={`flex h-4 w-4 items-center justify-center rounded-full border-2 ${
-                    method === m ? 'border-green-500' : 'border-gray-300'
-                  }`}
-                >
-                  {method === m && <div className="h-2 w-2 rounded-full bg-green-500" />}
-                </div>
+                <input
+                  type="radio"
+                  name="payment-method"
+                  className="sr-only"
+                  checked={method === m}
+                  onChange={() => setMethod(m)}
+                />
+
+                <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 ...">
+                  {method === m && <span className="h-2 w-2 rounded-full bg-green-500" />}
+                </span>
                 <span className="text-sm capitalize text-gray-700">{m}</span>
               </label>
             ))}
@@ -107,12 +110,13 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
             </div>
 
             <label className="flex cursor-pointer items-center gap-2">
-              <div
-                onClick={() => setSaveCard(!saveCard)}
-                className={`flex h-4 w-4 items-center justify-center rounded border ${
-                  saveCard ? 'border-[#1565C0] bg-[#1565C0]' : 'border-gray-300 bg-white'
-                }`}
-              >
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={saveCard}
+                onChange={(e) => setSaveCard(e.target.checked)}
+              />
+              <span className="flex h-4 w-4 items-center justify-center rounded border ...">
                 {saveCard && (
                   <svg
                     className="h-3 w-3 text-white"
@@ -124,7 +128,7 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 )}
-              </div>
+              </span>
               <span className="text-sm text-gray-600">Save card details</span>
             </label>
 
