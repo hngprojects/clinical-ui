@@ -45,7 +45,7 @@ export function FAQ() {
     <section className="bg-[#FFFFFE] py-16 lg:py-24">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
-         <div className="mb-12 lg:mb-16 flex flex-col items-center text-center">
+        <div className="mb-12 lg:mb-16 flex flex-col items-center text-center">
           <div className="mb-6 flex w-fit h-auto items-center justify-center gap-2 rounded-full bg-[#FFFFFE] px-4 py-2 border border-slate-50 shadow-sm">
             <span className="h-2 w-2 rounded-sm bg-[#F59E0B]" />
             <span className="text-[10px] lg:text-xs font-bold text-[#F59E0B] uppercase tracking-wider">
@@ -58,18 +58,14 @@ export function FAQ() {
           </h2>
 
           <p className="max-w-2xl text-[14px] lg:text-[18px] font-normal leading-relaxed text-[#5E5E5E]">
-            Explore answers to common questions about your results, features,
-            and how Clinsight supports your care
+            Explore answers to common questions about your results, features, and how Clinsight
+            supports your care
           </p>
         </div>
 
         {/* FAQ Accordion */}
         <div className="mx-auto w-full max-w-2xl">
-          <Accordion
-            type="single"
-            collapsible
-            className="w-full space-y-4 border-none"
-          >
+          <Accordion type="single" collapsible className="w-full space-y-4 border-none">
             {FAQS.map((faq, index) => (
               <AccordionItem
                 key={index}
