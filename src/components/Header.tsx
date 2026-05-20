@@ -18,14 +18,18 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  if (
-    pathname === '/waitlist' ||
-    pathname === '/signup' ||
-    pathname === '/login' ||
-    pathname === '/forgot-password' ||
-    pathname === '/verify-otp'
-  )
+  const hideOnRoutes = [
+    '/waitlist',
+    '/signup',
+    '/signin',
+    '/forgot-password',
+    '/verify-otp',
+    '/reset-password',
+  ];
+
+  if (hideOnRoutes.includes(pathname)) {
     return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#F5F5F5] bg-white">
