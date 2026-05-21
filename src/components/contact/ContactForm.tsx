@@ -5,6 +5,7 @@ import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { ContactFormDataType, contactSchema } from '@/schemas/contact-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, type Variants } from 'motion/react';
+import Link from 'next/dist/client/link';
 import { useTransition } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -59,7 +60,7 @@ export default function ContactForm() {
 
   return (
     <motion.div
-      className="border border-outline-border py-5 px-4 space-y-7.5 rounded-[12px] md:w-[60%]"
+      className="border border-outline-border py-5 px-4 space-y-7.5 rounded-[12px] md:w-[60%] bg-white md:px-7.5 md:py-7.5"
       initial={{ opacity: 0, x: -28 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: '-60px' }}
@@ -150,7 +151,10 @@ export default function ContactForm() {
               htmlFor="termsAgreement"
               className="text-xs text-text-disabled leading-[150%] tracking-[-1%] md:text-sm"
             >
-              I agree that my information will be processed according to Clinsight privacy policy
+              I agree that my information will be processed according to{' '}
+              <Link href="/privacy-policy" className="font-bold underline">
+                Clinsight privacy policy
+              </Link>
             </label>
           </motion.div>
 
