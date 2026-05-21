@@ -30,12 +30,6 @@ const steps = [
   },
 ];
 
-/**
- * THE ALIGNMENT FIX:
- * Instead of right-0/left-0, we anchor the horizontal center of the cards to exact percentages.
- * Mobile: Left columns center at 25%, Right columns center at 75%.
- * Desktop (lg): Left columns center at 22%, Right columns center at 78%.
- */
 const cardPositions = [
   'top-[0%] left-[75%] lg:left-[78%] -translate-x-1/2',
   'top-[20%] left-[25%] lg:left-[22%] -translate-x-1/2',
@@ -68,7 +62,6 @@ export function ProcessPath() {
               </clipPath>
             </defs>
 
-            {/* PERFECTED MOBILE DASHED LINE (Matches 25% and 75% Centers) */}
             <path
               className="lg:hidden"
               d="M 75 0 C 75 10, 25 10, 25 20 C 25 30, 75 30, 75 40 C 75 50, 25 50, 25 60 C 25 70, 75 70, 75 80"
@@ -81,7 +74,6 @@ export function ProcessPath() {
               clipPath="url(#reveal-clip)"
             />
 
-            {/* PERFECTED DESKTOP DASHED LINE (Matches 22% and 78% Centers) */}
             <path
               className="hidden lg:block"
               d="M 78 0 C 78 10, 22 10, 22 20 C 22 30, 78 30, 78 40 C 78 50, 22 50, 22 60 C 22 70, 78 70, 78 80"
