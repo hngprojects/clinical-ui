@@ -8,10 +8,11 @@ const FOOTER_LINKS = {
   platform: [
     { name: 'How It Works', href: '/how-it-works' },
     { name: 'Join Waitlist', href: '/waitlist' },
+    { name: 'FAQs', href: '/faqs' },
   ],
   company: [
-    { name: 'About', href: '#' },
-    { name: 'Contact Us', href: '/contact-us' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact Us', href: '/contact' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy-policy' },
@@ -29,6 +30,7 @@ export function Footer() {
     '/forgot-password',
     '/verify-otp',
     '/reset-password',
+    '/payment',
   ];
 
   if (hideOnRoutes.includes(pathname)) {

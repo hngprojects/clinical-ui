@@ -3,150 +3,93 @@
 import React from 'react';
 import Image from 'next/image';
 
-const ImgBlock = ({
-  style,
-  image,
-}: {
-  style?: React.CSSProperties;
-  image?: string;
-  radius?: string;
-}) => {
-  if (!image) return null;
-
-  return (
-    <div className="relative" style={style}>
-      <Image src={image} alt="" fill className="object-contain" />
-    </div>
-  );
-};
-
 export default function AboutMissionVision() {
   return (
-    <>
-      <style>{`
-        .mission-section { flex-direction: row; }
-        .vision-section { flex-direction: row; }
-        @media (max-width: 700px) {
-          .mission-section { flex-direction: column !important; }
-          .vision-section { flex-direction: column !important; }
-          .vision-image-box { order: -1; }
-        }
-      `}</style>
-
-      {/* ── Middle Section ────────────────────────────────────────────────── */}
-      <div
-        className="flex items-center justify-center flex-wrap mx-auto"
-        style={{ maxWidth: '1100px', gap: '80px', padding: '80px 0px' }}
-      >
-        {/* ── Mission ──────────────────────────────────────────────────────── */}
-        <section className="mission-section flex items-center justify-between flex-wrap">
-          {/* middleImageBox */}
-          <div className="middle-image-box" style={{ flex: '1 1 500px', height: '500px' }}>
-            <ImgBlock
-              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-              image={`/assets/about-page-assets/mission-image.svg`}
+    <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-24 flex flex-col gap-24 lg:gap-32">
+      {/* ── Mission ──────────────────────────────────────────────────────── */}
+      <section className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
+        {/* middleContent */}
+        <div className="flex-1 flex items-start justify-center flex-col gap-5 lg:gap-6 order-1 lg:order-none">
+          {/* middleIconWrap */}
+          <div className="flex items-center justify-center bg-[#E8F0F9] w-12 h-12 lg:w-14 lg:h-14 rounded-xl lg:rounded-full">
+            <Image
+              src={`/assets/about-page-assets/spiral-icon.svg`}
+              alt="Spiral icon"
+              width={24}
+              height={24}
+              className="lg:w-7 lg:h-7"
             />
           </div>
 
-          {/* middleContent */}
-          <div
-            className="flex items-start justify-start flex-col"
-            style={{ flex: '1 1 500px', gap: '20px', padding: '30px' }}
-          >
-            {/* middleIconWrap */}
-            <div
-              className="flex items-center justify-center bg-[#E8F0F9]"
-              style={{ width: '66px', height: '66px', borderRadius: '13px', padding: '13px' }}
-            >
-              <Image
-                src={`/assets/about-page-assets/spiral-icon.svg`}
-                alt="Spiral icon"
-                width={33}
-                height={33}
-              />
-            </div>
+          {/* middleTagSmall */}
+          <p className="font-bold text-[#5E5E5E] uppercase tracking-wider text-sm lg:text-base leading-none">
+            OUR MISSION
+          </p>
 
-            {/* middleTagSmall */}
-            <p
-              className="font-medium uppercase text-[#272727]"
-              style={{ fontSize: '18px', lineHeight: '100%' }}
-            >
-              OUR MISSION
-            </p>
+          {/* middleHeading */}
+          <h2 className="font-bold text-[#1B1B1B] text-3xl lg:text-[40px] leading-[120%] tracking-tight break-words w-full">
+            Clarity for every patient.
+          </h2>
 
-            {/* middleHeading */}
-            <h2
-              className="font-semibold text-[#272727]"
-              style={{ fontSize: '40px', lineHeight: '52px' }}
-            >
-              Clarity for every patient.
-            </h2>
+          {/* middleBody */}
+          <p className="font-normal text-[#5E5E5E] text-base lg:text-lg leading-relaxed tracking-normal">
+            We turn AI lab reports into plain-language summaries so that anyone regardless of
+            medical background can confidently understand what their results mean.
+          </p>
+        </div>
 
-            {/* middleBody */}
-            <p
-              className="font-normal text-[#5E5E5E]"
-              style={{ fontSize: '16px', lineHeight: '26px' }}
-            >
-              We turn AI lab reports into plain-language summaries so that anyone regardless of
-              medical background can confidently understand what their results mean.
-            </p>
-          </div>
-        </section>
+        {/* middleImageBox */}
+        <div className="flex-1 w-full relative aspect-square lg:aspect-auto lg:h-[500px] rounded-[32px] lg:rounded-[48px] overflow-hidden order-2 lg:order-none max-w-full">
+          <Image
+            src="/assets/about-page-assets/mission-image.svg"
+            alt="Our Mission"
+            fill
+            className="object-cover lg:object-contain"
+          />
+        </div>
+      </section>
 
-        {/* ── Vision ───────────────────────────────────────────────────────── */}
-        <section className="vision-section flex items-center justify-between flex-wrap">
-          {/* middleContent */}
-          <div
-            className="flex items-start justify-start flex-col"
-            style={{ flex: '1 1 500px', gap: '20px', padding: '30px' }}
-          >
-            {/* middleIconWrap */}
-            <div
-              className="flex items-center justify-center bg-[#DEF6E7]"
-              style={{ width: '66px', height: '66px', borderRadius: '13px', padding: '13px' }}
-            >
-              <Image
-                src={`/assets/about-page-assets/eye-icon.svg`}
-                alt="Eye icon"
-                width={33}
-                height={33}
-              />
-            </div>
-
-            {/* middleTagSmall */}
-            <p
-              className="font-medium uppercase text-[#272727]"
-              style={{ fontSize: '18px', lineHeight: '100%' }}
-            >
-              OUR VISION
-            </p>
-
-            {/* middleHeading */}
-            <h2
-              className="font-semibold text-[#272727]"
-              style={{ fontSize: '40px', lineHeight: '52px' }}
-            >
-              A world without medical confusion.
-            </h2>
-
-            {/* middleBody */}
-            <p
-              className="font-normal text-[#5E5E5E]"
-              style={{ fontSize: '16px', lineHeight: '26px' }}
-            >
-              We imagine a future where every test result is paired with an explanation so patients
-              actually understand, and a clinician they can reach in minutes.
-            </p>
-          </div>
-
-          <div className="vision-image-box" style={{ flex: '1 1 500px', height: '500px' }}>
-            <ImgBlock
-              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-              image={`/assets/about-page-assets/vission-image.svg`}
+      {/* ── Vision ───────────────────────────────────────────────────────── */}
+      <section className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
+        {/* middleContent */}
+        <div className="flex-1 flex items-start justify-center flex-col gap-5 lg:gap-6 order-1 lg:order-none">
+          {/* middleIconWrap */}
+          <div className="flex items-center justify-center bg-[#DEF6E7] w-12 h-12 lg:w-14 lg:h-14 rounded-xl lg:rounded-full">
+            <Image
+              src={`/assets/about-page-assets/eye-icon.svg`}
+              alt="Eye icon"
+              width={24}
+              height={24}
+              className="lg:w-7 lg:h-7"
             />
           </div>
-        </section>
-      </div>
-    </>
+
+          {/* middleTagSmall */}
+          <p className="font-bold text-[#5E5E5E] uppercase tracking-wider text-sm lg:text-base leading-none">
+            OUR VISION
+          </p>
+
+          {/* middleHeading */}
+          <h2 className="font-bold text-[#1B1B1B] text-3xl lg:text-[40px] leading-[120%] tracking-tight break-words w-full">
+            A world without medical confusion.
+          </h2>
+
+          {/* middleBody */}
+          <p className="font-normal text-[#5E5E5E] text-base lg:text-lg leading-relaxed tracking-normal">
+            We imagine a future where every test result is paired with an explanation so patients
+            actually understand, and a clinician they can reach in minutes.
+          </p>
+        </div>
+
+        <div className="flex-1 w-full relative aspect-square lg:aspect-auto lg:h-[500px] rounded-[32px] lg:rounded-[48px] overflow-hidden order-2 lg:order-1 max-w-full">
+          <Image
+            src="/assets/about-page-assets/vission-image.svg"
+            alt="Our Vision"
+            fill
+            className="object-cover lg:object-contain"
+          />
+        </div>
+      </section>
+    </div>
   );
 }

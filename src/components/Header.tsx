@@ -25,6 +25,7 @@ export function Header() {
     '/forgot-password',
     '/verify-otp',
     '/reset-password',
+    '/payment',
   ];
 
   if (hideOnRoutes.includes(pathname)) {
