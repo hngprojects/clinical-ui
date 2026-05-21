@@ -8,6 +8,7 @@ const FOOTER_LINKS = {
   platform: [
     { name: 'How It Works', href: '/how-it-works' },
     { name: 'Join Waitlist', href: '/waitlist' },
+    { name: 'FAQs', href: '/faqs' },
   ],
   company: [
     { name: 'About', href: '/about' },
