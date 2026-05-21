@@ -1,67 +1,46 @@
 'use client';
 
-import Image from 'next/image';
-
 const ResponsiveStyle = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap');
 
     .about-hero-section { font-family: 'Source Sans 3', sans-serif; }
-
-    @media (max-width: 700px) {
-      .hero-heading { font-size: 1.75rem !important; }
-    }
-  `}</style>
+    `}</style>
 );
 
 export default function AboutHero() {
   return (
-    <div className="about-hero-section w-full flex flex-col items-center justify-center">
+    <div className="about-hero-section w-full flex flex-col items-center justify-center font-sans">
       <ResponsiveStyle />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section
-        className="text-center mx-auto flex items-center justify-center flex-col"
-        style={{ maxWidth: '842px', gap: '56px', padding: '80px 0px' }}
-      >
+      <section className="container mx-auto px-6 lg:px-12 text-center flex items-center justify-center flex-col py-12 lg:py-24 max-w-[900px] gap-8 lg:gap-12">
         {/* heroTop */}
-        <div className="flex items-start justify-start flex-col" style={{ gap: '10px' }}>
+        <div className="flex items-center justify-center flex-col relative gap-2 w-full">
           {/* heroHeading */}
-          <h1
-            className="hero-heading font-bold flex items-center justify-center flex-wrap text-[#272727]"
-            style={{
-              fontSize: '64px',
-              lineHeight: '120%',
-              letterSpacing: '-2%',
-              gap: '20px',
-            }}
-          >
-            Making lab results{' '}
-            <span className="bg-brand-blue text-white inline-block" style={{ padding: '10px' }}>
+          <h1 className="hero-heading font-bold flex items-center justify-center flex-wrap text-[#1B1B1B] relative text-2xl md:text-3xl lg:text-[64px] leading-[1.1] tracking-tight gap-x-4 lg:gap-x-6 gap-y-2 break-words">
+            <span className="relative inline-block pb-4 lg:pb-8">
+              Making lab results
+              <div className="absolute -bottom-3 lg:-bottom-4 left-0 w-full">
+                <img
+                  src="/assets/about-page-assets/hero-icon.svg"
+                  alt=""
+                  className="w-full"
+                  style={{ display: 'block' }}
+                />
+              </div>
+            </span>
+            <span className="bg-[#1565C0] text-white inline-block px-4 py-1 lg:px-6 lg:py-2 rounded-lg lg:rounded-xl shrink-0">
               Human.
             </span>
           </h1>
-
-          <Image
-            src={`/assets/about-page-assets/hero-icon.svg`}
-            alt="Hero icon"
-            width={100}
-            height={40}
-          />
         </div>
 
         {/* heroSubtext */}
-        <p
-          className="text-[#5E5E5E] font-normal"
-          style={{
-            fontSize: '20px',
-            lineHeight: '150%',
-            letterSpacing: '-1%',
-          }}
-        >
+        <p className="text-[#5E5E5E] font-normal max-w-[780px] mx-auto text-sm lg:text-[20px] leading-[1.6] tracking-tight">
           Clinsights simplifies complex lab results, so you can focus on your health. Clinsight was
           built to bridge the gap between complex medical reports and the people who deserve to
-          understand the
+          understand them - with clarity, empathy, and clinical rigor.
         </p>
       </section>
     </div>
