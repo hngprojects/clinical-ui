@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 const ResponsiveStyle = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap');
@@ -22,9 +24,11 @@ export default function AboutHero() {
             <span className="relative inline-block pb-4 lg:pb-8">
               Making lab results
               <div className="absolute -bottom-3 lg:-bottom-4 left-0 w-full">
-                <img
+                <Image
                   src="/assets/about-page-assets/hero-icon.svg"
                   alt=""
+                  width={842}
+                  height={40}
                   className="w-full"
                   style={{ display: 'block' }}
                 />
