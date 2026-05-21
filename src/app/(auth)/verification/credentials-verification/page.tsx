@@ -2,8 +2,8 @@ import CredentialsVerificationForm from '@/components/verification/CredentialsVe
 import { pageMetadata } from '@/lib/pageMetadata';
 
 export const metadata = pageMetadata(
-  'Verification Complete — Clinsight',
-  'Your verification is complete! You can now access personalized lab insights and doctor consultations.',
+  'Credentials Verification — Clinsight',
+  'Verify your professional credentials to complete the verification process.',
   '/verification/credentials-verification',
 );
 
