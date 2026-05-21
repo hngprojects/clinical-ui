@@ -90,15 +90,35 @@ export default function PrivacyPolicyContent() {
   return (
     <main className="flex-1">
       {/* Blue hero header */}
-      <div className="bg-[#2B5BA8] px-4 py-12 text-center sm:py-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+      <div className="relative flex max-lg:bg-[#11519A] flex-col justify-center items-center h-77 gap-6">
+        <div
+          className="lg:hidden absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(/assets/terms-and-conditions/circle-bg.png)`,
+          }}
+        />
+        <div
+          className="max-lg:hidden absolute inset-0 -z-10 bg-center w-full bg-no-repeat bg-cover"
+          style={{
+            backgroundImage: `url(/assets/terms-and-conditions/circle-bg-web.png)`,
+          }}
+        />
+        <motion.h1
+          initial={{ scale: 1.2 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="text-[2rem] sm:text-[2.5rem] text-white font-semibold"
         >
-          <h1 className="text-2xl font-semibold text-white sm:text-3xl">Privacy Policy</h1>
-          <p className="mt-2 text-sm text-blue-200">Last Updated, May 2026</p>
-        </motion.div>
+          Privacy Policy
+        </motion.h1>
+        <motion.p
+          initial={{ scale: 1.12 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.35, delay: 0.2 }}
+          className="text-base text-white"
+        >
+          Last Updated, May 2026
+        </motion.p>
       </div>
 
       {/* Content card */}
