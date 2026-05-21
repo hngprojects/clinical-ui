@@ -20,7 +20,7 @@ const steps = [
   },
   {
     n: '04',
-    t: 'We Give Recommendation',
+    t: 'We Give Recommendations',
     d: 'Our system provides a detailed recommendation based on the results uploaded. This is a guide and not a medical diagnosis.',
   },
   {

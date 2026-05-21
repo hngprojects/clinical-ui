@@ -199,7 +199,8 @@ export function HowItWorksHero() {
                       Get Started
                       <Image
                         src="/assets/how-it-works/arrow_forward.svg"
-                        alt="Arrow forward icon"
+                        alt=""
+                        aria-hidden="true"
                         width={16}
                         height={16}
                         className="ml-1.5 lg:ml-2 w-3 h-3 lg:w-4 lg:h-4"
