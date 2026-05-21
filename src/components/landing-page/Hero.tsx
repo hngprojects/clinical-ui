@@ -195,7 +195,7 @@ export function Hero() {
                 </div>
 
                 {/* CTA Button */}
-                <div className="z-20 -mt-3 lg:-mt-4 w-full">
+                <div className="z-20 -mt-4 lg:-mt-6 w-full">
                   <Link href="/signup">
                     <Button
                       variant="brand"

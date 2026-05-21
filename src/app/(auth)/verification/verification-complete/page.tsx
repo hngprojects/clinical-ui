@@ -1,4 +1,3 @@
-import CredentialsVerificationForm from '@/components/verification/CredentialsVerification';
 import VerfificationCompleteCard from '@/components/verification/VerfificationCompleteCard';
 import { pageMetadata } from '@/lib/pageMetadata';
 
