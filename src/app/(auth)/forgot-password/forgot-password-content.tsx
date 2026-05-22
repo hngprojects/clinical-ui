@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useCountdown } from '@/hooks/useCountdown';
 import { EmailForm } from '@/components/auth/forgot-password/EmailForm';
 import { OtpForm } from '@/components/auth/forgot-password/OtpForm';
@@ -167,24 +168,25 @@ export default function ForgotPasswordContent() {
                   setStep('otp');
                   startTimer();
                 }}
-                onContactSupport={() => router.push('/contact-us')}
+                onContactSupport={() => router.push('/contact')}
               />
             )}
           </div>
           <div className="w-full flex flex-col items-center mt-6">
             {step === 'email' && (
               <footer className="w-full pt-6 border-t border-zinc-200 flex items-center justify-center mx-auto animate-fadeIn">
-                <p className="text-center text-gray-700 text-base font-medium font-['Inter'] leading-6">
-                  Need immediate assistance? <br className="sm:hidden" />
-                  Contact{' '}
-                  <button
-                    type="button"
-                    onClick={() => router.push('/contact-us')}
-                    className="text-blue-700 hover:text-blue-900 font-medium transition-colors inline"
-                  >
-                    Lab Support
-                  </button>
-                </p>
+                <div className="text-center text-gray-700 text-base font-medium font-['Inter'] leading-6 flex flex-col items-center">
+                  <span>Need immediate assistance?</span>
+                  <span className="mt-1">
+                    Contact{' '}
+                    <Link
+                      href="/contact"
+                      className="text-[#1565C0] hover:text-[#0D47A1] font-semibold transition-colors duration-150 inline-block"
+                    >
+                      Lab Support
+                    </Link>
+                  </span>
+                </div>
               </footer>
             )}
             {step === 'otp' && (

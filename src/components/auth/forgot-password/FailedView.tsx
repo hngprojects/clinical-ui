@@ -31,7 +31,7 @@ export function FailedView({ onRetry, onContactSupport, isLoading = false }: Fai
           </span>
 
           <div className="w-full py-3.5 px-4 bg-[#EAECEF] text-[#191C21] text-sm font-medium font-['Inter'] rounded-xl">
-            Incorrect OTP entered
+            Wrong OTP inputted
           </div>
 
           <div className="w-full py-3.5 px-4 bg-[#EAECEF] text-[#191C21] text-sm font-medium font-['Inter'] rounded-xl uppercase">

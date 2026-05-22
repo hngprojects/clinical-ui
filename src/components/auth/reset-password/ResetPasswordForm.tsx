@@ -74,8 +74,8 @@ export function ResetPasswordForm({
 
   if (isSuccessState) {
     return (
-      <div className="w-full max-w-[390px] mx-auto flex flex-col items-center justify-center text-center px-4 pb-10 min-h-[520px] animate-fadeIn">
-        <div className="size-14 rounded-full bg-[#CCFBF1] flex items-center justify-center mb-8 shrink-0 shadow-sm">
+      <div className="w-full max-w-[440px] mx-auto bg-white rounded-[32px] p-8 sm:p-10 flex flex-col items-center justify-center text-center shadow-sm animate-fadeIn">
+        <div className="size-14 rounded-full bg-[#CCFBF1] flex items-center justify-center mb-8 shrink-0">
           <div className="relative size-6">
             <Image
               src="/assets/forgot-password/check-icon.svg"
@@ -100,13 +100,10 @@ export function ResetPasswordForm({
   }
 
   return (
-    <div className="w-full max-w-[390px] mx-auto min-h-[520px]">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full h-full flex flex-col justify-start gap-8 px-4 pb-10 bg-transparent"
-      >
-        <div className="w-full flex flex-col items-center text-center pt-2 mb-1">
-          <div className="relative size-8 mb-3">
+    <div className="w-full max-w-[480px] mx-auto bg-white rounded-[32px] p-8 sm:p-10 shadow-sm">
+      <form onSubmit={handleSubmit} className="w-full h-full flex flex-col justify-start gap-8">
+        <div className="w-full flex flex-col items-center text-center">
+          <div className="relative size-10 mb-4">
             <Image
               src="/assets/forgot-password/create-icon.svg"
               alt="Secure Icon"
@@ -115,10 +112,10 @@ export function ResetPasswordForm({
               priority
             />
           </div>
-          <h1 className="text-zinc-900 text-xl font-bold font-['Inter'] tracking-wide mb-1.5">
+          <h1 className="text-[#191C21] text-2xl font-bold font-['Inter'] tracking-wide mb-2">
             Set New Password
           </h1>
-          <p className="text-gray-600 text-xs font-normal font-['Inter'] leading-normal max-w-[280px] tracking-wide">
+          <p className="text-[#424752] text-sm font-normal font-['Inter'] leading-normal max-w-[320px]">
             Please create a secure password for your Clinical Lab Insight account.
           </p>
         </div>
@@ -142,33 +139,32 @@ export function ResetPasswordForm({
               },
             ] as const
           ).map((field) => (
-            <div key={field.id} className="w-full flex flex-col gap-1.5">
+            <div key={field.id} className="w-full flex flex-col gap-2">
               <label
                 htmlFor={field.id}
-                className="text-zinc-800 text-xs font-semibold font-['Inter'] tracking-wide"
+                className="text-[#191C21] text-sm font-semibold font-['Inter']"
               >
                 {field.label}
               </label>
-              <div className="w-full h-11 px-3.5 rounded-lg border border-stone-300 focus-within:border-[#004D99] flex items-center justify-between transition-all bg-white">
+              <div className="w-full h-12 px-4 rounded-xl border border-[#CBD5E1] focus-within:border-[#004D99] flex items-center justify-between transition-all bg-white">
                 <input
                   id={field.id}
                   type={field.visible ? 'text' : 'password'}
                   value={field.val}
                   onChange={(e) => setForm((f) => ({ ...f, [field.id]: e.target.value }))}
                   placeholder="**************"
-                  className="w-full h-full text-zinc-800 text-xs font-normal font-['Inter'] outline-none bg-transparent placeholder-stone-300 tracking-wide"
+                  className="w-full h-full text-[#191C21] text-sm font-normal font-['Inter'] outline-none bg-transparent placeholder-[#94A3B8] tracking-widest"
                   required
                 />
                 <button
                   type="button"
                   onClick={field.toggle}
                   aria-label={field.visible ? `Hide ${field.label}` : `Show ${field.label}`}
-                  aria-pressed={field.visible}
-                  className="text-zinc-400 hover:text-zinc-600 transition-colors ml-1 focus:outline-none"
+                  className="text-[#94A3B8] hover:text-[#424752] transition-colors ml-2 focus:outline-none"
                 >
                   {field.visible ? (
                     <svg
-                      className="size-4"
+                      className="size-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -182,7 +178,7 @@ export function ResetPasswordForm({
                     </svg>
                   ) : (
                     <svg
-                      className="size-4"
+                      className="size-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -205,58 +201,69 @@ export function ResetPasswordForm({
             </div>
           ))}
 
-          <div className="w-full flex flex-col gap-1.5 pt-1">
-            <div className="w-full flex justify-between items-center text-xs font-semibold font-['Inter'] tracking-wide">
-              <span className="text-gray-700">Password Strength</span>
-              <span style={{ color: metRulesCount === 4 ? '#006B5F' : '#D44437' }}>
-                {metRulesCount === 4 ? 'Strong' : 'Weak'}
+          <div className="w-full flex flex-col gap-2 pt-1">
+            <div className="w-full flex justify-between items-center text-sm font-semibold font-['Inter']">
+              <span className="text-[#424752]">Password Strength</span>
+              <span
+                style={{
+                  color:
+                    form.password.length === 0
+                      ? 'transparent'
+                      : metRulesCount === 4
+                        ? '#006B5F'
+                        : '#D44437',
+                }}
+              >
+                {form.password.length === 0 ? '' : metRulesCount === 4 ? 'Strong' : 'Weak'}
               </span>
             </div>
-            <div className="w-full h-1 flex gap-1">
+            <div className="w-full h-1.5 flex gap-1.5">
               {[1, 2, 3, 4].map((index) => (
                 <div
                   key={index}
                   className="flex-1 h-full rounded-full transition-all duration-300"
                   style={{
                     backgroundColor:
-                      index <= metRulesCount
-                        ? metRulesCount === 4
-                          ? '#006B5F'
-                          : '#E6A122'
-                        : '#E4E4E7',
+                      form.password.length === 0
+                        ? '#E4E4E7'
+                        : index <= metRulesCount
+                          ? metRulesCount === 4
+                            ? '#006B5F'
+                            : '#1565C0'
+                          : '#E4E4E7',
                   }}
                 />
               ))}
             </div>
           </div>
 
-          <div className="w-full p-4 bg-[#F2F3FB] rounded-xl flex flex-col gap-3.5">
-            <span className="text-[#424752] text-xs font-semibold font-['Inter'] tracking-wide">
+          <div className="w-full p-5 bg-[#F4F6FB] rounded-xl flex flex-col gap-3.5">
+            <span className="text-[#424752] text-sm font-normal font-['Inter']">
               Password must contain:
             </span>
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-3">
               {requirements.map((req, idx) => (
-                <div key={idx} className="flex items-center gap-2">
+                <div key={idx} className="flex items-center gap-2.5">
                   <div
-                    className="size-3.5 rounded-full flex items-center justify-center border transition-all duration-200 shrink-0"
+                    className="size-[18px] rounded-full flex items-center justify-center border transition-all duration-200 shrink-0"
                     style={{
-                      borderColor: req.valid ? '#006B5F' : '#CBD5E1',
-                      backgroundColor: req.valid ? '#E6F4F2' : 'transparent',
+                      borderColor: req.valid ? '#006B5F' : '#006B5F',
+                      backgroundColor: req.valid ? 'transparent' : 'transparent',
                     }}
                   >
                     <svg
-                      className="size-2"
+                      className="size-3"
                       viewBox="0 0 24 24"
                       fill="none"
-                      stroke={req.valid ? '#006B5F' : '#94A3B8'}
-                      strokeWidth="4"
+                      stroke={req.valid ? '#006B5F' : 'transparent'}
+                      strokeWidth="3"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     >
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   </div>
-                  <span className="text-[#424752] text-xs font-normal font-['Inter'] tracking-wide truncate">
+                  <span className="text-[#424752] text-sm font-normal font-['Inter']">
                     {req.label}
                   </span>
                 </div>
@@ -266,34 +273,34 @@ export function ResetPasswordForm({
         </div>
 
         {error && (
-          <div className="w-full p-3 bg-red-50 border border-red-200 text-red-600 text-xs font-medium font-['Inter'] rounded-lg tracking-wide animate-fadeIn">
+          <div className="w-full p-3 bg-red-50 border border-red-200 text-red-600 text-sm font-medium font-['Inter'] rounded-lg animate-fadeIn">
             {error}
           </div>
         )}
 
-        <div className="w-full flex flex-col gap-3.5 pt-2 shrink-0">
+        <div className="w-full flex flex-col gap-4 shrink-0">
           <button
             type="submit"
             disabled={!isFormValid || isLoading}
-            className="w-full h-11 bg-[#1565C0] hover:bg-[#003366] text-white rounded-lg font-semibold font-['Inter'] text-xs tracking-wide transition-colors flex items-center justify-center gap-2 shadow-sm focus:outline-none disabled:bg-[#a5c2eb] disabled:cursor-not-allowed"
+            className="w-full h-12 bg-[#004D99] hover:bg-[#003366] text-white rounded-lg font-medium font-['Inter'] text-sm transition-colors flex items-center justify-center gap-2 disabled:bg-[#80A6CC] disabled:cursor-not-allowed"
           >
-            <div className="relative size-3.5 shrink-0">
+            <div className="relative size-5 shrink-0">
               <Image
                 src="/assets/forgot-password/Icon.svg"
-                alt="Arrow Action Icon"
+                alt="Action Icon"
                 fill
                 className="object-contain brightness-0 invert"
               />
             </div>
-            <span>{isLoading ? 'Updating Credentials...' : 'Update Password'}</span>
+            <span>{isLoading ? 'Updating...' : 'Update Password'}</span>
           </button>
 
           <button
             type="button"
             onClick={() => router.push('/signin')}
-            className="w-full py-1 text-center text-[#004D99] hover:text-sky-900 font-semibold font-['Inter'] text-xs tracking-wide transition-colors flex items-center justify-center gap-1 focus:outline-none"
+            className="w-full text-center text-[#004D99] hover:text-[#003366] font-medium font-['Inter'] text-sm transition-colors focus:outline-none"
           >
-            <span>Return to Sign In</span>
+            Return to Login
           </button>
         </div>
       </form>
