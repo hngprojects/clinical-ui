@@ -37,8 +37,9 @@ export default function ResetPasswordContent() {
         </span>
       </header>
 
-      <div className="relative z-10 w-full flex-1 flex items-center justify-center px-4 pt-28 pb-12 md:pt-36 md:pb-16">
-        <div className="w-full md:w-165.25 min-h-180 md:h-200 bg-white rounded-[32px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-10 md:px-17.5 md:py-16 flex flex-col justify-between transition-all duration-300">
+      {/* Reduced pt to push it up visually. Removed the white card styling from the inner div. */}
+      <div className="relative z-10 w-full flex-1 flex items-center justify-center px-4 pt-20 pb-12 md:pt-24 md:pb-16">
+        <div className="w-full flex justify-center transition-all duration-300">
           {step === 'form' ? (
             <ResetPasswordForm onSuccess={() => setStep('success')} />
           ) : (

@@ -8,7 +8,7 @@ interface EmailFormProps {
   setEmail: (val: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
-  onBackToSignin: () => void; // Renamed prop for accuracy
+  onBackToSignin: () => void;
   errorMsg: string;
 }
 
@@ -17,12 +17,11 @@ export function EmailForm({
   setEmail,
   onSubmit,
   isLoading,
-  onBackToSignin, // Renamed prop for accuracy
+  onBackToSignin,
   errorMsg,
 }: EmailFormProps) {
   return (
     <div className="w-full flex flex-col items-center justify-center flex-1 max-w-[521px] mx-auto animate-fadeIn">
-      {/* Icon Wrapper matching Figma */}
       <div className="relative size-16 mb-[71px] flex items-center justify-center bg-[#D6E3FF] rounded-full">
         <Image
           src="/assets/forgot-password/icon-padlock.svg"
@@ -65,8 +64,8 @@ export function EmailForm({
               disabled={isLoading}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Chioma@gmail.com"
-              className="flex-1 h-full bg-transparent text-[#191C21] placeholder-[#424752] text-sm sm:text-base font-normal font-['Inter'] outline-none border-none p-0 focus:ring-0 disabled:opacity-50"
+              placeholder="chioma@gmail.com"
+              className="flex-1 h-full bg-transparent text-[#191C21] placeholder-[#2D2F2F] placeholder:opacity-40 text-sm sm:text-base font-normal font-['Inter'] outline-none border-none p-0 focus:ring-0 disabled:opacity-50"
             />
           </div>
 
@@ -96,7 +95,7 @@ export function EmailForm({
 
           <button
             type="button"
-            onClick={onBackToSignin} // Trigger the renamed prop
+            onClick={onBackToSignin}
             disabled={isLoading}
             className="w-full flex items-center justify-center gap-2 py-2 text-[#006B5F] hover:text-[#004D44] text-sm sm:text-base font-medium font-['Inter'] transition-colors duration-150 group"
           >
@@ -108,7 +107,6 @@ export function EmailForm({
                 className="object-contain"
               />
             </div>
-            {/* Text updated to match your routing context */}
             <span>Back to Sign in</span>
           </button>
         </div>
