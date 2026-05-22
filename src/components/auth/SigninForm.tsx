@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { useForm } from 'react-hook-form';
@@ -12,8 +12,9 @@ import { Mail01Icon, LockPasswordIcon, ViewIcon, ViewOffIcon } from '@hugeicons/
 import { Button } from '@/components/ui/button';
 import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { cn } from '@/lib/utils';
-import { signinAction } from '@/actions/auth-actions';
-import { toast } from 'sonner';
+// import { signinAction } from '@/actions/auth-actions';
+// import { toast } from 'sonner';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 const signinSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -25,7 +26,7 @@ type SigninValues = z.infer<typeof signinSchema>;
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const router = useRouter();
+  // const router = useRouter();
 
   const {
     register,
@@ -41,17 +42,22 @@ export function SignInForm() {
   });
 
   const onSubmit = async (data: SigninValues) => {
-    const result = await signinAction({
-      email: data.email,
-      password: data.password,
-    });
+    // const result = await signinAction({
+    //   email: data.email,
+    //   password: data.password,
+    // });
 
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success('Signed in successfully!');
-      router.push('/dashboard');
-    }
+    // if (result.error) {
+    //   toast.error(result.error);
+    // } else {
+    //   toast.success('Signed in successfully!');
+    //   router.push('/dashboard');
+    // }
+
+    triggerComingSoonModal({
+      title: 'Sign in is coming soon',
+      description: `We are still wiring the sign-in experience for ${data.email}.`,
+    });
   };
 
   return (
@@ -68,7 +74,7 @@ export function SignInForm() {
             Welcome Back
           </h1>
           <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em] text-center">
-            Log in to reveiw cases and manage your activities
+            Log in to review cases and manage your activities
           </p>
         </div>
 
@@ -199,6 +205,7 @@ export function SignInForm() {
           <Button
             variant="brand"
             type="submit"
+            onClick={() => triggerComingSoonModal()}
             disabled={isSubmitting}
             className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
           >

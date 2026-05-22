@@ -6,6 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import Image from 'next/image';
 import React from 'react';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 export default function CredentialsVerificationForm() {
   const [workplace, setWorkplace] = useState('');
@@ -83,6 +84,7 @@ export default function CredentialsVerificationForm() {
           <div>
             <button
               type="button"
+              onClick={() => triggerComingSoonModal()}
               className="body_large btn__primary text-white bg-primary-blue w-full"
             >
               <span>Save and Continue</span>

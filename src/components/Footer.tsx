@@ -71,7 +71,7 @@ export function Footer() {
           {/* Left: Brand Description */}
           <div className="flex flex-col gap-6 max-w-sm">
             <p className="text-[14px] leading-relaxed opacity-80">
-              Clinsight helps you turns complex medical reports into clear, simple explanations you
+              Clinsight helps you turn complex medical reports into clear, simple explanations you
               can actually understand.
             </p>
           </div>

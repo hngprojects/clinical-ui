@@ -6,24 +6,31 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 export default function ForgotPassword() {
   const router = useRouter();
   const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
 
-    setIsLoading(true);
-    try {
-      console.log('Submitting reset code request for:', email);
-    } catch (error) {
-      console.error('Error sending reset code:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    // if (!email) return;
+
+    // setIsLoading(true);
+    // try {
+    //   console.log('Submitting reset code request for:', email);
+    // } catch (error) {
+    //   console.error('Error sending reset code:', error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
+
+    triggerComingSoonModal({
+      title: 'Password reset is coming soon',
+      description: 'We are still building the password reset request flow.',
+    });
   };
 
   return (
@@ -109,10 +116,11 @@ export default function ForgotPassword() {
                 <div className="w-full flex flex-col gap-2"></div>
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  // disabled={isLoading}
                   className="w-full h-14 bg-[#1565C0] hover:bg-[#0D47A1] disabled:bg-[#1565C0]/50 text-white font-medium text-base font-['Inter'] rounded-xl transition-all duration-200 shadow-[0px_4px_12px_rgba(21,101,192,0.2)] flex items-center justify-center gap-2"
                 >
-                  {isLoading ? 'Sending...' : 'Send Reset Code'}
+                  {/* {isLoading ? 'Sending...' : 'Send Reset Code'} */}
+                  Send Reset Code
                 </button>
                 <button
                   type="button"

@@ -8,6 +8,7 @@ import { useCountdown } from '@/hooks/useCountdown';
 import { EmailForm } from '@/components/auth/forgot-password/EmailForm';
 import { OtpForm } from '@/components/auth/forgot-password/OtpForm';
 import { FailedView } from '@/components/auth/forgot-password/FailedView';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 type FlowStep = 'email' | 'otp' | 'failed';
 
@@ -23,63 +24,77 @@ export default function ForgotPasswordContent() {
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    setIsLoading(true);
-    setErrorMessage('');
 
-    try {
-      const res = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
-      });
+    // if (!email.trim()) return;
+    // setIsLoading(true);
+    // setErrorMessage('');
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to dispatch reset token');
+    // try {
+    //   const res = await fetch('/api/auth/forgot-password', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ email: email.trim() }),
+    //   });
 
-      startTimer();
-      setStep('otp');
-    } catch (err) {
-      const error = err as Error;
-      setErrorMessage(error.message || 'Network transport failure');
-    } finally {
-      setIsLoading(false);
-    }
+    //   const data = await res.json();
+    //   if (!res.ok) throw new Error(data.error || 'Failed to dispatch reset token');
+
+    //   startTimer();
+    //   setStep('otp');
+    // } catch (err) {
+    //   const error = err as Error;
+    //   setErrorMessage(error.message || 'Network transport failure');
+    // } finally {
+    //   setIsLoading(false);
+    // }
+
+
+    triggerComingSoonModal({
+      title: 'Password reset is coming soon',
+      description: 'We are still building the password reset request flow.',
+    });
   };
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const otpCodeString = otp.join('');
-    if (otpCodeString.length < 6) return;
-    setIsLoading(true);
-    setErrorMessage('');
 
-    try {
-      const res = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), otp: otpCodeString }),
-      });
+    // const otpCodeString = otp.join('');
+    // if (otpCodeString.length < 6) return;
+    // setIsLoading(true);
+    // setErrorMessage('');
 
-      const data = await res.json();
-      if (!res.ok) {
-        const message = data.error || 'Token authorization rejected';
-        if ([400, 401, 422].includes(res.status)) {
-          setErrorMessage(message);
-          setStep('failed');
-          return;
-        }
-        throw new Error(message);
-      }
+    // try {
+    //   const res = await fetch('/api/auth/verify-otp', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ email: email.trim(), otp: otpCodeString }),
+    //   });
 
-      router.push('/reset-password');
-    } catch (err) {
-      const error = err as Error;
-      setErrorMessage(error.message || 'Unable to verify code right now. Please try again.');
-      setStep('otp');
-    } finally {
-      setIsLoading(false);
-    }
+    //   const data = await res.json();
+    //   if (!res.ok) {
+    //     const message = data.error || 'Token authorization rejected';
+    //     if ([400, 401, 422].includes(res.status)) {
+    //       setErrorMessage(message);
+    //       setStep('failed');
+    //       return;
+    //     }
+    //     throw new Error(message);
+    //   }
+
+    //   router.push('/reset-password');
+    // } catch (err) {
+    //   const error = err as Error;
+    //   setErrorMessage(error.message || 'Unable to verify code right now. Please try again.');
+    //   setStep('otp');
+    // } finally {
+    //   setIsLoading(false);
+    // }
+  
+
+    triggerComingSoonModal({
+      title: 'OTP verification is coming soon',
+      description: 'We are still completing the reset-code verification flow.',
+    });
   };
 
   const handleResendOtpCode = async () => {

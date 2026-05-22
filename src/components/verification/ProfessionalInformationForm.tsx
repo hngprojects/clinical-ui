@@ -8,6 +8,7 @@ import { ArrowRight } from 'lucide-react';
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 const SPECIALIZATIONS = ['General Practice', 'Orthopedics', 'Neurology'];
 
@@ -104,6 +105,7 @@ export default function ProfessionalInformationForm() {
 
           <button
             type="button"
+            onClick={() => triggerComingSoonModal()}
             className="body_large btn__primary text-white bg-primary-blue w-full"
           >
             <span>Save and Continue</span>

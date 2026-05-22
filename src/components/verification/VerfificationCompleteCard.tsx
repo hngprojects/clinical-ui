@@ -1,6 +1,7 @@
 import VerificationSteps from '@/components/verification/VerificationSteps';
 import { ArrowRight } from 'lucide-react';
 import React from 'react';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 export default function VerfificationCompleteCard() {
   return (
@@ -28,6 +29,7 @@ export default function VerfificationCompleteCard() {
         <div>
           <button
             type="button"
+            onClick={() => triggerComingSoonModal()}
             className="body_large btn__primary text-white bg-primary-blue w-full"
           >
             <span>Save and Continue</span>
