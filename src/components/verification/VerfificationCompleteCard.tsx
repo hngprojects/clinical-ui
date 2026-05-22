@@ -18,7 +18,7 @@ const itemVariants = {
 export default function VerfificationCompleteCard() {
   return (
     <motion.div
-      className="max-w-165.25 mx-auto rounded-[32px] border py-10 px-20 space-y-22 bg-white"
+      className="max-w-165.25 mx-auto rounded-[32px] border py-10 px-6 md:py-10 md:px-20  space-y-22 bg-white"
       initial={{ opacity: 0, scale: 0.94, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 180, damping: 18, delay: 0.1 }}

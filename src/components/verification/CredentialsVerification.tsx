@@ -22,7 +22,7 @@ export default function CredentialsVerificationForm() {
   const [workplace, setWorkplace] = useState('');
 
   return (
-    <div className="max-w-165.25 mx-auto rounded-[32px] border py-10 px-20 space-y-22 bg-white">
+    <div className="max-w-165.25 mx-auto rounded-[32px] border py-10 px-6 md:py-10 md:px-20  space-y-22 bg-white">
       <VerificationSteps activeStep={1} />
 
       <div className="space-y-10">
