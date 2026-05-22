@@ -25,62 +25,56 @@ export function WaitlistForm() {
   const isButtonEnabled = firstName.trim() !== '' && email.trim() !== '';
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Guard against double submission
-    if (isLoading) return;
+  if (isLoading) return;
 
-    setError('');
+  setError('');
 
-    // Validate email
-    if (!isValidEmail(email)) {
-      setError('Enter a valid email address');
-      return;
+  if (!isValidEmail(email)) {
+    setError('Enter a valid email address');
+    return;
+  }
+
+  setIsLoading(true);
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const response = await fetch('/api/v1/waitlist', { 
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, firstName }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        setError(data.error || 'This email is already on the waitlist.');
+        return;  
+      }
+      throw new Error(data.error || 'Failed to join waitlist');
     }
 
-    setIsLoading(true);
+    setShowSuccess(true);
+  } catch (err) {
+    clearTimeout(timeoutId);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-    try {
-      // API call with timeout
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, firstName }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 409) {
-          setError(data.error);
-          return;
-        }
-        throw new Error(data.error || 'Failed to join waitlist');
-      }
-
-      // Success!
-      setShowSuccess(true);
-    } catch (err) {
-      clearTimeout(timeoutId);
-
-      if (err instanceof Error && err.name === 'AbortError') {
-        console.error('WaitlistForm submission error: Request timeout');
-        setError('Request took too long. Please try again.');
-      } else {
-        const error = err as Error;
-        console.error('WaitlistForm submission error:', error.message);
-        setError(error.message || 'Something went wrong. Please try again.');
-      }
-    } finally {
-      setIsLoading(false);
+    if (err instanceof Error && err.name === 'AbortError') {
+      setError('Request took too long. Please try again.');
+    } else {
+      const error = err as Error;
+      setError(error.message || 'Something went wrong. Please try again.');
     }
-  };
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <main className="relative flex min-h-screen items-center justify-center px-4 py-8 md:px-6 lg:px-8">
