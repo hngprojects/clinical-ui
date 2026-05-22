@@ -57,6 +57,10 @@ export function WaitlistForm() {
       const data = await response.json();
 
       if (!response.ok) {
+        if (response.status === 409) {
+          setError(data.error);
+          return;
+        }
         throw new Error(data.error || 'Failed to join waitlist');
       }
 
