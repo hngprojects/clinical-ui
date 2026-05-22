@@ -42,7 +42,7 @@ export function WaitlistForm() {
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      const response = await fetch('/api/v1/waitlist', {
+      const response = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, firstName }),
@@ -188,16 +188,25 @@ export function WaitlistForm() {
               type="text"
               placeholder="First Name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 50) {
+                  setFirstName(e.target.value);
+                }
+              }}
               onFocus={() => setFocusedField('firstName')}
               onBlur={() => setFocusedField(null)}
               disabled={isLoading}
+              maxLength={50}
               className={`w-full rounded-xl border-2 bg-white py-4 pl-12 pr-4 text-base transition-all placeholder:text-gray-400 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400 ${
                 focusedField === 'firstName'
                   ? 'border-blue-500'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             />
+            {/* Character counter — only shows when close to limit */}
+            {firstName.length >= 40 && (
+              <p className="mt-1 text-right text-xs text-gray-400">{firstName.length}/50</p>
+            )}
           </div>
 
           {/* Email Input */}
