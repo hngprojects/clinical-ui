@@ -71,9 +71,7 @@ export default function VerificationSteps({
                     className={`h-4 w-4 rounded-full flex items-center justify-center ${circleColor}`}
                     animate={isCompleted ? { scale: [1, 1.25, 1] } : { scale: 1 }}
                     transition={{ duration: 0.3 }}
-                  >
-                    {isCompleted && <Check className="h-4 w-4 text-white" />}
-                  </motion.div>
+                  />
 
                   <span className={`body__large font-medium ${labelColor}`}>{step.label}</span>
                 </div>

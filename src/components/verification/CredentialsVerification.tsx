@@ -19,8 +19,6 @@ const fieldVariants = {
 };
 
 export default function CredentialsVerificationForm() {
-  const [workplace, setWorkplace] = useState('');
-
   return (
     <div className="max-w-165.25 mx-auto rounded-[32px] border py-10 px-6 md:py-10 md:px-20  space-y-22 bg-white">
       <VerificationSteps activeStep={1} />
@@ -51,10 +49,8 @@ export default function CredentialsVerificationForm() {
                 />
                 <input
                   id="licenseNumber"
-                  type="number"
+                  type="text"
                   placeholder="Enter License number"
-                  value={workplace}
-                  onChange={(e) => setWorkplace(e.target.value)}
                   className="py-1 w-full focus:outline-none"
                 />
               </VerificationInputField>
@@ -66,8 +62,6 @@ export default function CredentialsVerificationForm() {
                   id="nin"
                   type="text"
                   placeholder="Enter your 11-digin NIN"
-                  value={workplace}
-                  onChange={(e) => setWorkplace(e.target.value)}
                   className="py-3 w-full input__field"
                 />
               </InputFieldContainer>

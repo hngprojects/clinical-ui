@@ -23,7 +23,6 @@ const fieldVariants = {
 
 export default function ProfessionalInformationForm() {
   const [specialization, setSpecialization] = useState('');
-  const [workplace, setWorkplace] = useState('');
 
   return (
     <div className="max-w-165.25 mx-auto rounded-[32px] border py-10 px-6 md:py-10 md:px-20 space-y-22 bg-white">
@@ -67,8 +66,6 @@ export default function ProfessionalInformationForm() {
                   id="yoe"
                   type="text"
                   placeholder="e.g: 3"
-                  value={workplace}
-                  onChange={(e) => setWorkplace(e.target.value)}
                   className="py-1 w-full focus:outline-none"
                 />
               </VerificationInputField>
