@@ -234,7 +234,7 @@ export function BentoGrid() {
             <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 p-6 md:p-8 flex flex-col gap-2">
               <div className="flex items-center gap-3">
                 <div
-                  className="w-9 h-9 flex-shrink-0 text-[#935F07] md:text-[#FEF0DA]"
+                  className="w-9 h-9 shrink-0 text-[#935F07] md:text-[#FEF0DA]"
                   style={{
                     maskImage: 'url("/assets/how-it-works/mynaui_four-waves-solid.svg")',
                     WebkitMaskImage: 'url("/assets/how-it-works/mynaui_four-waves-solid.svg")',

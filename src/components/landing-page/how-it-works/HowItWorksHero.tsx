@@ -126,7 +126,7 @@ export function HowItWorksHero() {
                   h-[210px] lg:h-[320px] overflow-hidden"
                   >
                     <div className="flex items-center gap-2 lg:gap-3">
-                      <div className="flex h-5 w-5 lg:h-10 lg:w-10 flex-shrink-0 items-center justify-center">
+                      <div className="flex h-5 w-5 lg:h-10 lg:w-10 shrink-0 items-center justify-center">
                         <Image
                           src="/assets/landing-page-assets/ai-scan.svg"
                           alt="AI Scan"
@@ -161,7 +161,7 @@ export function HowItWorksHero() {
                         alt="Key icon"
                         width={14}
                         height={14}
-                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 flex-shrink-0"
+                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 shrink-0"
                       />
                       <span className="text-[7px] lg:text-[12px] font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em]">
                         Key Findings
@@ -178,7 +178,7 @@ export function HowItWorksHero() {
                         alt="Recommendation icon"
                         width={14}
                         height={14}
-                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 flex-shrink-0"
+                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 shrink-0"
                       />
                       <span className="text-[7px] lg:text-[12px] font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em]">
                         Recommendations

@@ -49,7 +49,7 @@ export function EmailForm({
             Email address
           </label>
           <div className="w-full h-14 px-4 py-2.5 rounded-lg border border-[#BDC3C3] bg-white flex items-center gap-3 focus-within:border-[#1565C0] focus-within:ring-2 focus-within:ring-[#1565C0]/10 transition-all duration-200">
-            <div className="size-5 relative flex-shrink-0">
+            <div className="size-5 relative shrink-0">
               <Image
                 src="/assets/forgot-password/ai-mail-02.svg"
                 alt="Mail Icon"
