@@ -160,7 +160,7 @@ export function ResetPasswordForm({
                   type="button"
                   onClick={field.toggle}
                   aria-label={field.visible ? `Hide ${field.label}` : `Show ${field.label}`}
-                  className="text-[#94A3B8] hover:text-[#424752] transition-colors ml-2 focus:outline-none"
+                  className="text-[`#94A3B8`] hover:text-[`#424752`] transition-colors ml-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[`#004D99`] focus-visible:ring-offset-2 rounded"
                 >
                   {field.visible ? (
                     <svg
