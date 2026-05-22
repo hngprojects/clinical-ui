@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -96,8 +99,8 @@ export default function ForgotPassword() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Chioma@gmail.com"
-                    className="flex-1 h-full bg-transparent text-[#1B1B1B] placeholder-[#2D2F2F] text-sm sm:text-base font-normal font-['Inter'] outline-none border-none p-0 focus:ring-0 focus:outline-none"
+                    placeholder="chioma@gmail.com"
+                    className="flex-1 h-full bg-transparent text-[#1B1B1B] placeholder-[#2D2F2F] placeholder:opacity-100 text-sm sm:text-base font-normal font-['Inter'] outline-none border-none p-0 focus:ring-0 focus:outline-none"
                   />
                 </div>
               </div>
@@ -116,12 +119,12 @@ export default function ForgotPassword() {
                   onClick={() => router.push('/signin')}
                   className="w-full flex items-center justify-center gap-2 py-2 text-[#006B5F] hover:text-[#004D44] text-sm sm:text-base font-medium font-['Inter'] transition-colors duration-150 group"
                 >
-                  <div className="size-4 relative transition-transform duration-200 group-hover:-translate-x-1">
-                    <Image
-                      src="/assets/forgot-password/arrow-Icon.svg"
-                      alt="Left Arrow Indicator"
-                      fill
-                      className="object-contain"
+                  <div className="transition-transform duration-200 group-hover:-translate-x-1 flex items-center justify-center">
+                    <HugeiconsIcon
+                      icon={ArrowLeft02Icon}
+                      size={18}
+                      color="currentColor"
+                      strokeWidth={2}
                     />
                   </div>
                   Back to Sign In
@@ -131,17 +134,17 @@ export default function ForgotPassword() {
           </div>
 
           <footer className="w-full max-w-[521px] pt-6 border-t border-[#E1E2EA] flex items-center justify-center mt-10">
-            <p className="text-center text-[#424752] text-sm sm:text-base font-medium font-['Inter'] leading-6">
+            <div className="text-center text-[#424752] text-sm sm:text-base font-medium font-['Inter'] leading-6">
               Need immediate assistance?
-              <br className="sm:hidden" /> Contact{' '}
-              <button
-                type="button"
-                onClick={() => router.push('/contact-us')}
+              <br />
+              Contact{' '}
+              <Link
+                href="/contact"
                 className="text-[#1565C0] hover:text-[#0D47A1] font-semibold underline underline-offset-4 transition-colors duration-150"
               >
                 Lab Support
-              </button>
-            </p>
+              </Link>
+            </div>
           </footer>
         </div>
       </div>
