@@ -205,7 +205,6 @@ export function SignInForm() {
           <Button
             variant="brand"
             type="submit"
-            onClick={() => triggerComingSoonModal()}
             disabled={isSubmitting}
             className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
           >
