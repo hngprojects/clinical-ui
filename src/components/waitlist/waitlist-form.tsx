@@ -25,56 +25,90 @@ export function WaitlistForm() {
   const isButtonEnabled = firstName.trim() !== '' && email.trim() !== '';
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (isLoading) return;
+    if (isLoading) return;
 
-  setError('');
+    setError('');
 
-  if (!isValidEmail(email)) {
-    setError('Enter a valid email address');
-    return;
-  }
+    if (!isValidEmail(email)) {
+      setError('Enter a valid email address');
+      return;
+    }
 
-  setIsLoading(true);
+    setIsLoading(true);
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-  try {
-    const response = await fetch('/api/v1/waitlist', { 
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, firstName }),
-      signal: controller.signal,
-    });
+    try {
+      const response = await fetch('/api/v1/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, firstName }),
+        signal: controller.signal,
+      });
 
-    clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
 
-    const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      let data: unknown = null;
+      let textBody: string | null = null;
 
-    if (!response.ok) {
-      if (response.status === 409) {
-        setError(data.error || 'This email is already on the waitlist.');
-        return;  
+      if (contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (parseErr) {
+          console.error('WaitlistForm JSON parse error:', parseErr);
+          try {
+            textBody = await response.text();
+          } catch {
+            textBody = null;
+          }
+        }
+      } else {
+        try {
+          textBody = await response.text();
+        } catch {
+          textBody = null;
+        }
       }
-      throw new Error(data.error || 'Failed to join waitlist');
-    }
 
-    setShowSuccess(true);
-  } catch (err) {
-    clearTimeout(timeoutId);
+      // Extract a safe error message from `data` (unknown) without using `any`
+      let errorMessage: string | null = null;
+      if (data && typeof data === 'object' && data !== null && 'error' in data) {
+        const maybeError = (data as Record<string, unknown>)['error'];
+        if (typeof maybeError === 'string') errorMessage = maybeError;
+      }
 
-    if (err instanceof Error && err.name === 'AbortError') {
-      setError('Request took too long. Please try again.');
-    } else {
-      const error = err as Error;
-      setError(error.message || 'Something went wrong. Please try again.');
+      if (!response.ok) {
+        if (response.status === 409) {
+          setError(errorMessage || textBody || 'This email is already on the waitlist.');
+          return;
+        }
+
+        // console.error(
+        //   'WaitlistForm submission error:',
+        //   errorMessage ?? data ?? textBody ?? 'Unknown error',
+        // );
+        throw new Error(errorMessage || textBody || 'Failed to join waitlist');
+      }
+
+      setShowSuccess(true);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.error('WaitlistForm submission error:', err || 'Unknown error');
+
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('Request took too long. Please try again.');
+      } else {
+        const error = err as Error;
+        setError(error.message || 'Something went wrong. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
     }
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   return (
     <main className="relative flex min-h-screen items-center justify-center px-4 py-8 md:px-6 lg:px-8">
