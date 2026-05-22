@@ -1,8 +1,11 @@
 import VerfificationCompleteCard from '@/components/verification/VerfificationCompleteCard';
+import { pageMetadata } from '@/lib/pageMetadata';
 
-export const metadata = {
-  title: 'Complete Verification',
-};
+export const metadata = pageMetadata(
+  'Verification Complete — Clinsight',
+  'Your verification is complete! You can now access personalized lab insights and doctor consultations.',
+  '/verification/verification-complete',
+);
 
 export default function page() {
   return (

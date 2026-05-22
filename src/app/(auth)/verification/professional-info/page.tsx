@@ -1,9 +1,11 @@
 import ProfessionalInformationForm from '@/components/verification/ProfessionalInformationForm';
-import React from 'react';
+import { pageMetadata } from '@/lib/pageMetadata';
 
-export const metadata = {
-  title: 'Professional Information',
-};
+export const metadata = pageMetadata(
+  'Professional Information — Clinsight',
+  'Provide your professional information to complete the verification process.',
+  '/verification/professional-info',
+);
 
 export default function page() {
   return (

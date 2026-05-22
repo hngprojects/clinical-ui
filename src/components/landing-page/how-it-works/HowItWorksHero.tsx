@@ -3,15 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowRight01Icon } from '@hugeicons/core-free-icons';
 
 export function HowItWorksHero() {
   return (
     <section className="relative overflow-hidden bg-white pt-10 pb-16 lg:pt-16 lg:pb-24">
       <div className="container mx-auto px-6 lg:px-12">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
-          {/* Left Column */}
           <div className="flex-[1.4] flex flex-col items-start gap-6 text-left">
             <div className="flex items-center gap-2 rounded-full bg-[#F5F5F5] p-1 pr-4">
               <div className="flex -space-x-2 overflow-hidden">
@@ -52,7 +49,7 @@ export function HowItWorksHero() {
               <h1 className="text-[28px] lg:text-[48px] font-bold leading-[1.2] tracking-[-0.02em] text-[#1B1B1B]">
                 <span className="relative inline-block px-3 text-white">
                   <span className="absolute inset-0 -skew-x-2 rounded bg-[#1565C0]" />
-                  <span className="relative">Here&apos;s How!</span>
+                  <span className="relative">Here&apos;s How</span>
                 </span>
               </h1>
             </div>
@@ -65,11 +62,9 @@ export function HowItWorksHero() {
             </div>
           </div>
 
-          {/* Right Column */}
           <div className="relative w-full flex-1 min-h-[400px] lg:min-h-[600px] flex items-center justify-end -mr-6 lg:mr-0 -mt-8 lg:mt-0">
             {/* Circle Wrapper */}
             <div className="relative h-[320px] w-[320px] lg:h-[600px] lg:w-[600px] flex items-center justify-center scale-90 sm:scale-100 lg:scale-100 translate-x-6 lg:translate-x-0">
-              {/* Background Circle Asset */}
               <div className="absolute inset-0 pointer-events-none">
                 <Image
                   src="/assets/landing-page-assets/outer-inner-circle.svg"
@@ -93,7 +88,6 @@ export function HowItWorksHero() {
                 </div>
               </div>
 
-              {/* User Reports Sidebar */}
               <div
                 className="absolute left-[-50px] lg:left-[10px] top-[50%] -translate-y-1/2 lg:translate-y-0 lg:top-[20%] z-30 flex
               w-[50px] lg:w-[84px] h-[210px] lg:h-[320px] flex-col gap-1.5 lg:gap-2 rounded-lg lg:rounded-xl
@@ -122,7 +116,6 @@ export function HowItWorksHero() {
                 </div>
               </div>
 
-              {/* Dashboard Content */}
               <div className="relative flex flex-col items-center gap-0 z-10 w-full max-w-[240px] lg:max-w-[380px]">
                 {/* Dashboard Card */}
                 <div className="relative z-10 w-full">
@@ -201,10 +194,17 @@ export function HowItWorksHero() {
                       variant="brand"
                       className="w-full rounded-lg lg:rounded-xl py-3 lg:py-7 text-[9px]
                     lg:text-sm font-bold shadow-lg transition-all bg-[#1565C0] text-white
-                    hover:bg-[#1565C0]/90"
+                    hover:bg-[#1565C0]/90 flex items-center justify-center"
                     >
                       Get Started
-                      <HugeiconsIcon icon={ArrowRight01Icon} size={12} className="ml-1 lg:ml-2" />
+                      <Image
+                        src="/assets/how-it-works/arrow_forward.svg"
+                        alt=""
+                        aria-hidden="true"
+                        width={16}
+                        height={16}
+                        className="ml-1.5 lg:ml-2 w-3 h-3 lg:w-4 lg:h-4"
+                      />
                     </Button>
                   </Link>
                 </div>

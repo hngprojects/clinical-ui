@@ -3,6 +3,13 @@ import AboutMissionVision from '@/components/landing-page/about/MissionVission';
 import AboutStory from '@/components/landing-page/about/Story';
 import AboutValues from '@/components/landing-page/about/Values';
 import AboutTeam from '@/components/landing-page/about/Team';
+import { pageMetadata } from '@/lib/pageMetadata';
+
+export const metadata = pageMetadata(
+  'About — Clinsight',
+  'Learn about Clinsight, our mission, team, and values.',
+  '/about',
+);
 
 export default function AboutPage() {
   return (
