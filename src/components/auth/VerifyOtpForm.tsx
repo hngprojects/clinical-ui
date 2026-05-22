@@ -15,7 +15,7 @@ import { triggerComingSoonModal } from '@/components/coming-soon';
 export function VerifyOtpForm() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   // const [isVerifying, setIsVerifying] = useState(false);
-  const [isResending, setIsResending] = useState(false);
+  // const [isResending, setIsResending] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   // const router = useRouter();
   const searchParams = useSearchParams();
@@ -145,7 +145,7 @@ export function VerifyOtpForm() {
           variant="brand"
           onClick={handleVerify}
           // disabled={isVerifying || isResending || otp.some((d) => !d)}
-          disabled={isResending}
+          // disabled={isResending}
           className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
         >
           {/* {isVerifying ? 'Verifying...' : 'Begin verification'}
@@ -160,7 +160,8 @@ export function VerifyOtpForm() {
           // disabled={isVerifying || isResending}
           className="h-15 w-full rounded-2xl border border-[#1565C0] text-[#1565C0] text-base font-bold transition-colors hover:bg-blue-50 disabled:opacity-50"
         >
-          {isResending ? 'Sending...' : 'Resend OTP'}
+          {/* {isResending ? 'Sending...' : 'Resend OTP'} */}
+          Resend OTP
         </button>
       </div>
     </motion.div>
