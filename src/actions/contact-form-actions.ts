@@ -17,7 +17,7 @@ export async function sendMessageAction(formData: ContactFormDataType) {
   try {
     // Change the URL to the actual endpoint when it's ready and also the form data to be sent to the backend, the properties should be the same as the ones expected in the server.
 
-    const response = await fetch(`${process.env.API_BASE_URL}/contact`, {
+    const response = await fetch(`${process.env.BASE_URL_V1!}/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ full_name, email, message, termsAgreement }),
