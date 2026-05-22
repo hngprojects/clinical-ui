@@ -54,9 +54,9 @@ export const terms: Term[] = [
     title: '6. Limitation of Liability',
     content: 'We are not liable for:',
     bullets: [
-      'Outcomes of doctor consultations',
+      // 'Outcomes of doctor consultations',
       'Decisions made based on AI interpretations',
-      'Refund policies (if any) will be communicated within the platform',
+      // 'Refund policies (if any) will be communicated within the platform',
     ],
   },
   {
