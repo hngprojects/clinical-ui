@@ -1,6 +1,7 @@
+"use client";
+
 import VerificationSteps from '@/components/verification/VerificationSteps';
 import { ArrowRight } from 'lucide-react';
-import React from 'react';
 import { triggerComingSoonModal } from '@/components/coming-soon';
 
 export default function VerfificationCompleteCard() {
