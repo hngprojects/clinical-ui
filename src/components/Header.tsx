@@ -26,6 +26,9 @@ export function Header() {
     '/verify-otp',
     '/reset-password',
     '/payment',
+    '/verification/professional-info',
+    '/verification/credentials-verification',
+    '/verification/verification-complete',
   ];
 
   if (hideOnRoutes.includes(pathname)) {
