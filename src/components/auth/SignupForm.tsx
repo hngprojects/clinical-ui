@@ -29,7 +29,7 @@ const signupSchema = z.object({
   phone: z
     .string()
     .min(1, 'Phone number is required')
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Enter a valid phone number (e.g., +1234567890)'),
+    .regex(/^0?[789]\d{9}$/, 'Enter a valid phone number (e.g., 08012345678)'),
   email: z.string().email('Enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   agreed: z.boolean().refine((val) => val === true, {
