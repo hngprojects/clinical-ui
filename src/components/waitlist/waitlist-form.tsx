@@ -97,7 +97,7 @@ export function WaitlistForm() {
       setShowSuccess(true);
     } catch (err) {
       clearTimeout(timeoutId);
-      console.error('WaitlistForm submission error:', err || 'Unknown error');
+      // console.error('WaitlistForm submission error:', err || 'Unknown error');
 
       if (err instanceof Error && err.name === 'AbortError') {
         setError('Request took too long. Please try again.');
