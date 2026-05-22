@@ -39,20 +39,25 @@ export function ComingSoonProvider({ children }: Readonly<{ children: React.Reac
       setIsOpen(true);
     };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-      }
-    };
-
     window.addEventListener(COMING_SOON_EVENT, handleOpen);
-    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener(COMING_SOON_EVENT, handleOpen);
-      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+   if (!isOpen) return;
+
+   const handleKeyDown = (event: KeyboardEvent) => {
+     if (event.key === 'Escape') {
+       setIsOpen(false);
+     }
+   };
+
+   window.addEventListener('keydown', handleKeyDown);
+   return () => window.removeEventListener('keydown', handleKeyDown);
+ }, [isOpen]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -70,7 +75,6 @@ export function ComingSoonProvider({ children }: Readonly<{ children: React.Reac
         createPortal(
           <div
             className="fixed inset-0 z-100 flex items-center justify-center bg-slate-950/60 px-4 py-8 backdrop-blur-md"
-            role="presentation"
             onClick={() => setIsOpen(false)}
           >
             <div
