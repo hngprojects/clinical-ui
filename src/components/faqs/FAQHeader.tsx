@@ -27,7 +27,7 @@ export default function FAQHeader() {
           initial={{ scale: 1.2 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="text-[2rem] sm:text-[2.5rem] text-white font-semibold"
+          className="text-[2rem] sm:text-[2.5rem] text-white font-semibold text-center"
         >
           Frequently Asked Questions
         </motion.h1>
@@ -35,7 +35,7 @@ export default function FAQHeader() {
           initial={{ scale: 1.12 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.35, delay: 0.2 }}
-          className="text-base text-white"
+          className="text-base text-white text-center"
         >
           Explore answers to common questions about your results, features, and how Clinsights
           supports your care
