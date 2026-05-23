@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     }
 
     // Call backend with timeout
-    const WAITLIST_API_URL = `${process.env.BASE_URL}/api/v1/waitlist`;
+    const WAITLIST_API_URL = `${process.env.API_BASE_URL}/api/v1/waitlist`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
