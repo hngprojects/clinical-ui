@@ -25,7 +25,7 @@ export default function SignInPage() {
       </div>
 
       {/* Logo - Top Left */}
-      <div className="absolute top-6 left-6 md:top-10 md:left-12 z-10">
+      <div className="absolute top-6 left-6 md:top-4 lg:top-10 md:left-12 z-10">
         <div className="relative w-35 h-10 md:w-45 md:h-12.5">
           <Image
             src="/assets/signup-page-assets/auth-logo.svg"
