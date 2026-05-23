@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 interface ResetPasswordFormProps {
   onSuccess: () => void;
@@ -37,39 +38,45 @@ export function ResetPasswordForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid || isLoading) return;
 
-    setIsLoading(true);
-    setError(null);
+    // if (!isFormValid || isLoading) return;
 
-    try {
-      const res = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token: token,
-          new_password: form.password,
-        }),
-      });
+    // setIsLoading(true);
+    // setError(null);
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(
-          data.error || 'Failed to update credentials. Please check your link and try again.',
-        );
-      }
+    // try {
+    //   const res = await fetch('/api/auth/reset-password', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       token: token,
+    //       new_password: form.password,
+    //     }),
+    //   });
 
-      setIsSuccessState(true);
-      setTimeout(() => {
-        onSuccess();
-      }, 3000);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.',
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    //   if (!res.ok) {
+    //     const data = await res.json().catch(() => ({}));
+    //     throw new Error(
+    //       data.error || 'Failed to update credentials. Please check your link and try again.',
+    //     );
+    //   }
+
+    //   setIsSuccessState(true);
+    //   setTimeout(() => {
+    //     onSuccess();
+    //   }, 3000);
+    // } catch (err) {
+    //   setError(
+    //     err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.',
+    //   );
+    // } finally {
+    //   setIsLoading(false);
+    // }
+
+    triggerComingSoonModal({
+      title: 'Reset password is coming soon',
+      description: 'We are still building the secure password reset flow.',
+    });
   };
 
   if (isSuccessState) {
@@ -281,7 +288,8 @@ export function ResetPasswordForm({
         <div className="w-full flex flex-col gap-4 shrink-0">
           <button
             type="submit"
-            disabled={!isFormValid || isLoading}
+            // disabled={!isFormValid || isLoading}
+            disabled={isLoading}
             className="w-full h-12 bg-[#004D99] hover:bg-[#003366] text-white rounded-lg font-medium font-['Inter'] text-sm transition-colors flex items-center justify-center gap-2 disabled:bg-[#80A6CC] disabled:cursor-not-allowed"
           >
             <div className="relative size-5 shrink-0">

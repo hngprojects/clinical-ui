@@ -1,11 +1,11 @@
 'use client';
 
+import { triggerComingSoonModal } from '@/components/coming-soon';
 import InputFieldContainer, { VerificationInputField } from '@/components/ui/InputFieldContainer';
 import VerificationSteps from '@/components/verification/VerificationSteps';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
-import React from 'react';
 
 const fieldContainerVariants = {
   hidden: {},
@@ -105,6 +105,7 @@ export default function CredentialsVerificationForm() {
               className="body_large btn__primary text-white bg-primary-blue w-full"
               whileHover={{ scale: 1.015, transition: { duration: 0.15 } }}
               whileTap={{ scale: 0.96, transition: { duration: 0.1 } }}
+              onClick={() => triggerComingSoonModal()}
             >
               <span>Save and Continue</span>
               <ArrowRight className="size-6 text-white" />

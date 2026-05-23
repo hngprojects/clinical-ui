@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 const FEATURES = [
   {
@@ -69,6 +70,8 @@ export function Features() {
             <div className="flex items-center justify-start gap-3 w-full lg:justify-start">
               {/* App Store Button */}
               <button
+                type="button"
+                onClick={() => triggerComingSoonModal()}
                 className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
               items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white 
               transition-opacity hover:opacity-80"
@@ -89,6 +92,8 @@ export function Features() {
               </button>
               {/* Google Play Button */}
               <button
+                type="button"
+                onClick={() => triggerComingSoonModal()}
                 className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
               items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white 
               transition-opacity hover:opacity-80"
