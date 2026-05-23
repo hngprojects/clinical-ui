@@ -53,11 +53,11 @@ export function FAQ() {
             </span>
           </div>
 
-          <h2 className="mb-4 lg:mb-6 text-[22px] lg:text-[40px] font-bold leading-tight tracking-tight text-[#1B1B1B]">
+          <h2 className="mb-4 lg:mb-6 text-[22px] lg:text-[40px] font-bold leading-tight tracking-tight text-[#1B1B1B] text-center">
             Frequently Asked Questions
           </h2>
 
-          <p className="max-w-2xl text-[14px] lg:text-[18px] font-normal leading-relaxed text-[#5E5E5E]">
+          <p className="max-w-2xl text-[14px] lg:text-[18px] font-normal leading-relaxed text-[#5E5E5E] text-center">
             Explore answers to common questions about your results, features, and how Clinsight
             supports your care
           </p>

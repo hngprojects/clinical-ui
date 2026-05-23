@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 export function HowItWorksHero() {
   return (
@@ -126,7 +126,7 @@ export function HowItWorksHero() {
                   h-[210px] lg:h-[320px] overflow-hidden"
                   >
                     <div className="flex items-center gap-2 lg:gap-3">
-                      <div className="flex h-5 w-5 lg:h-10 lg:w-10 flex-shrink-0 items-center justify-center">
+                      <div className="flex h-5 w-5 lg:h-10 lg:w-10 shrink-0 items-center justify-center">
                         <Image
                           src="/assets/landing-page-assets/ai-scan.svg"
                           alt="AI Scan"
@@ -161,7 +161,7 @@ export function HowItWorksHero() {
                         alt="Key icon"
                         width={14}
                         height={14}
-                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 flex-shrink-0"
+                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 shrink-0"
                       />
                       <span className="text-[7px] lg:text-[12px] font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em]">
                         Key Findings
@@ -178,7 +178,7 @@ export function HowItWorksHero() {
                         alt="Recommendation icon"
                         width={14}
                         height={14}
-                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 flex-shrink-0"
+                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 shrink-0"
                       />
                       <span className="text-[7px] lg:text-[12px] font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em]">
                         Recommendations
@@ -189,24 +189,24 @@ export function HowItWorksHero() {
 
                 {/* CTA Button */}
                 <div className="z-20 -mt-3 lg:-mt-4 w-full">
-                  <Link href="/signup">
-                    <Button
-                      variant="brand"
-                      className="w-full rounded-lg lg:rounded-xl py-3 lg:py-7 text-[9px]
+                  <Button
+                    type="button"
+                    variant="brand"
+                    onClick={() => triggerComingSoonModal()}
+                    className="w-full rounded-lg lg:rounded-xl py-3 lg:py-7 text-[9px]
                     lg:text-sm font-bold shadow-lg transition-all bg-[#1565C0] text-white
                     hover:bg-[#1565C0]/90 flex items-center justify-center"
-                    >
-                      Get Started
-                      <Image
-                        src="/assets/how-it-works/arrow_forward.svg"
-                        alt=""
-                        aria-hidden="true"
-                        width={16}
-                        height={16}
-                        className="ml-1.5 lg:ml-2 w-3 h-3 lg:w-4 lg:h-4"
-                      />
-                    </Button>
-                  </Link>
+                  >
+                    Get Started
+                    <Image
+                      src="/assets/how-it-works/arrow_forward.svg"
+                      alt=""
+                      aria-hidden="true"
+                      width={16}
+                      height={16}
+                      className="ml-1.5 lg:ml-2 w-3 h-3 lg:w-4 lg:h-4"
+                    />
+                  </Button>
                 </div>
               </div>
             </div>

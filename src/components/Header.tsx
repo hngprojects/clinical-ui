@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Cancel01Icon } from '@hugeicons/core-free-icons';
 import { motion, AnimatePresence } from 'motion/react';
@@ -17,6 +17,7 @@ const NAV_LINKS = [
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const hideOnRoutes = [
     '/waitlist',
@@ -34,6 +35,10 @@ export function Header() {
   if (hideOnRoutes.includes(pathname)) {
     return null;
   }
+
+  const handleDownload = () => {
+    router.push('/waitlist');
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#F5F5F5] bg-white">
@@ -70,7 +75,11 @@ export function Header() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-4">
-          <button className="flex w-[226px] h-[46.1px] items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 transition-all hover:bg-slate-50">
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="flex w-[226px] h-[46.1px] items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 transition-all hover:bg-slate-50"
+          >
             <div className="flex items-center gap-2">
               <Image
                 src="/assets/header-assets/google-play-icon.svg"
@@ -132,7 +141,11 @@ export function Header() {
                   </Link>
                 );
               })}
-              <button className="flex w-full items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-slate-50">
+              <button
+                type="button"
+                onClick={handleDownload}
+                className="flex w-full items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-slate-50"
+              >
                 <div className="flex items-center gap-2">
                   <Image
                     src="/assets/header-assets/google-play-icon.svg"

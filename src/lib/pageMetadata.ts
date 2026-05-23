@@ -19,5 +19,3 @@ export function pageMetadata(title: string, description: string, endpoint: strin
     },
   };
 }
-
-export default pageMetadata;

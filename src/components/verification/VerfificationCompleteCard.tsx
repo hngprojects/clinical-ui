@@ -1,9 +1,9 @@
 'use client';
 
+import { triggerComingSoonModal } from '@/components/coming-soon';
 import VerificationSteps from '@/components/verification/VerificationSteps';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
-import React from 'react';
 
 const detailVariants = {
   hidden: {},
@@ -50,6 +50,7 @@ export default function VerfificationCompleteCard() {
         <div>
           <motion.button
             type="button"
+            onClick={() => triggerComingSoonModal()}
             className="body_large btn__primary text-white bg-primary-blue w-full"
             animate={{ scale: [1, 1.03, 1] }}
             transition={{ repeat: Infinity, repeatDelay: 2, duration: 0.6, ease: 'easeInOut' }}
