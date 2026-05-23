@@ -1,6 +1,5 @@
 'use server';
 
-import { BASE_URL_V1 } from '@/lib/constants';
 import { ContactFormDataType, contactSchema } from '@/schemas/contact-form-schema';
 
 // also Add the type of data that is going to be returned from the server, it can be a success message or an error message, it should be the same as the one returned from the server.
@@ -16,7 +15,7 @@ export async function sendMessageAction(formData: ContactFormDataType) {
   const { fullName: full_name, email, message, termsAgreement } = validatedData.data;
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/contact`, {
+    const response = await fetch(`${process.env.BASE_URL}/api/v1/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ full_name, email, message, termsAgreement }),

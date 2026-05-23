@@ -2,7 +2,7 @@
 import { motion, Variants } from 'motion/react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { triggerComingSoonModal } from '@/components/coming-soon';
+import Link from 'next/link';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -81,13 +81,15 @@ export function BentoGrid() {
               <p className="text-[#5E5E5E] leading-relaxed text-sm">
                 Easily upload your hard-to-understand report as a PDF or image in seconds.
               </p>
-              <Button
-                type="button"
-                onClick={() => triggerComingSoonModal()}
-                className="w-full rounded-2xl py-6 bg-[#1565C0] hover:bg-[#1255A8] font-bold text-base mt-2 transition-all active:scale-[0.98]"
-              >
-                Get Started on Clinsights
-              </Button>
+
+              <Link href="/waitlist">
+                <Button
+                  type="button"
+                  className="w-full rounded-2xl py-6 bg-[#1565C0] hover:bg-[#1255A8] font-bold text-base mt-2 transition-all active:scale-[0.98]"
+                >
+                  Get Started on Clinsights
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
