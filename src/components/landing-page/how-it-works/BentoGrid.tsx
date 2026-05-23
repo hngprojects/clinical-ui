@@ -2,6 +2,7 @@
 import { motion, Variants } from 'motion/react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -80,9 +81,15 @@ export function BentoGrid() {
               <p className="text-[#5E5E5E] leading-relaxed text-sm">
                 Easily upload your hard-to-understand report as a PDF or image in seconds.
               </p>
-              <Button className="w-full rounded-2xl py-6 bg-[#1565C0] hover:bg-[#1255A8] font-bold text-base mt-2 transition-all active:scale-[0.98]">
-                Get Started on Clinsights
-              </Button>
+
+              <Link href="/waitlist">
+                <Button
+                  type="button"
+                  className="w-full rounded-2xl py-6 bg-[#1565C0] hover:bg-[#1255A8] font-bold text-base mt-2 transition-all active:scale-[0.98]"
+                >
+                  Get Started on Clinsights
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
@@ -229,7 +236,7 @@ export function BentoGrid() {
             <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 p-6 md:p-8 flex flex-col gap-2">
               <div className="flex items-center gap-3">
                 <div
-                  className="w-9 h-9 flex-shrink-0 text-[#935F07] md:text-[#FEF0DA]"
+                  className="w-9 h-9 shrink-0 text-[#935F07] md:text-[#FEF0DA]"
                   style={{
                     maskImage: 'url("/assets/how-it-works/mynaui_four-waves-solid.svg")',
                     WebkitMaskImage: 'url("/assets/how-it-works/mynaui_four-waves-solid.svg")',

@@ -95,14 +95,14 @@ export function Hero() {
 
               {/* User Reports Sidebar */}
               <div
-                className="absolute left-[-50px] lg:left-[10px] top-[50%] -translate-y-1/2 lg:translate-y-0 lg:top-[16%] z-30 flex
+                className="absolute left-[-50px] lg:left-[10px] top-[50%] -translate-y-1/2 lg:translate-y-0 lg:top-[20%] z-30 flex
               w-[50px] lg:w-[84px] h-[210px] lg:h-[320px] flex-col gap-1.5 lg:gap-2 rounded-lg lg:rounded-xl
               bg-white p-1 lg:p-2 shadow-lg ring-1 ring-slate-100"
               >
                 {[
                   '/assets/landing-page-assets/woman-with-laptop1.jpg',
                   '/assets/landing-page-assets/successful-entrepreneur1.jpg',
-                  '/assets/landing-page-assets/african-american-student11.jpg',
+                  '/assets/landing-page-assets/african-american-student1.jpg',
                 ].map((src, i) => (
                   <div
                     key={i}
@@ -133,7 +133,7 @@ export function Hero() {
                   h-[210px] lg:h-[320px] overflow-hidden"
                   >
                     <div className="flex items-center gap-2 lg:gap-3">
-                      <div className="flex h-5 w-5 lg:h-10 lg:w-10 flex-shrink-0 items-center justify-center">
+                      <div className="flex h-5 w-5 lg:h-10 lg:w-10 shrink-0 items-center justify-center">
                         <Image
                           src="/assets/landing-page-assets/ai-scan.svg"
                           alt="AI Scan"
@@ -168,7 +168,7 @@ export function Hero() {
                         alt="Key icon"
                         width={14}
                         height={14}
-                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 flex-shrink-0"
+                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 shrink-0"
                       />
                       <span className="text-[7px] lg:text-[12px] font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em]">
                         Key Findings
@@ -185,7 +185,7 @@ export function Hero() {
                         alt="Recommendation icon"
                         width={14}
                         height={14}
-                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 flex-shrink-0"
+                        className="w-3.5 h-3.5 lg:w-6 lg:h-6 shrink-0"
                       />
                       <span className="text-[7px] lg:text-[12px] font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em]">
                         Recommendations
@@ -195,8 +195,8 @@ export function Hero() {
                 </div>
 
                 {/* CTA Button */}
-                <div className="z-20 -mt-3 lg:-mt-4 w-full">
-                  <Link href="/signup">
+                <div className="z-20 -mt-4 lg:-mt-6 w-full">
+                  <Link href="/waitlist">
                     <Button
                       variant="brand"
                       className="w-full rounded-lg lg:rounded-xl py-3 lg:py-7 text-[9px]

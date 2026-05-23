@@ -8,10 +8,11 @@ const FOOTER_LINKS = {
   platform: [
     { name: 'How It Works', href: '/how-it-works' },
     { name: 'Join Waitlist', href: '/waitlist' },
+    { name: 'FAQs', href: '/faqs' },
   ],
   company: [
-    { name: 'About', href: '#' },
-    { name: 'Contact Us', href: '/contact-us' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact Us', href: '/contact' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy-policy' },
@@ -22,15 +23,22 @@ const FOOTER_LINKS = {
 export function Footer() {
   const pathname = usePathname();
 
-  if (
-    pathname === '/waitlist' ||
-    pathname === '/signup' ||
-    pathname === '/login' ||
-    pathname === '/forgot-password' ||
-    pathname === '/verify-otp'
-  )
-    return null;
+  const hideOnRoutes = [
+    '/waitlist',
+    '/signup',
+    '/signin',
+    '/forgot-password',
+    '/verify-otp',
+    '/reset-password',
+    '/payment',
+    '/verification/professional-info',
+    '/verification/credentials-verification',
+    '/verification/verification-complete',
+  ];
 
+  if (hideOnRoutes.includes(pathname)) {
+    return null;
+  }
   return (
     <footer className="relative overflow-hidden bg-[#11519A] pt-12 pb-10 text-white">
       {/* Background Image Asset - Responsive Positioning */}
@@ -66,7 +74,7 @@ export function Footer() {
           {/* Left: Brand Description */}
           <div className="flex flex-col gap-6 max-w-sm">
             <p className="text-[14px] leading-relaxed opacity-80">
-              Clinsight helps you turns complex medical reports into clear, simple explanations you
+              Clinsight helps you turn complex medical reports into clear, simple explanations you
               can actually understand.
             </p>
           </div>

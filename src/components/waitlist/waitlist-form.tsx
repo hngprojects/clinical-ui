@@ -27,12 +27,10 @@ export function WaitlistForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Guard against double submission
     if (isLoading) return;
 
     setError('');
 
-    // Validate email
     if (!isValidEmail(email)) {
       setError('Enter a valid email address');
       return;
@@ -44,7 +42,6 @@ export function WaitlistForm() {
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      // API call with timeout
       const response = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,23 +51,58 @@ export function WaitlistForm() {
 
       clearTimeout(timeoutId);
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      let data: unknown = null;
+      let textBody: string | null = null;
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to join waitlist');
+      if (contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (parseErr) {
+          console.error('WaitlistForm JSON parse error:', parseErr);
+          try {
+            textBody = await response.text();
+          } catch {
+            textBody = null;
+          }
+        }
+      } else {
+        try {
+          textBody = await response.text();
+        } catch {
+          textBody = null;
+        }
       }
 
-      // Success!
+      // Extract a safe error message from `data` (unknown) without using `any`
+      let errorMessage: string | null = null;
+      if (data && typeof data === 'object' && data !== null && 'error' in data) {
+        const maybeError = (data as Record<string, unknown>)['error'];
+        if (typeof maybeError === 'string') errorMessage = maybeError;
+      }
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          setError(errorMessage || textBody || 'This email is already on the waitlist.');
+          return;
+        }
+
+        // console.error(
+        //   'WaitlistForm submission error:',
+        //   errorMessage ?? data ?? textBody ?? 'Unknown error',
+        // );
+        throw new Error(errorMessage || textBody || 'Failed to join waitlist');
+      }
+
       setShowSuccess(true);
     } catch (err) {
       clearTimeout(timeoutId);
+      // console.error('WaitlistForm submission error:', err || 'Unknown error');
 
       if (err instanceof Error && err.name === 'AbortError') {
-        console.error('WaitlistForm submission error: Request timeout');
         setError('Request took too long. Please try again.');
       } else {
         const error = err as Error;
-        console.error('WaitlistForm submission error:', error.message);
         setError(error.message || 'Something went wrong. Please try again.');
       }
     } finally {
@@ -156,16 +188,25 @@ export function WaitlistForm() {
               type="text"
               placeholder="First Name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 50) {
+                  setFirstName(e.target.value);
+                }
+              }}
               onFocus={() => setFocusedField('firstName')}
               onBlur={() => setFocusedField(null)}
               disabled={isLoading}
+              maxLength={50}
               className={`w-full rounded-xl border-2 bg-white py-4 pl-12 pr-4 text-base transition-all placeholder:text-gray-400 focus:outline-none disabled:bg-gray-50 disabled:text-gray-400 ${
                 focusedField === 'firstName'
                   ? 'border-blue-500'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             />
+            {/* Character counter — only shows when close to limit */}
+            {firstName.length >= 40 && (
+              <p className="mt-1 text-right text-xs text-gray-400">{firstName.length}/50</p>
+            )}
           </div>
 
           {/* Email Input */}

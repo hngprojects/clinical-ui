@@ -22,3 +22,6 @@ export const BUSINESS_REACH = [
     info2: 'Sat : 9am - 6pm',
   },
 ];
+
+const ROOT_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+export const BASE_URL_V1 = `${ROOT_URL}/api/v1`;

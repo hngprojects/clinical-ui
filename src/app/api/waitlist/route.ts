@@ -11,12 +11,10 @@ export async function POST(request: Request) {
     }
 
     // Call backend with timeout
-    const WAITLIST_API_URL =
-      process.env.NEXT_PUBLIC_WAITLIST_API_URL ||
-      'https://api.staging.clinsight.hng14.com/api/v1/waitlist';
+    const WAITLIST_API_URL = `${process.env.API_BASE_URL}/api/v1/waitlist`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
       const response = await fetch(WAITLIST_API_URL, {
@@ -42,6 +40,20 @@ export async function POST(request: Request) {
           }
         } else {
           errorMessage = await response.text();
+        }
+
+        // ✅ Catch duplicate email specifically
+        const isDuplicate =
+          response.status === 409 ||
+          errorMessage.toLowerCase().includes('already') ||
+          errorMessage.toLowerCase().includes('exist') ||
+          errorMessage.toLowerCase().includes('duplicate');
+
+        if (isDuplicate) {
+          return NextResponse.json(
+            { error: 'This email is already on the waitlist!' },
+            { status: 409 },
+          );
         }
 
         throw new Error(errorMessage);

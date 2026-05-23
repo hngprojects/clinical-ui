@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Footer } from '@/components/Footer';
+import { ComingSoonProvider } from '@/components/coming-soon';
 import { Toaster } from '@/components/ui/sonner';
 
 const inter = Inter({
@@ -33,11 +34,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn('h-full', 'antialiased', inter.variable, 'font-sans')}>
-      <body className="min-h-full flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <Toaster />
+      <body className="min-h-full flex flex-col bg-neutral-50">
+        <ComingSoonProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Toaster />
+        </ComingSoonProvider>
       </body>
     </html>
   );

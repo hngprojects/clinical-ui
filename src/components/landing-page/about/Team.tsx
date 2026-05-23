@@ -3,23 +3,6 @@
 import React from 'react';
 import Image from 'next/image';
 
-const ImgBlock = ({
-  style,
-  image,
-}: {
-  style?: React.CSSProperties;
-  image?: string;
-  radius?: string;
-}) => {
-  if (!image) return null;
-
-  return (
-    <div className="relative" style={style}>
-      <Image src={image} alt="" fill className="object-cover" />
-    </div>
-  );
-};
-
 const team = [
   {
     name: 'Dr. Amara Okafor',
@@ -47,86 +30,46 @@ const team = [
 
 export default function AboutTeam() {
   return (
-    <>
-      <style>{`
-        @media (max-width: 700px) {
-          .team-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
-
-      {/* ── Team ─────────────────────────────────────────────────────────── */}
-      <section
-        className="flex items-center justify-center flex-col text-center"
-        style={{ gap: '25px', padding: '80px 0px' }}
-      >
+    <section className="py-12 lg:py-24 w-full bg-white">
+      <div className="container mx-auto px-6 lg:px-12 flex flex-col items-start lg:items-center gap-12 lg:gap-16">
         {/* sectionTag */}
-        <div
-          className="flex items-center text-[#F59E0B] font-medium uppercase"
-          style={{ gap: '10px', fontSize: '20px', lineHeight: '100%' }}
-        >
-          <span
-            className="bg-[#F59E0B] shrink-0"
-            style={{ width: '15px', height: '15px', borderRadius: '2px' }}
-          />
+        <div className="flex items-center text-[#F59E0B] font-bold uppercase tracking-wider gap-2.5 text-sm lg:text-base leading-none">
+          <span className="bg-[#F59E0B] shrink-0 w-3 h-3 rounded-none" />
           THE TEAM
         </div>
 
         {/* teamMain */}
-        <div className="flex items-center justify-center flex-col" style={{ gap: '50px' }}>
+        <div className="flex flex-col items-center w-full gap-10 lg:gap-14">
           {/* teamHeading */}
-          <h2
-            className="font-semibold text-[#272727]"
-            style={{ fontSize: '40px', lineHeight: '120%', letterSpacing: '-2%' }}
-          >
+          <h2 className="font-bold text-[#1B1B1B] text-center text-2xl lg:text-5xl leading-[120%] tracking-tight break-words w-full">
             People behind the platform
           </h2>
 
           {/* teamGrid */}
-          <div
-            className="team-grid text-left w-full"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(309px, 1fr))',
-              gap: '80px',
-              maxWidth: '1100px',
-            }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-20 w-full">
             {team.map((member) => (
               <div
                 key={member.name}
-                className="border border-[#F0F0F0] overflow-hidden"
-                style={{ borderRadius: '12px' }}
+                className="bg-white border border-[#F0F0F0] overflow-hidden rounded-2xl flex flex-col"
               >
-                <ImgBlock
-                  style={{
-                    width: '100%',
-                    height: '400px',
-                    objectFit: 'cover',
-                    objectPosition: 'top',
-                    display: 'block',
-                  }}
-                  image={member.pic}
-                  radius="0"
-                />
+                <div className="relative w-full aspect-[3/4] lg:h-[400px] overflow-hidden">
+                  <Image
+                    src={member.pic}
+                    alt={member.name}
+                    fill
+                    className="object-cover object-top transition-transform duration-300 hover:scale-105"
+                  />
+                </div>
 
                 {/* teamInfo */}
-                <div
-                  className="flex items-start justify-start flex-col"
-                  style={{ gap: '5px', padding: '23px 24px' }}
-                >
+                <div className="flex flex-col items-center lg:items-start gap-1 p-6 lg:p-8">
                   {/* teamName */}
-                  <p
-                    className="font-semibold text-[#272727]"
-                    style={{ fontSize: '16px', lineHeight: '32px' }}
-                  >
+                  <p className="font-bold text-[#1B1B1B] text-lg lg:text-2xl leading-tight">
                     {member.name}
                   </p>
 
                   {/* teamRole */}
-                  <p
-                    className="text-[#135BAD] font-normal"
-                    style={{ fontSize: '14px', lineHeight: '26px' }}
-                  >
+                  <p className="text-[#135BAD] font-medium text-sm lg:text-lg leading-relaxed">
                     {member.role}
                   </p>
                 </div>
@@ -134,7 +77,7 @@ export default function AboutTeam() {
             ))}
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

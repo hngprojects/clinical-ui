@@ -1,12 +1,14 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 const FEATURES = [
   {
     title: 'AI Analysis',
     description:
-      'Advanced intelligent models analyze your lab data with precision, identifying patterns, flagging abnormalities, and breaking down complex values into clear, structured insights you can easily understand and act on.',
+      'Advanced intelligent models analyze your lab data with precision, identifying patterns, flagging abnormalities,' +
+      ' and breaking down complex values into clear, structured insights you can easily understand.',
     icon: '/assets/landing-page-assets/ai-scan-blue.svg',
     bgColor: 'bg-[#E8F0F9]',
     iconColor: 'text-[#1565C0]',
@@ -14,7 +16,8 @@ const FEATURES = [
   {
     title: 'Medical Expert Support',
     description:
-      'Get guidance from qualified healthcare professionals who help interpret your results, answer your questions, and provide clarity so you can make informed health decisions with confidence.',
+      'Get guidance from qualified healthcare professionals who help interpret your results, answer your questions, ' +
+      'and provide clarity so you can make informed health decisions with confidence.',
     icon: '/assets/landing-page-assets/analytics-up.svg',
     bgColor: 'bg-[#FEF0DA]',
     iconColor: 'text-[#F59E0B]',
@@ -22,7 +25,8 @@ const FEATURES = [
   {
     title: 'Actionable Insights',
     description:
-      'Move beyond confusing laboratory data with insights specifically tailored to your results. This would include what each value means, what requires attention, and practical next steps to support your health journey.',
+      'Move beyond confusing laboratory data with insights specifically tailored to your results. ' +
+      'This would include what each value means, what requires attention, and practical next steps to support your health journey.',
     icon: '/assets/landing-page-assets/notepad.svg',
     bgColor: 'bg-[#DEF6E7]',
     iconColor: 'text-[#10B981]',
@@ -65,47 +69,55 @@ export function Features() {
 
             <div className="flex items-center justify-start gap-3 w-full lg:justify-start">
               {/* App Store Button */}
-              <button
-                className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
+              <Link href="/waitlist">
+                <button
+                  type="button"
+                  className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
               items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white 
               transition-opacity hover:opacity-80"
-              >
-                <Image
-                  src="/assets/header-assets/apple-app-store.svg"
-                  alt="App Store"
-                  width={20}
-                  height={20}
-                  className="shrink-0"
-                />
-                <div className="flex flex-col items-start leading-none gap-1 min-w-0">
-                  <span className="text-[8px] lg:text-[10px] opacity-70 whitespace-nowrap">
-                    Available on the
-                  </span>
-                  <span className="text-xs lg:text-sm font-bold whitespace-nowrap">App Store</span>
-                </div>
-              </button>
+                >
+                  <Image
+                    src="/assets/header-assets/apple-app-store.svg"
+                    alt="App Store"
+                    width={20}
+                    height={20}
+                    className="shrink-0"
+                  />
+                  <div className="flex flex-col items-start leading-none gap-1 min-w-0">
+                    <span className="text-[8px] lg:text-[10px] opacity-70 whitespace-nowrap">
+                      Available on the
+                    </span>
+                    <span className="text-xs lg:text-sm font-bold whitespace-nowrap">
+                      App Store
+                    </span>
+                  </div>
+                </button>
+              </Link>
               {/* Google Play Button */}
-              <button
-                className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
+              <Link href="/waitlist">
+                <button
+                  type="button"
+                  className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
               items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white 
               transition-opacity hover:opacity-80"
-              >
-                <Image
-                  src="/assets/header-assets/google-play-icon.svg"
-                  alt="Google Play"
-                  width={20}
-                  height={20}
-                  className="shrink-0"
-                />
-                <div className="flex flex-col items-start leading-none gap-1 min-w-0">
-                  <span className="text-[8px] lg:text-[10px] opacity-70 whitespace-nowrap">
-                    Get it on
-                  </span>
-                  <span className="text-xs lg:text-sm font-bold whitespace-nowrap">
-                    Google Play
-                  </span>
-                </div>
-              </button>
+                >
+                  <Image
+                    src="/assets/header-assets/google-play-icon.svg"
+                    alt="Google Play"
+                    width={20}
+                    height={20}
+                    className="shrink-0"
+                  />
+                  <div className="flex flex-col items-start leading-none gap-1 min-w-0">
+                    <span className="text-[8px] lg:text-[10px] opacity-70 whitespace-nowrap">
+                      Get it on
+                    </span>
+                    <span className="text-xs lg:text-sm font-bold whitespace-nowrap">
+                      Google Play
+                    </span>
+                  </div>
+                </button>
+              </Link>
             </div>
           </div>
         </div>

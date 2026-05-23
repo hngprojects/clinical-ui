@@ -3,6 +3,9 @@
 const SIGNUP_URL =
   process.env.NEXT_PUBLIC_SIGNUP_API_URL ||
   'https://api.staging.clinsight.hng14.com/api/v1/auth/signup';
+const SIGNIN_URL =
+  process.env.NEXT_PUBLIC_SIGNIN_API_URL ||
+  'https://api.staging.clinsight.hng14.com/api/v1/auth/login';
 const VERIFY_OTP_URL =
   process.env.NEXT_PUBLIC_VERIFY_OTP_API_URL ||
   'https://api.staging.clinsight.hng14.com/api/v1/auth/verify-otp';
@@ -84,6 +87,24 @@ export async function signupAction(data: { fullName: string; email: string; pass
     return await handleApiResponse(response, 'Signup failed');
   } catch (error) {
     console.error('Signup Error:', error);
+    return { error: 'Unable to reach the server. Please check your connection.' };
+  }
+}
+
+export async function signinAction(data: { email: string; password: string }) {
+  try {
+    const response = await fetch(SIGNIN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+    });
+
+    return await handleApiResponse(response, 'Signin failed');
+  } catch (error) {
+    console.error('Signin Error:', error);
     return { error: 'Unable to reach the server. Please check your connection.' };
   }
 }
