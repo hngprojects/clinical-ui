@@ -74,7 +74,7 @@ export const terms: Term[] = [
     content: 'If you have any questions or concerns about these Terms, you can reach us at:',
     bullets: [
       { label: 'Email', value: 'support@clinsight.com' },
-      { label: 'Phone', value: '' },
+      { label: 'Phone', value: '+234 806 - 442 - 0456' },
     ],
   },
 ];
