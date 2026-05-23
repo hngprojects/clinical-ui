@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { triggerComingSoonModal } from '@/components/coming-soon';
+import Link from 'next/link';
 
 const FEATURES = [
   {
@@ -69,51 +69,55 @@ export function Features() {
 
             <div className="flex items-center justify-start gap-3 w-full lg:justify-start">
               {/* App Store Button */}
-              <button
-                type="button"
-                onClick={() => triggerComingSoonModal()}
-                className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
+              <Link href="/waitlist">
+                <button
+                  type="button"
+                  className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
               items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white 
               transition-opacity hover:opacity-80"
-              >
-                <Image
-                  src="/assets/header-assets/apple-app-store.svg"
-                  alt="App Store"
-                  width={20}
-                  height={20}
-                  className="shrink-0"
-                />
-                <div className="flex flex-col items-start leading-none gap-1 min-w-0">
-                  <span className="text-[8px] lg:text-[10px] opacity-70 whitespace-nowrap">
-                    Available on the
-                  </span>
-                  <span className="text-xs lg:text-sm font-bold whitespace-nowrap">App Store</span>
-                </div>
-              </button>
+                >
+                  <Image
+                    src="/assets/header-assets/apple-app-store.svg"
+                    alt="App Store"
+                    width={20}
+                    height={20}
+                    className="shrink-0"
+                  />
+                  <div className="flex flex-col items-start leading-none gap-1 min-w-0">
+                    <span className="text-[8px] lg:text-[10px] opacity-70 whitespace-nowrap">
+                      Available on the
+                    </span>
+                    <span className="text-xs lg:text-sm font-bold whitespace-nowrap">
+                      App Store
+                    </span>
+                  </div>
+                </button>
+              </Link>
               {/* Google Play Button */}
-              <button
-                type="button"
-                onClick={() => triggerComingSoonModal()}
-                className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
+              <Link href="/waitlist">
+                <button
+                  type="button"
+                  className="flex flex-1 lg:flex-none lg:w-[180px] h-[50px] lg:h-[55px] 
               items-center gap-2 rounded-[12px] bg-[#1B1B1B] px-4 lg:px-6 py-2 text-white 
               transition-opacity hover:opacity-80"
-              >
-                <Image
-                  src="/assets/header-assets/google-play-icon.svg"
-                  alt="Google Play"
-                  width={20}
-                  height={20}
-                  className="shrink-0"
-                />
-                <div className="flex flex-col items-start leading-none gap-1 min-w-0">
-                  <span className="text-[8px] lg:text-[10px] opacity-70 whitespace-nowrap">
-                    Get it on
-                  </span>
-                  <span className="text-xs lg:text-sm font-bold whitespace-nowrap">
-                    Google Play
-                  </span>
-                </div>
-              </button>
+                >
+                  <Image
+                    src="/assets/header-assets/google-play-icon.svg"
+                    alt="Google Play"
+                    width={20}
+                    height={20}
+                    className="shrink-0"
+                  />
+                  <div className="flex flex-col items-start leading-none gap-1 min-w-0">
+                    <span className="text-[8px] lg:text-[10px] opacity-70 whitespace-nowrap">
+                      Get it on
+                    </span>
+                    <span className="text-xs lg:text-sm font-bold whitespace-nowrap">
+                      Google Play
+                    </span>
+                  </div>
+                </button>
+              </Link>
             </div>
           </div>
         </div>

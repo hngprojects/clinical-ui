@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { triggerComingSoonModal } from '@/components/coming-soon';
+import Link from 'next/link';
 
 export function MedicalProfessional() {
   return (
@@ -41,14 +41,15 @@ export function MedicalProfessional() {
               </p>
             </div>
 
-            <Button
-              className="w-fit h-[42px] lg:h-[48px] rounded-[12px] 
+            <Link href="/signup">
+              <Button
+                className="w-fit h-[42px] lg:h-[48px] rounded-[12px] 
               bg-[#1565C0] px-4 lg:px-6 py-2 lg:py-3 text-[13px] lg:text-sm font-bold 
               text-white hover:bg-[#1565C0]/90 transition-all shadow-lg"
-              onClick={() => triggerComingSoonModal()}
-            >
-              Get Started as a Doctor
-            </Button>
+              >
+                Get Started as a Doctor
+              </Button>
+            </Link>
           </div>
 
           {/* Right Visual (side-image) */}
