@@ -49,7 +49,7 @@ export function EmailForm({
             Email address
           </label>
           <div className="w-full h-14 px-4 py-2.5 rounded-lg border border-[#BDC3C3] bg-white flex items-center gap-3 focus-within:border-[#1565C0] focus-within:ring-2 focus-within:ring-[#1565C0]/10 transition-all duration-200">
-            <div className="size-5 relative flex-shrink-0">
+            <div className="size-5 relative shrink-0">
               <Image
                 src="/assets/forgot-password/ai-mail-02.svg"
                 alt="Mail Icon"
@@ -71,7 +71,7 @@ export function EmailForm({
 
           {errorMsg && (
             <div className="flex items-center gap-2 text-red-600 text-sm font-medium pt-1 animate-slideUp">
-              <div className="relative size-4 flex-shrink-0">
+              <div className="relative size-4 shrink-0">
                 <Image
                   src="/assets/forgot-password/alert-circle.svg"
                   alt="Error Alert"
@@ -87,7 +87,8 @@ export function EmailForm({
         <div className="w-full flex flex-col gap-5 mt-2">
           <button
             type="submit"
-            disabled={isLoading || !email}
+            // disabled={isLoading || email}
+            disabled={isLoading}
             className="w-full h-14 bg-[#1565C0] hover:bg-[#0D47A1] text-white font-medium text-base font-['Inter'] leading-6 rounded-xl transition-all duration-200 shadow-[0px_4px_12px_rgba(21,101,192,0.2)] flex items-center justify-center gap-2"
           >
             {isLoading ? 'Sending Request...' : 'Send Reset Code'}

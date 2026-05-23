@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { useForm } from 'react-hook-form';
@@ -20,15 +20,16 @@ import {
 import { Button } from '@/components/ui/button';
 import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { cn } from '@/lib/utils';
-import { signupAction } from '@/actions/auth-actions';
-import { toast } from 'sonner';
+// import { signupAction } from '@/actions/auth-actions';
+// import { toast } from 'sonner';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 const signupSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
   phone: z
     .string()
     .min(1, 'Phone number is required')
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Enter a valid phone number (e.g., +1234567890)'),
+    .regex(/^0?[789]\d{9}$/, 'Enter a valid phone number (e.g., 08012345678)'),
   email: z.string().email('Enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   agreed: z.boolean().refine((val) => val === true, {
@@ -41,8 +42,7 @@ type SignupValues = z.infer<typeof signupSchema>;
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const router = useRouter();
-
+  // const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -60,18 +60,23 @@ export function SignupForm() {
   });
 
   const onSubmit = async (data: SignupValues) => {
-    const result = await signupAction({
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-    });
+    // const result = await signupAction({
+    //   fullName: data.fullName,
+    //   email: data.email,
+    //   password: data.password,
+    // });
 
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success('Account created! Please check your email for the OTP.');
-      router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
-    }
+    // if (result.error) {
+    //   toast.error(result.error);
+    // } else {
+    //   toast.success('Account created! Please check your email for the OTP.');
+    //   router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+    // }
+
+    triggerComingSoonModal({
+      title: 'Sign up is coming soon',
+      description: `We are still preparing the account creation flow for ${data.fullName}.`,
+    });
   };
 
   return (

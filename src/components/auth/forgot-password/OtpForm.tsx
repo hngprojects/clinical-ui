@@ -117,7 +117,8 @@ export function OtpForm({
 
         <button
           type="submit"
-          disabled={isLoading || otp.join('').length < 6}
+          // disabled={isLoading || otp.join('').length < 6}
+          disabled={isLoading}
           className="w-full max-w-[520px] h-14 bg-[#1565C0] hover:bg-[#0D47A1] disabled:opacity-50 text-white font-medium text-base font-['Inter'] leading-6 rounded-xl transition-all duration-200 mt-2"
         >
           {isLoading ? 'Verifying...' : 'Verify Connection'}

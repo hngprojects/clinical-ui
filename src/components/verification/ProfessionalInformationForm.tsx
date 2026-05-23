@@ -8,6 +8,7 @@ import { ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { triggerComingSoonModal } from '@/components/coming-soon';
 
 const SPECIALIZATIONS = ['General Practice', 'Orthopedics', 'Neurology'];
 
@@ -126,6 +127,7 @@ export default function ProfessionalInformationForm() {
 
           <motion.button
             type="button"
+            onClick={() => triggerComingSoonModal()}
             className="body_large btn__primary text-white bg-primary-blue w-full"
             whileHover={{ scale: 1.015, transition: { duration: 0.15 } }}
             whileTap={{ scale: 0.96, transition: { duration: 0.1 } }}
