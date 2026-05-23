@@ -10,9 +10,9 @@ export default function ContactPageHeader() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: 'easeOut' }}
     >
-      <h1 className="text-[32px] font-semibold leading-[130%] tracking-[-2%] text-center text-heading-text md:font-bold md:text-[64px] md:leading-[120%]">
+      <h1 className="text-[32px] font-semibold leading-[130%] tracking-[-2%] text-center text-heading-text md:font-bold md:text-[64px] md:leading-[120%] ">
         We&apos;d love to{' '}
-        <span className="text-white bg-primary-blue p-2.5 block w-fit mx-auto md:block lg:inline  sm:inline">
+        <span className="text-white bg-primary-blue p-2.5 block w-fit mx-auto md:block lg:inline  sm:inline mt-4 sm:mt-0 md:mt-4 lg:mt-0">
           {' '}
           hear from you.
         </span>
