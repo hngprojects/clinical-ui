@@ -58,15 +58,5 @@ Icons come from `@hugeicons/react` (`HugeiconsIcon`) with icon definitions impor
 
 UI primitives are shadcn/ui components in `src/components/ui/`.
 
-### Environment Variables
-
-| Variable | Purpose |
-|---|---|
-| `NEXT_PUBLIC_APP_URL` | Canonical app URL (default: `http://localhost:3000`) |
-| `NEXT_PUBLIC_APP_NAME` | App display name (default: `Clinsight`) |
-| `NEXT_PUBLIC_SIGNUP_API_URL` | External signup endpoint |
-| `NEXT_PUBLIC_SIGNIN_API_URL` | External signin endpoint |
-| `NEXT_PUBLIC_VERIFY_OTP_API_URL` | External OTP verification endpoint |
-| `NEXT_PUBLIC_RESEND_OTP_API_URL` | External resend OTP endpoint |
 
 All API URLs fall back to `https://api.staging.clinsight.hng14.com/api/v1/auth/*` if unset.

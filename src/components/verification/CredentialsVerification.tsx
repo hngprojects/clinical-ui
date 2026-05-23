@@ -4,7 +4,6 @@ import InputFieldContainer, { VerificationInputField } from '@/components/ui/Inp
 import VerificationSteps from '@/components/verification/VerificationSteps';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
 import Image from 'next/image';
 import React from 'react';
 
@@ -61,7 +60,7 @@ export default function CredentialsVerificationForm() {
                 <input
                   id="nin"
                   type="text"
-                  placeholder="Enter your 11-digin NIN"
+                  placeholder="Enter your 11-digit NIN"
                   className="py-3 w-full input__field"
                 />
               </InputFieldContainer>
@@ -102,7 +101,7 @@ export default function CredentialsVerificationForm() {
 
           <div>
             <motion.button
-              type="button"
+              type="submit"
               className="body_large btn__primary text-white bg-primary-blue w-full"
               whileHover={{ scale: 1.015, transition: { duration: 0.15 } }}
               whileTap={{ scale: 0.96, transition: { duration: 0.1 } }}

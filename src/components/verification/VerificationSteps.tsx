@@ -1,8 +1,6 @@
 'use client';
 
-import { Check } from 'lucide-react';
 import { motion } from 'motion/react';
-import React from 'react';
 
 type StepItem = {
   label: string;
