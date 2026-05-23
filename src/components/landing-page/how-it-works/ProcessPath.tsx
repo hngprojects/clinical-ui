@@ -42,7 +42,7 @@ export function ProcessPath() {
   return (
     <section className="relative py-16 lg:py-32 bg-white overflow-hidden">
       <div className="container mx-auto px-4 lg:px-6 relative max-w-[1200px] flex justify-center">
-        <div className="relative h-[750px] sm:h-[1000px] lg:h-[2500px] w-full mt-10">
+        <div className="relative h-[900px] sm:h-[1000px] lg:h-[2500px] w-full mt-10">
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none z-0"
             viewBox="0 0 100 100"

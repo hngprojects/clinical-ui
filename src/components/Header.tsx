@@ -26,6 +26,9 @@ export function Header() {
     '/verify-otp',
     '/reset-password',
     '/payment',
+    '/verification/professional-info',
+    '/verification/credentials-verification',
+    '/verification/verification-complete',
   ];
 
   if (hideOnRoutes.includes(pathname)) {
@@ -66,7 +69,6 @@ export function Header() {
           })}
         </nav>
 
-        {/* Desktop Download Button */}
         <div className="hidden lg:flex items-center gap-4">
           <button className="flex w-[226px] h-[46.1px] items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 transition-all hover:bg-slate-50">
             <div className="flex items-center gap-2">
