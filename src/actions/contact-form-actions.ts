@@ -15,7 +15,7 @@ export async function sendMessageAction(formData: ContactFormDataType) {
   const { fullName: full_name, email, message, termsAgreement } = validatedData.data;
 
   try {
-    const response = await fetch(`${process.env.BASE_URL}/api/v1/contact`, {
+    const response = await fetch(`${process.env.API_BASE_URL}/api/v1/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ full_name, email, message, termsAgreement }),
