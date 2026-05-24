@@ -87,7 +87,7 @@ export function BentoGrid() {
                   type="button"
                   className="w-full rounded-2xl py-6 bg-[#1565C0] hover:bg-[#1255A8] font-bold text-base mt-2 transition-all active:scale-[0.98]"
                 >
-                  Get Started on Clinsights
+                  Get Started on Clinsight
                 </Button>
               </Link>
             </div>
