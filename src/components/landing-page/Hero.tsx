@@ -51,7 +51,7 @@ export function Hero() {
               </h1>
               <h1 className="text-[28px] lg:text-[48px] font-bold leading-[1.2] tracking-[-0.02em] text-[#1B1B1B]">
                 <span className="relative inline-block px-3 text-white">
-                  <span className="absolute inset-0 -skew-x-2 rounded bg-[#1565C0]" />
+                  <span className="absolute inset-0 -skew-x-2 rounded-lg bg-[#1565C0]" />
                   <span className="relative">No Waiting!</span>
                 </span>
               </h1>
