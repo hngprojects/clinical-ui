@@ -70,7 +70,7 @@ export function FAQ() {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="rounded-[16px] border border-[#D0D0D0] bg-[#D0D0D0] transition-all data-[state=open]:bg-[#FAFAFA] data-[state=open]:shadow-sm overflow-hidden"
+                className="rounded-[16px] border border-[#D0D0D0] bg-[#FAFAFA] transition-all data-[state=open]:bg-[#FAFAFA] data-[state=open]:shadow-sm overflow-hidden"
               >
                 <AccordionTrigger className="py-5 px-5 hover:no-underline focus:ring-0 focus:outline-none text-[16px] lg:text-[18px] font-bold text-[#1B1B1B] text-left">
                   {faq.question}
