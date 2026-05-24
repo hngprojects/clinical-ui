@@ -6,19 +6,16 @@ import { useRouter } from 'next/navigation';
 import { triggerComingSoonModal } from '@/components/coming-soon';
 
 interface ResetPasswordFormProps {
-  onSuccess: () => void;
+  onSuccess?: () => void;
   token?: string;
 }
 
-export function ResetPasswordForm({
-  onSuccess,
-  token = 'active_session_token',
-}: ResetPasswordFormProps) {
+export function ResetPasswordForm({}: ResetPasswordFormProps) {
   const router = useRouter();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccessState, setIsSuccessState] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading] = useState(false);
+  const [isSuccessState] = useState(false);
+  const [error] = useState<string | null>(null);
   const [form, setForm] = useState({ password: '', confirmPassword: '' });
   const [visibility, setVisibility] = useState({ password: false, confirm: false });
 
@@ -33,8 +30,6 @@ export function ResetPasswordForm({
   );
 
   const metRulesCount = useMemo(() => requirements.filter((r) => r.valid).length, [requirements]);
-  const isFormValid =
-    metRulesCount === 4 && form.password === form.confirmPassword && form.password.length > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
