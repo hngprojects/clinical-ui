@@ -10,15 +10,48 @@ const ResponsiveStyle = () => (
     `}</style>
 );
 
+import { motion, Variants } from 'motion/react';
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.21, 1.02, 0.73, 1],
+    },
+  },
+};
+
 export default function AboutHero() {
   return (
-    <div className="about-hero-section w-full flex flex-col items-center justify-center font-sans">
+    <div className="about-hero-section w-full flex flex-col items-center justify-center font-sans overflow-hidden">
       <ResponsiveStyle />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="container mx-auto px-6 lg:px-12 text-center flex items-center justify-center flex-col py-12 lg:py-24 max-w-[900px] gap-8 lg:gap-12">
+      <motion.section
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="container mx-auto px-6 lg:px-12 text-center flex items-center justify-center flex-col py-12 lg:py-24 max-w-[900px] gap-8 lg:gap-12"
+      >
         {/* heroTop */}
-        <div className="flex items-center justify-center flex-col relative gap-2 w-full">
+        <motion.div
+          variants={fadeInUp}
+          className="flex items-center justify-center flex-col relative gap-2 w-full"
+        >
           {/* heroHeading */}
           <h1 className="hero-heading font-bold text-[#1B1B1B] text-2xl md:text-3xl lg:text-[64px] leading-[1.1] tracking-tight flex flex-col items-center md:block">
             <span className="relative inline-block mb-6 md:mb-0 md:mr-4 lg:mr-6">
@@ -38,15 +71,18 @@ export default function AboutHero() {
               Human.
             </span>
           </h1>
-        </div>
+        </motion.div>
 
         {/* heroSubtext */}
-        <p className="text-[#5E5E5E] font-normal max-w-[780px] mx-auto text-sm lg:text-[20px] leading-[1.6] tracking-tight">
+        <motion.p
+          variants={fadeInUp}
+          className="text-[#5E5E5E] font-normal max-w-[780px] mx-auto text-sm lg:text-[20px] leading-[1.6] tracking-tight"
+        >
           Clinsight simplifies complex lab results, so you can focus on your health. Clinsight was
           built to bridge the gap between complex medical reports and the people who deserve to
           understand them - with clarity, empathy, and clinical rigor.
-        </p>
-      </section>
+        </motion.p>
+      </motion.section>
     </div>
   );
 }
