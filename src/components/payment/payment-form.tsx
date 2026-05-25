@@ -185,7 +185,7 @@ export function PaymentForm({ amount = 5000, onSubmit }: PaymentFormProps) {
                 Account Number: <span className="font-medium text-gray-900">0123456789</span>
               </p>
               <p>
-                Account Name: <span className="font-medium text-gray-900">Clinsights Health</span>
+                Account Name: <span className="font-medium text-gray-900">Clinsight Health</span>
               </p>
               <p>
                 Amount:{' '}
