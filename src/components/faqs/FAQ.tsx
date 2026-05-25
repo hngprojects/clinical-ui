@@ -46,10 +46,10 @@ export function FAQ() {
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <div className="mb-12 lg:mb-16 flex flex-col items-center text-center">
-          <div className="mb-6 flex w-fit h-auto items-center justify-center gap-2 rounded-full bg-[#FFFFFE] px-4 py-2 border border-slate-50 shadow-sm">
-            <span className="h-2 w-2 rounded-sm bg-[#F59E0B]" />
-            <span className="text-[10px] lg:text-xs font-bold text-[#F59E0B] uppercase tracking-wider">
-              Clarity, simplified
+          <div className="flex w-fit h-auto items-center justify-center gap-2 rounded-full bg-[#E8F0F9] px-4 py-2 border border-slate-50">
+            <span className="h-2 w-2 bg-[#1565C0]" />
+            <span className="text-[10px] lg:text-xs font-bold text-[#1565C0] capitalize tracking-wider">
+              FAQs
             </span>
           </div>
 
@@ -70,7 +70,7 @@ export function FAQ() {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="rounded-[16px] border border-[#D0D0D0] bg-[#FAFAFA] transition-all data-[state=open]:bg-[#FAFAFA] data-[state=open]:shadow-sm overflow-hidden"
+                className="rounded-[16px] border border-[#D0D0D0] bg-white transition-all data-[state=open]:bg-white data-[state=open]:shadow-sm overflow-hidden"
               >
                 <AccordionTrigger className="py-5 px-5 hover:no-underline focus:ring-0 focus:outline-none text-[16px] lg:text-[18px] font-bold text-[#1B1B1B] text-left">
                   {faq.question}
