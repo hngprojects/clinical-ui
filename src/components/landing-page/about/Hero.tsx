@@ -41,7 +41,7 @@ export default function AboutHero() {
         </div>
 
         {/* heroSubtext */}
-        <p className="text-[#5E5E5E] font-normal max-w-195 mx-auto text-sm lg:text-[20px] leading-[162%] tracking-[-1%] px-12 sm:px-8">
+        <p className="text-[#5E5E5E] font-normal max-w-195 mx-auto text-sm lg:text-[20px] leading-[162%] tracking-[-1%] px-10 sm:px-8">
           Clinsights simplifies complex lab results, so you can focus on your health. Clinsight was
           built to bridge the gap between complex medical reports and the people who deserve to
           understand them - with clarity, empathy, and clinical rigor.
