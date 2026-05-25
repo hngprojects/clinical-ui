@@ -122,8 +122,8 @@ export default function ForgotPasswordContent() {
   };
 
   return (
-    <main className="relative min-h-screen w-full flex flex-col overflow-y-auto bg-[#FFFFFE]">
-      <div className="absolute inset-0 z-0 h-full w-full">
+    <main className="relative h-screen w-full flex flex-col overflow-hidden bg-[#FFFFFE]">
+      <div className="fixed inset-0 z-0 h-full w-full">
         <Image
           src="/assets/forgot-password/BG.png"
           alt="Lab Background Frame"
@@ -138,7 +138,7 @@ export default function ForgotPasswordContent() {
         role="button"
         tabIndex={0}
         aria-label="Go back"
-        className="absolute top-10 left-8 md:left-20 z-20 flex items-center gap-2.5 select-none"
+        className="fixed top-10 left-8 md:left-20 z-20 flex items-center gap-2.5 select-none"
       >
         <div className="relative size-8 md:size-10">
           <Image
@@ -152,8 +152,8 @@ export default function ForgotPasswordContent() {
           Clinsights
         </span>
       </header>
-      <div className="relative z-10 w-full flex-1 flex items-center justify-center px-4 pt-28 pb-12 md:pt-36 md:pb-16">
-        <div className="w-full md:w-165.25 md:h-200 bg-white rounded-[32px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-10 md:px-17.5 md:pt-22.5 md:pb-16 flex flex-col items-center justify-between transition-all duration-300">
+      <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
+        <div className="w-full md:w-150 bg-white rounded-[24px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-5 py-6 md:px-12 md:py-8 flex flex-col items-center justify-between transition-all duration-300">
           <div className="w-full flex flex-col items-center flex-1 justify-start">
             {step === 'email' && (
               <EmailForm
