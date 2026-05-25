@@ -46,32 +46,32 @@ export function OtpForm({
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center flex-1 max-w-[521px] mx-auto animate-fadeIn">
-      <div className="relative size-16 mb-[71px] flex items-center justify-center bg-[#D6E3FF] rounded-full">
+    <div className="w-full flex flex-col items-center justify-center max-w-[480px] mx-auto animate-fadeIn">
+      <div className="relative size-10 mb-4 md:mb-5 flex items-center justify-center bg-[#D6E3FF] rounded-full">
         <Image
           src="/assets/forgot-password/icon-padlock.svg"
           alt="Lock Identity Verification"
-          width={24}
-          height={28}
+          width={18}
+          height={22}
           className="object-contain"
         />
       </div>
 
-      <h1 className="text-center text-[#191C21] text-4xl font-bold font-['Inter'] leading-[52px] mb-4">
+      <h1 className="text-center text-[#191C21] text-xl md:text-2xl font-bold font-['Inter'] leading-tight mb-1.5">
         Verify Your Identity
       </h1>
 
-      <div className="text-center mb-[75px] flex flex-col items-center justify-center">
-        <span className="text-[#424752] text-base font-medium font-['Inter'] leading-6 block">
+      <div className="text-center mb-4 md:mb-6 flex flex-col items-center justify-center">
+        <span className="text-[#424752] text-xs md:text-sm font-medium font-['Inter'] leading-relaxed block">
           We&apos;ve sent a 6-digit verification code to
         </span>
-        <span className="text-[#191C21] text-base font-medium font-['Inter'] leading-6 block mt-1">
+        <span className="text-[#191C21] text-xs md:text-sm font-medium font-['Inter'] leading-relaxed block mt-0.5">
           {maskEmail(email)}
         </span>
       </div>
 
-      <form onSubmit={onSubmit} className="w-full flex flex-col items-center gap-6">
-        <div className="flex justify-between items-center gap-3 sm:gap-5 w-full max-w-[384px]">
+      <form onSubmit={onSubmit} className="w-full flex flex-col items-center gap-3 md:gap-5">
+        <div className="flex justify-between items-center gap-2 sm:gap-4 w-full max-w-[340px]">
           {otp.map((data, index) => (
             <input
               key={index}
@@ -86,7 +86,7 @@ export function OtpForm({
               value={data}
               onChange={(e) => handleOtpChange(e.target, index)}
               onKeyDown={(e) => handleOtpKeyDown(e, index)}
-              className="w-12 h-14 px-3 py-3 text-center text-[#191C21] text-2xl font-medium font-['Inter'] bg-[#F8FAFC] rounded-lg border border-slate-300 focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 outline-none transition-all disabled:opacity-50"
+              className="w-9 h-11 md:w-11 md:h-12 px-2 py-2 text-center text-[#191C21] text-lg md:text-xl font-medium font-['Inter'] bg-[#F8FAFC] rounded-lg border border-slate-300 focus:border-[#1565C0] focus:ring-2 focus:ring-[#1565C0]/10 outline-none transition-all disabled:opacity-50"
             />
           ))}
         </div>
