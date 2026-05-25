@@ -74,7 +74,7 @@ export function FAQ() {
           whileInView="visible"
           viewport={{ once: true, margin: '-100px' }}
           variants={containerVariants}
-          className="mb-12 lg:mb-16 flex flex-col items-center text-center"
+          className="mb-12 lg:mb-16 flex flex-col items-center text-center gap-4 lg:gap-6"
         >
           <motion.div
             variants={fadeInUp}
