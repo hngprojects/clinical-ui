@@ -21,35 +21,35 @@ export function EmailForm({
   errorMsg,
 }: EmailFormProps) {
   return (
-    <div className="w-full flex flex-col items-center justify-center flex-1 max-w-[521px] mx-auto animate-fadeIn">
-      <div className="relative size-12 mb-6 md:mb-8 flex items-center justify-center bg-[#D6E3FF] rounded-full">
+    <div className="w-full flex flex-col items-center justify-center max-w-[480px] mx-auto animate-fadeIn">
+      <div className="relative size-10 mb-4 md:mb-5 flex items-center justify-center bg-[#D6E3FF] rounded-full">
         <Image
           src="/assets/forgot-password/icon-padlock.svg"
           alt="Lock Verification"
-          width={20}
-          height={24}
+          width={18}
+          height={22}
           className="object-contain"
         />
       </div>
 
-      <h1 className="text-center text-[#191C21] text-2xl sm:text-3xl font-bold font-['Inter'] leading-tight tracking-tight mb-2">
+      <h1 className="text-center text-[#191C21] text-xl sm:text-2xl font-bold font-['Inter'] leading-tight tracking-tight mb-1.5">
         Forgot Password?
       </h1>
-      <p className="text-center text-[#424752] text-sm md:text-base font-medium font-['Inter'] leading-relaxed mb-6 max-w-[480px]">
+      <p className="text-center text-[#424752] text-xs md:text-sm font-medium font-['Inter'] leading-relaxed mb-4 max-w-[400px]">
         Enter your registered email address and we&apos;ll send you a secure link to reset your
         password.
       </p>
 
-      <form onSubmit={onSubmit} className="w-full flex flex-col gap-4 md:gap-5">
-        <div className="w-full flex flex-col justify-start items-start gap-1.5">
+      <form onSubmit={onSubmit} className="w-full flex flex-col gap-3 md:gap-4">
+        <div className="w-full flex flex-col justify-start items-start gap-1">
           <label
             htmlFor="email"
-            className="text-[#191C21] text-sm md:text-base font-medium font-['Inter'] leading-relaxed"
+            className="text-[#191C21] text-xs md:text-sm font-medium font-['Inter'] leading-relaxed"
           >
             Email address
           </label>
-          <div className="w-full h-11 md:h-12 px-4 py-2 rounded-lg border border-[#BDC3C3] bg-white flex items-center gap-3 focus-within:border-[#1565C0] focus-within:ring-2 focus-within:ring-[#1565C0]/10 transition-all duration-200">
-            <div className="size-4 relative shrink-0">
+          <div className="w-full h-10 md:h-11 px-4 py-2 rounded-lg border border-[#BDC3C3] bg-white flex items-center gap-2.5 focus-within:border-[#1565C0] focus-within:ring-2 focus-within:ring-[#1565C0]/10 transition-all duration-200">
+            <div className="size-3.5 relative shrink-0">
               <Image
                 src="/assets/forgot-password/ai-mail-02.svg"
                 alt="Mail Icon"
@@ -65,7 +65,7 @@ export function EmailForm({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="chioma@gmail.com"
-              className="flex-1 h-full bg-transparent text-[#191C21] placeholder-[#2D2F2F] placeholder:opacity-40 text-sm font-normal font-['Inter'] outline-none border-none p-0 focus:ring-0 disabled:opacity-50"
+              className="flex-1 h-full bg-transparent text-[#191C21] placeholder-[#2D2F2F] placeholder:opacity-40 text-xs md:text-sm font-normal font-['Inter'] outline-none border-none p-0 focus:ring-0 disabled:opacity-50"
             />
           </div>
 
