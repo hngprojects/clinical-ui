@@ -44,7 +44,12 @@ export default function ProfessionalInformationForm() {
       const file = acceptedFiles[0];
       if (!file) return;
       setPassportFile(file);
-      if (file.type.startsWith('image/')) setPassportPreview(URL.createObjectURL(file));
+      if (passportPreview) URL.revokeObjectURL(passportPreview);
+      if (file.type.startsWith('image/')) {
+        setPassportPreview(URL.createObjectURL(file));
+      } else {
+        setPassportPreview(null);
+      }
     },
   });
 
@@ -127,7 +132,7 @@ export default function ProfessionalInformationForm() {
             <motion.div variants={fieldVariants}>
               <InputFieldContainer label="Upload passport photograph" htmlFor="passportPhotograph">
                 <div {...getRootProps()}>
-                  <input {...getInputProps()} />
+                  <input {...getInputProps({ id: 'passportPhotograph' })} />
                   <motion.div
                     className="flex min-h-35 flex-col items-center justify-center rounded-[16px] border border-dashed px-6 py-4 text-center gap-2.5 cursor-pointer"
                     animate={{

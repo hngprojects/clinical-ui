@@ -40,7 +40,12 @@ export default function CredentialsVerificationForm() {
       const file = acceptedFiles[0];
       if (!file) return;
       setLicenseFile(file);
-      if (file.type.startsWith('image/')) setLicensePreview(URL.createObjectURL(file));
+      if (licensePreview) URL.revokeObjectURL(licensePreview);
+      if (file.type.startsWith('image/')) {
+        setLicensePreview(URL.createObjectURL(file));
+      } else {
+        setLicensePreview(null);
+      }
     },
   });
 
@@ -104,7 +109,7 @@ export default function CredentialsVerificationForm() {
             <motion.div variants={fieldVariants}>
               <InputFieldContainer label="Upload medical license" htmlFor="medicalLicense">
                 <div {...getRootProps()}>
-                  <input {...getInputProps()} />
+                  <input {...getInputProps({ id: 'medicalLicense' })} />
                   <motion.div
                     className="flex min-h-35 flex-col items-center justify-center rounded-[16px] border border-dashed px-6 py-4 text-center gap-2.5 cursor-pointer"
                     animate={{
