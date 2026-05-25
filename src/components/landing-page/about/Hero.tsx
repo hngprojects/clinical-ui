@@ -53,21 +53,21 @@ export default function AboutHero() {
           className="flex items-center justify-center flex-col relative gap-2 w-full"
         >
           {/* heroHeading */}
-          <h1 className="hero-heading font-bold text-[#1B1B1B] text-2xl md:text-3xl lg:text-[64px] leading-[1.1] tracking-tight flex flex-col items-center md:block">
-            <span className="relative inline-block mb-6 md:mb-0 md:mr-4 lg:mr-6">
+          <h1 className="font-bold flex items-start justify-center max-sm:flex-col max-sm:items-center text-[#1B1B1B] relative text-[32px] lg:text-[64px] leading-[120%] tracking-tight gap-x-3.25 gap-y-3 wrap-break-word">
+            <span className="relative inline-block pb-4 lg:pb-8">
               Making lab results
               <div className="absolute -bottom-5 lg:-bottom-10 left-0 w-full">
                 <Image
                   src="/assets/about-page-assets/hero-icon.svg"
                   alt=""
-                  width={842}
-                  height={40}
+                  width={542}
+                  height={50}
                   className="w-full"
                   style={{ display: 'block' }}
                 />
               </div>
             </span>
-            <span className="bg-[#1565C0] text-white inline-block px-4 py-1 lg:px-6 lg:py-2 rounded-lg lg:rounded-xl">
+            <span className="bg-[#1565C0] text-white inline-block px-4 lg:px-6 rounded-lg lg:rounded-xl shrink-0">
               Human.
             </span>
           </h1>
