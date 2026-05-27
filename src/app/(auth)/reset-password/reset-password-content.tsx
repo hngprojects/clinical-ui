@@ -4,11 +4,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { ResetPasswordForm } from '@/components/auth/reset-password/ResetPasswordForm';
 import { SuccessView } from '@/components/auth/reset-password/SuccessView';
+import { useRouter } from 'next/navigation';
+import { createAuthBackHandlers } from '@/lib/auth-navigation';
 
 type ResetStep = 'form' | 'success';
 
 export default function ResetPasswordContent() {
+  const router = useRouter();
   const [step, setStep] = useState<ResetStep>('form');
+  const { handleBack } = createAuthBackHandlers(router);
 
   return (
     <main className="relative min-h-screen w-full flex flex-col overflow-y-auto bg-[#FFFFFE]">
@@ -23,13 +27,19 @@ export default function ResetPasswordContent() {
         <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
       </div>
 
-      <header className="absolute top-10 left-8 md:left-20 z-10 flex items-center gap-2.5 select-none">
+      <header
+        onClick={handleBack}
+        role="button"
+        tabIndex={0}
+        aria-label="Go back"
+        className="absolute top-10 left-8 md:left-20 z-20 flex items-center gap-2.5 select-none"
+      >
         <div className="relative size-8 md:size-10">
           <Image
             src="/assets/forgot-password/Subtract.svg"
             alt="Clinsights Icon"
             fill
-            className="object-contain"
+            className="object-contain cursor-pointer"
           />
         </div>
         <span className="text-white text-2xl md:text-3xl font-medium font-['Playfair_Display'] tracking-tight leading-8">
