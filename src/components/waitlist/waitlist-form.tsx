@@ -179,12 +179,16 @@ export function WaitlistForm() {
         >
           {/* First Name Input */}
           <div className="relative">
+            <label htmlFor="firstName" className="sr-only">
+              First Name
+            </label>
             <HugeiconsIcon
               icon={User02Icon}
               className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
               size={20}
             />
             <input
+              id="firstName"
               type="text"
               placeholder="First Name"
               value={firstName}
@@ -212,12 +216,16 @@ export function WaitlistForm() {
           {/* Email Input */}
           <div>
             <div className="relative">
+              <label htmlFor="email" className="sr-only">
+                Email Address
+              </label>
               <HugeiconsIcon
                 icon={MailBlock01Icon}
                 className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
                 size={20}
               />
               <input
+                id="email"
                 type="email"
                 placeholder="Enter your email address"
                 value={email}
@@ -300,16 +308,13 @@ export function WaitlistForm() {
             {/* Success content */}
             <div className="flex flex-col items-center pt-4 text-center">
               {/* Green checkmark circle */}
-              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500">
-                <svg
-                  className="h-10 w-10 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth={3}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
+              <div className="mb-6 flex h-20 w-20 items-center justify-center">
+                <Image
+                  src="/assets/waitlist-assets/checked.svg"
+                  alt="success-checkmark"
+                  width={80}
+                  height={80}
+                />
               </div>
 
               <h3 id="waitlist-success-title" className="mb-3 text-2xl font-bold text-gray-900">
