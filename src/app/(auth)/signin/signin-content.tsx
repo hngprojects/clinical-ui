@@ -10,7 +10,7 @@ export default function SigninContent() {
   const router = useRouter();
   const { handleBack } = createAuthBackHandlers(router);
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center p-4">
+    <div className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="fixed inset-0 -z-10">
         <Image
@@ -25,7 +25,7 @@ export default function SigninContent() {
       </div>
 
       {/* Logo - Top Left */}
-      <div className="absolute top-6 left-6 md:top-4 lg:top-10 md:left-12 z-20">
+      <div className="fixed top-6 left-6 md:top-4 lg:top-10 md:left-12 z-20">
         <Button
           type="button"
           variant="ghost"
@@ -44,7 +44,7 @@ export default function SigninContent() {
       </div>
 
       {/* Signin Form Card */}
-      <div className="relative z-10 w-full flex justify-center py-12">
+      <div className="relative z-10 w-full h-full flex items-center justify-center p-4 md:p-6">
         <SignInForm />
       </div>
     </div>

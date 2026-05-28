@@ -65,15 +65,15 @@ export function SignInForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-165.25 rounded-[32px] bg-white shadow-2xl flex flex-col p-6 md:px-20 md:py-10"
+      className="w-full max-w-150 rounded-[24px] bg-white shadow-2xl flex flex-col p-5 md:px-12 md:py-6"
     >
-      <div className="flex flex-col h-full gap-6 md:gap-8">
+      <div className="flex flex-col h-full gap-3 md:gap-4">
         {/* Header */}
-        <div className="flex flex-col gap-1">
-          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[38px] leading-[130%] tracking-[-0.02em] whitespace-nowrap text-center">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[28px] leading-[120%] tracking-[-0.02em] whitespace-nowrap text-center">
             Welcome Back
           </h1>
-          <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em] text-center">
+          <p className="font-medium text-[#5E5E5E] text-xs md:text-sm leading-[140%] tracking-[-0.01em] text-center">
             Log in to review cases and manage your activities
           </p>
         </div>
@@ -81,12 +81,12 @@ export function SignInForm() {
         {/* Social Sign in */}
         <button
           type="button"
-          className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl border border-[#E0E0E0] bg-white text-base font-medium text-[#313131] transition-colors hover:bg-slate-50"
+          className="flex h-10 md:h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#E0E0E0] bg-white text-sm font-medium text-[#313131] transition-colors hover:bg-slate-50"
         >
           <span>Sign in with Google</span>
           <svg
-            width="24"
-            height="24"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -111,20 +111,20 @@ export function SignInForm() {
         </button>
 
         {/* Divider */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-[#E0E0E0]" />
-          <span className="text-sm font-medium text-[#313131]">or Sign in with Email</span>
+          <span className="text-xs font-medium text-[#313131]">or Sign in with Email</span>
           <div className="h-px flex-1 bg-[#E0E0E0]" />
         </div>
 
         {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-3 md:gap-4"
           autoComplete="off"
           noValidate
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2 md:gap-3">
             {/* Email */}
             <InputFieldContainer
               label="Email address"
@@ -132,8 +132,8 @@ export function SignInForm() {
               error={errors.email?.message}
             >
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={Mail01Icon} size={20} />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
+                  <HugeiconsIcon icon={Mail01Icon} size={18} />
                 </div>
                 <input
                   id="email"
@@ -142,7 +142,7 @@ export function SignInForm() {
                   placeholder="Enter email address"
                   autoComplete="off"
                   className={cn(
-                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-11 w-full rounded-lg border border-[#E0E0E0] bg-white pl-10 pr-3 text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-xs md:placeholder:text-sm',
                     errors.email && 'border-red-500',
                   )}
                 />
@@ -156,8 +156,8 @@ export function SignInForm() {
               error={errors.password?.message}
             >
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={LockPasswordIcon} size={20} />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
+                  <HugeiconsIcon icon={LockPasswordIcon} size={18} />
                 </div>
                 <input
                   id="password"
@@ -166,25 +166,25 @@ export function SignInForm() {
                   placeholder="At least 8 characters"
                   autoComplete="current-password"
                   className={cn(
-                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-11 w-full rounded-lg border border-[#E0E0E0] bg-white pl-10 pr-3 text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-xs md:placeholder:text-sm',
                     errors.password && 'border-red-500',
                   )}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#98A2B3] transition-colors hover:text-[#1B1B1B]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#98A2B3] transition-colors hover:text-[#1B1B1B]"
                 >
-                  <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={20} />
+                  <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={18} />
                 </button>
               </div>
             </InputFieldContainer>
           </div>
-          <div className="flex flex-col gap-3 mt-3 mb-5">
+          <div className="flex flex-col gap-2 mt-1 mb-2">
             {/* Forgot Password */}
             <Link
               href="/forgot-password"
-              className="text-sm text-[#1565C0] hover:underline text-right"
+              className="text-xs text-[#1565C0] hover:underline text-right"
             >
               Forgot your password?
             </Link>
@@ -193,9 +193,9 @@ export function SignInForm() {
               <input
                 id="remember"
                 type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue cursor-pointer"
+                className="h-3.5 w-3.5 rounded border-gray-300 text-brand-blue focus:ring-brand-blue cursor-pointer"
               />
-              <label htmlFor="remember" className="text-sm text-[#5E5E5E]">
+              <label htmlFor="remember" className="text-xs text-[#5E5E5E]">
                 Remember me
               </label>
             </div>
@@ -206,15 +206,16 @@ export function SignInForm() {
             variant="brand"
             type="submit"
             disabled={isSubmitting}
-            className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
+            className="h-12 w-full rounded-xl text-sm md:text-base font-bold shadow-lg text-white"
           >
             {isSubmitting ? 'Sending...' : 'Sign me in'}
             <svg
-              width="24"
-              height="24"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              className="ml-2"
             >
               <path
                 d="M11 7L9.6 8.4L12.2 11H2V13H12.2L9.6 15.6L11 17L16 12L11 7ZM20 19H12V21H20C21.1 21 22 20.1 22 19V5C22 3.9 21.1 3 20 3H12V5H20V19Z"
@@ -224,7 +225,7 @@ export function SignInForm() {
           </Button>
 
           {/* Footer Link */}
-          <div className="text-center text-base text-[#5E5E5E]">
+          <div className="text-center text-sm text-[#5E5E5E]">
             Don&apos;t have an account?{' '}
             <Link href="/signup" className="font-bold text-[#1565C0] hover:underline">
               Sign up

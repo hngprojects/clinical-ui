@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-// import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { useForm } from 'react-hook-form';
@@ -20,8 +19,6 @@ import {
 import { Button } from '@/components/ui/button';
 import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { cn } from '@/lib/utils';
-// import { signupAction } from '@/actions/auth-actions';
-// import { toast } from 'sonner';
 import { triggerComingSoonModal } from '@/components/coming-soon';
 
 const signupSchema = z.object({
@@ -42,7 +39,6 @@ type SignupValues = z.infer<typeof signupSchema>;
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  // const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -60,19 +56,6 @@ export function SignupForm() {
   });
 
   const onSubmit = async (data: SignupValues) => {
-    // const result = await signupAction({
-    //   fullName: data.fullName,
-    //   email: data.email,
-    //   password: data.password,
-    // });
-
-    // if (result.error) {
-    //   toast.error(result.error);
-    // } else {
-    //   toast.success('Account created! Please check your email for the OTP.');
-    //   router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
-    // }
-
     triggerComingSoonModal({
       title: 'Sign up is coming soon',
       description: `We are still preparing the account creation flow for ${data.fullName}.`,
@@ -84,15 +67,15 @@ export function SignupForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-165.25 rounded-[32px] bg-white shadow-2xl flex flex-col p-6 md:px-20 md:py-10"
+      className="w-full max-w-[500px] rounded-[24px] bg-white shadow-2xl flex flex-col px-6 md:px-10 py-4 md:py-6"
     >
-      <div className="flex flex-col h-full gap-6 md:gap-8">
+      <div className="flex flex-col gap-1.5 md:gap-2">
         {/* Header */}
-        <div className="flex flex-col gap-1">
-          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[38px] leading-[130%] tracking-[-0.02em] whitespace-nowrap">
+        <div className="flex flex-col gap-0.5">
+          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[22px] leading-[120%] tracking-[-0.02em]">
             Create your doctor account
           </h1>
-          <p className="font-medium text-[#5E5E5E] text-xs md:text-base leading-[150%] tracking-[-0.01em]">
+          <p className="font-medium text-[#5E5E5E] text-[10px] md:text-xs leading-[140%] tracking-[-0.01em]">
             Start your verification to begin reviewing cases
           </p>
         </div>
@@ -100,12 +83,12 @@ export function SignupForm() {
         {/* Social Sign up */}
         <button
           type="button"
-          className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl border border-[#E0E0E0] bg-white text-base font-medium text-[#313131] transition-colors hover:bg-slate-50"
+          className="flex h-8 md:h-9 w-full items-center justify-center gap-2 rounded-xl border border-[#E0E0E0] bg-white text-[11px] md:text-sm font-medium text-[#313131] transition-colors hover:bg-slate-50"
         >
           <span>Sign up with Google</span>
           <svg
-            width="24"
-            height="24"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -130,20 +113,22 @@ export function SignupForm() {
         </button>
 
         {/* Divider */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-[#E0E0E0]" />
-          <span className="text-sm font-medium text-[#313131]">or Sign up with Email</span>
+          <span className="text-[9px] md:text-[10px] font-medium text-[#313131]">
+            or Sign up with Email
+          </span>
           <div className="h-px flex-1 bg-[#E0E0E0]" />
         </div>
 
         {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-1.5 md:gap-2.5"
           autoComplete="off"
           noValidate
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1 md:gap-1.5">
             {/* Full Name */}
             <InputFieldContainer
               label="Full name"
@@ -151,8 +136,8 @@ export function SignupForm() {
               error={errors.fullName?.message}
             >
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={User02Icon} size={20} />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
+                  <HugeiconsIcon icon={User02Icon} size={14} />
                 </div>
                 <input
                   id="fullName"
@@ -161,7 +146,7 @@ export function SignupForm() {
                   placeholder="Enter full name"
                   autoComplete="off"
                   className={cn(
-                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-8 md:h-9 w-full rounded-lg border border-[#E0E0E0] bg-white pl-9 pr-3 text-[11px] md:text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-[9px] md:placeholder:text-[11px]',
                     errors.fullName && 'border-red-500',
                   )}
                 />
@@ -171,8 +156,8 @@ export function SignupForm() {
             {/* Phone No */}
             <InputFieldContainer label="Phone no." htmlFor="phone" error={errors.phone?.message}>
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={SmartPhone01Icon} size={20} />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
+                  <HugeiconsIcon icon={SmartPhone01Icon} size={14} />
                 </div>
                 <input
                   id="phone"
@@ -181,7 +166,7 @@ export function SignupForm() {
                   placeholder="Enter your phone number"
                   autoComplete="off"
                   className={cn(
-                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-8 md:h-9 w-full rounded-lg border border-[#E0E0E0] bg-white pl-9 pr-3 text-[11px] md:text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-[9px] md:placeholder:text-[11px]',
                     errors.phone && 'border-red-500',
                   )}
                 />
@@ -195,8 +180,8 @@ export function SignupForm() {
               error={errors.email?.message}
             >
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={Mail01Icon} size={20} />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
+                  <HugeiconsIcon icon={Mail01Icon} size={14} />
                 </div>
                 <input
                   id="email"
@@ -205,7 +190,7 @@ export function SignupForm() {
                   placeholder="Enter email address"
                   autoComplete="off"
                   className={cn(
-                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-8 md:h-9 w-full rounded-lg border border-[#E0E0E0] bg-white pl-9 pr-3 text-[11px] md:text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-[9px] md:placeholder:text-[11px]',
                     errors.email && 'border-red-500',
                   )}
                 />
@@ -219,8 +204,8 @@ export function SignupForm() {
               error={errors.password?.message}
             >
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={LockPasswordIcon} size={20} />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
+                  <HugeiconsIcon icon={LockPasswordIcon} size={14} />
                 </div>
                 <input
                   id="password"
@@ -229,33 +214,33 @@ export function SignupForm() {
                   placeholder="At least 8 characters"
                   autoComplete="new-password"
                   className={cn(
-                    'h-14 w-full rounded-xl border border-[#E0E0E0] bg-white pl-12 pr-4 text-sm md:text-base outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-sm md:placeholder:text-base',
+                    'h-8 md:h-9 w-full rounded-lg border border-[#E0E0E0] bg-white pl-9 pr-10 text-[11px] md:text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-[9px] md:placeholder:text-[11px]',
                     errors.password && 'border-red-500',
                   )}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#98A2B3] transition-colors hover:text-[#1B1B1B]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#98A2B3] transition-colors hover:text-[#1B1B1B]"
                 >
-                  <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={20} />
+                  <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={14} />
                 </button>
               </div>
             </InputFieldContainer>
           </div>
 
           {/* Terms & Privacy */}
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-center gap-2">
               <input
                 id="agreed"
                 {...register('agreed')}
                 type="checkbox"
-                className="h-5 w-5 rounded-md border-[#E0E0E0] text-brand-blue accent-brand-blue cursor-pointer"
+                className="h-3.5 w-3.5 rounded-md border-[#E0E0E0] text-brand-blue accent-brand-blue cursor-pointer"
               />
               <label
                 htmlFor="agreed"
-                className="text-xs md:text-base text-[#5E5E5E] cursor-pointer"
+                className="text-[9px] md:text-[11px] text-[#5E5E5E] cursor-pointer"
               >
                 I agree to the{' '}
                 <Link href="/terms-and-conditions" className="font-bold underline">
@@ -268,7 +253,7 @@ export function SignupForm() {
               </label>
             </div>
             {errors.agreed && (
-              <p className="text-xs italic text-red-500 font-medium text-right">
+              <p className="text-[8px] italic text-red-500 font-medium text-right">
                 {errors.agreed.message}
               </p>
             )}
@@ -279,14 +264,14 @@ export function SignupForm() {
             variant="brand"
             type="submit"
             disabled={isSubmitting}
-            className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
+            className="h-9 md:h-10 w-full rounded-xl text-[11px] md:text-sm font-bold shadow-lg text-white"
           >
             {isSubmitting ? 'Sending...' : 'Send me OTP'}
-            <HugeiconsIcon icon={ArrowRight02Icon} size={20} className="ml-2" />
+            <HugeiconsIcon icon={ArrowRight02Icon} size={16} className="ml-2" />
           </Button>
 
           {/* Footer Link */}
-          <div className="text-center text-base text-[#5E5E5E]">
+          <div className="text-center text-[11px] md:text-xs text-[#5E5E5E]">
             Already verified?{' '}
             <Link href="/signin" className="font-bold text-[#1565C0] hover:underline">
               Sign in
