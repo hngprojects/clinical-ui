@@ -30,6 +30,7 @@ export function Header() {
     '/verification/professional-info',
     '/verification/credentials-verification',
     '/verification/verification-complete',
+    '/user',
   ];
 
   if (hideOnRoutes.includes(pathname)) {
