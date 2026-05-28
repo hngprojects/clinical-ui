@@ -9,9 +9,18 @@ interface DropdownProps {
   placeholder: string;
   value: string;
   onChange: (value: string) => void;
+  icon?: string;
+  altText?: string;
 }
 
-export default function Dropdown({ options, placeholder, value, onChange }: DropdownProps) {
+export default function Dropdown({
+  options,
+  placeholder,
+  value,
+  onChange,
+  icon,
+  altText,
+}: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,12 +51,7 @@ export default function Dropdown({ options, placeholder, value, onChange }: Drop
         className="w-full px-4 py-3 border border-outline-border rounded-lg bg-white text-sm text-text-primary placeholder:text-text-disabled flex items-center justify-between hover:border-outline-border/80 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50"
       >
         <div className="flex items-center gap-2">
-          <Image
-            width={16.67}
-            height={15}
-            src={'/assets/verification-assets/specialization-icon.svg'}
-            alt="Specialization Icon"
-          />
+          {icon && <Image width={16.67} height={15} src={icon} alt={altText || 'icon'} />}
           <span className={value ? 'text-text-primary' : 'text-text-disabled'}>{displayValue}</span>
         </div>
         <ChevronDown size={20} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
