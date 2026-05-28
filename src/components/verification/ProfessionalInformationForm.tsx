@@ -88,6 +88,8 @@ export default function ProfessionalInformationForm() {
                   placeholder="Select your specialization"
                   value={specialization}
                   onChange={setSpecialization}
+                  icon="/assets/verification-assets/specialization-icon.svg"
+                  altText="Specialization Icon"
                 />
               </InputFieldContainer>
             </motion.div>
