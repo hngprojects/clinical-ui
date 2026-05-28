@@ -33,7 +33,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn('h-full', 'antialiased', inter.variable, 'font-sans')}>
+    <html
+      lang="en"
+      className={cn('h-full', 'antialiased', inter.variable, 'font-sans')}
+      suppressHydrationWarning
+    >
       <body className="min-h-full flex flex-col bg-neutral-50">
         <ComingSoonProvider>
           <Header />

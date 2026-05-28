@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="space-y-8 pb-20 md:space-y-18">
+    <div>
       <FAQHeader />
 
       <FAQ />
