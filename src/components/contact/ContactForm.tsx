@@ -1,6 +1,7 @@
 'use client';
 
 import { sendMessageAction } from '@/actions/contact-form-actions';
+import Dropdown from '@/components/ui/Dropdown';
 import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { ContactFormDataType, contactSchema } from '@/schemas/contact-form-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,7 +9,7 @@ import { motion, type Variants } from 'motion/react';
 import Link from 'next/link';
 
 import { useTransition } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 const containerVariants: Variants = {
@@ -23,6 +24,8 @@ const itemVariants: Variants = {
 
 const itemTransition = { duration: 0.3, ease: 'easeOut' as const };
 
+const SUBJECT_OPTIONS = ['General', 'Support', 'Partnership', 'Press'];
+
 export default function ContactForm() {
   const [isSendingMessage, startSendMessageTransition] = useTransition();
 
@@ -31,6 +34,7 @@ export default function ContactForm() {
     defaultValues: {
       fullName: '',
       email: '',
+      subject: undefined,
       message: '',
       termsAgreement: false,
     },
@@ -41,7 +45,7 @@ export default function ContactForm() {
 
   const isAllInputsFilled = Object.values(formValues).every((value) => {
     if (typeof value === 'boolean') return value === true;
-    return value.trim() !== '';
+    return value && value.trim() !== '';
   });
 
   function handleSendMessage(formData: ContactFormDataType) {
@@ -116,6 +120,27 @@ export default function ContactForm() {
                 className="input__field"
                 placeholder="you@gmail.com"
                 {...register('email')}
+              />
+            </InputFieldContainer>
+          </motion.div>
+
+          <motion.div variants={itemVariants} transition={itemTransition}>
+            <InputFieldContainer
+              label="Subject / Enquiry *"
+              htmlFor="subject"
+              error={errors?.subject?.message}
+            >
+              <Controller
+                name="subject"
+                control={control}
+                render={({ field }) => (
+                  <Dropdown
+                    options={SUBJECT_OPTIONS}
+                    placeholder="Select subject"
+                    value={field.value || ''}
+                    onChange={field.onChange}
+                  />
+                )}
               />
             </InputFieldContainer>
           </motion.div>
