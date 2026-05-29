@@ -62,13 +62,13 @@ export default function Table({
                 <td className="px-6 py-4">
                   {isRequests ? (
                     <span
-                      className={`text-sm px-3 py-1 rounded-full ${item.priority === 'High' ? 'bg-rose-50 text-rose-600' : item.priority === 'Medium' ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-600'}`}
+                      className={`text-sm px-3 py-1 rounded-full ${item.priority === 'High' ? 'bg-[#FDE3E3] text-[#8F2929]' : item.priority === 'Medium' ? 'bg-[#FEF0DA] text-[#935F07]' : 'bg-[#FDE3E3] text-[#8F2929]'}`}
                     >
                       {item.priority}
                     </span>
                   ) : (
                     <span
-                      className={`text-sm px-3 py-1 rounded-full ${item.status === 'Completed' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}
+                      className={`text-sm px-3 py-1 rounded-full ${item.status === 'Completed' ? 'bg-emerald-50 text-emerald-700' : 'bg-[#FEF0DA] text-[#935F07]'}`}
                     >
                       {item.status}
                     </span>
