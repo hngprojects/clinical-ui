@@ -1,6 +1,6 @@
 'use client';
 
-import { Overview } from '@/services/doctor/service';
+import { Overview } from '@/services/doctor';
 import {
   ArrowUpRight03Icon,
   Task01Icon,
@@ -44,7 +44,7 @@ function SummaryCard({
   );
 }
 
-export default function Summary({ overview }: { overview?: Overview | null }) {
+export default function Summary({ overview }: { overview: Overview | null }) {
   const overviews = overview ?? null;
 
   const newRequests = overviews?.summary.newRequests ?? '—';
