@@ -5,11 +5,11 @@ import { pages } from './pages';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { HugeiconsIcon } from '@hugeicons/react';
+import { HugeiconsIcon, IconSvgElement } from '@hugeicons/react';
 import { DashboardSquare03Icon, Folder03Icon, Stethoscope02Icon } from '@hugeicons/core-free-icons';
 import { LogoutIcon } from '@/components/icons/LogoutIcon';
 
-const iconMap: Record<string, unknown> = {
+const iconMap: Record<string, IconSvgElement> = {
   DashboardSquare03Icon,
   Folder03Icon,
   Stethoscope02Icon,
@@ -50,7 +50,7 @@ export default function Sidebar({ user }: { user: 'Doctor' }) {
                 {page.svg ? (
                   <Image src={page.svg} width={20} height={20} alt={`${page.name} icon`} />
                 ) : (
-                  <HugeiconsIcon icon={PageIcon as string} />
+                  <HugeiconsIcon icon={PageIcon as IconSvgElement} />
                 )}
                 {page.name}
               </Link>
