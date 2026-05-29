@@ -77,7 +77,7 @@ export default function Sidebar({
           className="flex text-text-disabled hover:text-red-600 transition-colors items-center gap-2.5 px-2.5 py-2 rounded-md hover:bg-red-50"
           aria-label="Logout"
           type="button"
-          onClick={() => router.push('/login')}
+          onClick={() => router.push('/signin')}
         >
           <LogoutIcon />
           Logout
@@ -105,7 +105,7 @@ export default function Sidebar({
               className="flex w-full items-center justify-center gap-2.5 px-4 py-3 rounded-md border border-[#D0D0D0] text-text-disabled hover:text-red-600"
               onClick={() => {
                 onClose();
-                router.push('/login');
+                router.push('/signin');
               }}
             >
               <LogoutIcon />
