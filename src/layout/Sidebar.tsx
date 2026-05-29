@@ -34,7 +34,7 @@ export default function Sidebar({
 
   const basePath = user === 'Doctor' ? '/user' : '';
 
-  const NavItems = () =>
+  const NavItems = ({ onNavigate }: { onNavigate?: () => void }) =>
     pages[user].map((page) => {
       const isActive =
         pathname === page.path || (page.path !== basePath && pathname.startsWith(`${page.path}/`));
@@ -48,6 +48,7 @@ export default function Sidebar({
           key={page.name}
           href={page.path}
           className={`${baseCls} ${isActive ? activeCls : inactiveCls}`}
+          onClick={onNavigate}
         >
           {page.svg ? (
             <Image src={page.svg} width={20} height={20} alt={`${page.name} icon`} />
@@ -98,7 +99,7 @@ export default function Sidebar({
             </button>
           </div>
 
-          <nav className="flex flex-col gap-3">{NavItems()}</nav>
+          <nav className="flex flex-col gap-3">{NavItems({ onNavigate: onClose })}</nav>
 
           <div className="mt-6">
             <button
