@@ -5,6 +5,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { getActiveCases } from '@/services/doctor';
 
 function UserHeader({
   onMenuToggle,
@@ -14,6 +15,7 @@ function UserHeader({
   isSidebarOpen: boolean;
 }) {
   const [isOnline, setIsOnline] = useState(true);
+  const [activeCount, setActiveCount] = useState<number | null>(null);
 
   useEffect(() => {
     const updateStatus = () => setIsOnline(navigator.onLine);
@@ -26,13 +28,27 @@ function UserHeader({
     };
   }, []);
 
+  useEffect(() => {
+    let mounted = true;
+    getActiveCases()
+      .then((cases) => {
+        if (mounted) setActiveCount(Array.isArray(cases) ? cases.length : 0);
+      })
+      .catch(() => {
+        if (mounted) setActiveCount(0);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <header className="min-h-20 sm:min-h-26.75 w-full bg-[#FFFFFE] border border-[#F0F0F0] p-4 md:px-10 sm:py-6 flex justify-between items-center gap-5 sm:gap-2.5 max-sm:flex-col-reverse sm:flex-row ">
       <div className="flex flex-col gap-1 max-sm:w-full">
         <h1 className="text-xl md:text-2xl font-semibold">Welcome Dr. Light</h1>
         <p className="max-sm:text-sm">
           <Link href="/user/case" className="text-primary-blue">
-            5 cases{' '}
+            {activeCount ?? 0} cases{' '}
           </Link>
           assigned for this shift
         </p>

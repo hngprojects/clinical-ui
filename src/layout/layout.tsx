@@ -32,7 +32,7 @@ export default function DashboardLayout({
           isSidebarOpen={isSidebarOpen}
           onMenuToggle={() => setIsSidebarOpen((state) => !state)}
         />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-2.5">{children}</main>
       </div>
     </div>
   );
