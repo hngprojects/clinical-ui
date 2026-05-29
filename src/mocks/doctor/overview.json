@@ -56,6 +56,54 @@
       "timeAssigned": "1 hour ago",
       "status": "Completed",
       "condition": "Hyperthyroidism"
+    },
+    {
+      "id": "case_5",
+      "patientName": "Ifeoma Okoye",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "2 hours ago",
+      "status": "Completed",
+      "condition": "Anemia"
+    },
+    {
+      "id": "case_6",
+      "patientName": "Tunde Adebayo",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "3 hours ago",
+      "status": "Completed",
+      "condition": "Hypertension"
+    },
+    {
+      "id": "case_7",
+      "patientName": "Ngozi Eze",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "4 hours ago",
+      "status": "Completed",
+      "condition": "Diabetes"
+    },
+    {
+      "id": "case_8",
+      "patientName": "Kelechi Nwankwo",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "5 hours ago",
+      "status": "Completed",
+      "condition": "Asthma"
+    },
+    {
+      "id": "case_9",
+      "patientName": "Amaka Obi",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "20 mins ago",
+      "status": "Pending",
+      "condition": "Migraine"
+    },
+    {
+      "id": "case_10",
+      "patientName": "Chinedu Okeke",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "25 mins ago",
+      "status": "Pending",
+      "condition": "Back Pain"
     }
   ]
 }
