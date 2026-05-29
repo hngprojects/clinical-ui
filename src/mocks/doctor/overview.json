@@ -1,0 +1,61 @@
+{
+  "summary": {
+    "newRequests": 2,
+    "activeCases": 5,
+    "completedCases": 5,
+    "earnings": 1200000,
+    "earningsChange": 5.2
+  },
+  "caseRequests": [
+    {
+      "id": "req_1",
+      "patientName": "Chioma Okafor",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeSent": "10 mins ago",
+      "priority": "Medium",
+      "condition": "Hormonal Imbalance"
+    },
+    {
+      "id": "req_2",
+      "patientName": "Victor Tosin",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeSent": "10 mins ago",
+      "priority": "Low",
+      "condition": "Vitamin D Deficiency"
+    }
+  ],
+  "cases": [
+    {
+      "id": "case_1",
+      "patientName": "Chioma Okafor",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "10 mins ago",
+      "status": "Pending",
+      "condition": "Hormonal Imbalance"
+    },
+    {
+      "id": "case_2",
+      "patientName": "Victor Tosin",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "15 mins ago",
+      "status": "Pending",
+      "condition": "Vitamin D Deficiency"
+    },
+    {
+      "id": "case_3",
+      "patientName": "Obi Chinedu",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "30 mins ago",
+      "status": "Pending",
+      "condition": "Iron Deficiency"
+    },
+    {
+      "id": "case_4",
+      "patientName": "Grace Frank",
+      "avatar": "/assets/dashboard/patient.png",
+      "timeAssigned": "1 hour ago",
+      "status": "Completed",
+      "condition": "Hyperthyroidism"
+    }
+  ]
+}
