@@ -9,7 +9,7 @@ export default function Cases({ overview }: { overview: Overview | null }) {
     <div>
       <div className="flex items-center justify-between bg-white p-5 rounded-t-[20px] border border-[#F0F0F0]">
         <h3 className="text-lg md:text-xl font-medium">Cases</h3>
-         <Link href="/user/cases" className="text-sm text-primary-blue hover:underline">
+        <Link href="/user/cases" className="text-sm text-primary-blue hover:underline">
           View All
         </Link>
       </div>
