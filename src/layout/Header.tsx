@@ -30,9 +30,13 @@ function UserHeader({
 
   useEffect(() => {
     let mounted = true;
-    getActiveCases().then((cases) => {
-      if (mounted) setActiveCount(Array.isArray(cases) ? cases.length : 0);
-    });
+    getActiveCases()
+      .then((cases) => {
+        if (mounted) setActiveCount(Array.isArray(cases) ? cases.length : 0);
+      })
+      .catch(() => {
+        if (mounted) setActiveCount(0);
+      });
     return () => {
       mounted = false;
     };
