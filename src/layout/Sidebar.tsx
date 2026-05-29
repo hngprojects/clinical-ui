@@ -57,7 +57,7 @@ export default function Sidebar({ user }: { user: 'Doctor' }) {
         </div>
       </div>
       <button
-        className="flex text-text-disabled hover:text-red-600 transition-colors items-center gap-2.5 px-2.5 "
+        className="flex text-text-disabled hover:text-red-600 transition-colors items-center gap-2.5 px-2.5 py-2 rounded-md hover:bg-red-50"
         aria-label="Logout"
         type="button"
       >
