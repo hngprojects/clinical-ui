@@ -58,7 +58,7 @@ export default function Summary({ overview }: { overview: Overview | null }) {
           style: 'currency',
           currency: 'NGN',
           maximumFractionDigits: 0,
-        }).format(earnings as number)
+        }).format(earnings)
       : '—';
 
   const cards = [
