@@ -34,7 +34,7 @@ export default function Sidebar({
 
   const basePath = user === 'Doctor' ? '/user' : '';
 
-  const NavItems = ({ onNavigate }: { onNavigate?: () => void }) =>
+  const NavItems = ({ onNavigate }: { onNavigate?: () => void } = {}) =>
     pages[user].map((page) => {
       const isActive =
         pathname === page.path || (page.path !== basePath && pathname.startsWith(`${page.path}/`));
