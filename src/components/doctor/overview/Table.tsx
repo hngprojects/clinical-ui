@@ -1,0 +1,103 @@
+import Image from 'next/image';
+
+type Item = {
+  id: string;
+  avatar: string;
+  patientName: string;
+  timeSent?: string;
+  timeAssigned?: string;
+  priority?: string;
+  status?: string;
+  condition?: string;
+};
+
+export default function Table({
+  variant,
+  items,
+}: {
+  variant: 'requests' | 'cases';
+  items: Item[];
+}) {
+  const isRequests = variant === 'requests';
+
+  return (
+    <div className="rounded-b-[20px] bg-white border border-[#F0F0F0] overflow-hidden">
+      <div className="overflow-x-auto w-full">
+        <table className="min-w-220 w-full table-auto text-left">
+          <thead className="bg-[#FAFAFA]">
+            <tr>
+              <th className="px-6 py-4 text-base font-medium text-secondary-3">PATIENTS</th>
+              <th className="px-6 py-4 text-base font-medium text-secondary-3">
+                {isRequests ? 'TIME SENT' : 'TIME ASSIGNED'}
+              </th>
+              <th className="px-6 py-4 text-base font-medium text-secondary-3">
+                {isRequests ? 'PRIORITY' : 'STATUS'}
+              </th>
+              <th className="px-6 py-4 text-base font-medium text-secondary-3">CONDITION</th>
+              <th className="px-6 py-4 text-base font-medium text-secondary-3 text-right">
+                ACTION
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item: Item) => (
+              <tr key={item.id} className="border-t last:border-b">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={item.avatar}
+                      alt={item.patientName}
+                      width={40}
+                      height={40}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <div>
+                      <div className="font-medium">{item.patientName}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-slate-500">
+                  {isRequests ? item.timeSent : item.timeAssigned}
+                </td>
+                <td className="px-6 py-4">
+                  {isRequests ? (
+                    <span
+                      className={`text-sm px-3 py-1 rounded-full ${item.priority === 'High' ? 'bg-rose-50 text-rose-600' : item.priority === 'Medium' ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-600'}`}
+                    >
+                      {item.priority}
+                    </span>
+                  ) : (
+                    <span
+                      className={`text-sm px-3 py-1 rounded-full ${item.status === 'Completed' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}
+                    >
+                      {item.status}
+                    </span>
+                  )}
+                </td>
+                <td className="px-6 py-4 font-medium">{item.condition}</td>
+                <td className="px-6 py-4 text-right">
+                  <button
+                    aria-label="row actions"
+                    className="p-2 rounded-full hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  >
+                    <svg
+                      width="4"
+                      height="16"
+                      viewBox="0 0 4 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="2" cy="2" r="2" fill="#222" />
+                      <circle cx="2" cy="8" r="2" fill="#222" />
+                      <circle cx="2" cy="14" r="2" fill="#222" />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
