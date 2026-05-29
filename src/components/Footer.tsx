@@ -35,8 +35,7 @@ export function Footer() {
     '/verification/credentials-verification',
     '/verification/verification-complete',
   ];
-
-  if (hideOnRoutes.includes(pathname)) {
+  if (hideOnRoutes.includes(pathname) || pathname.startsWith('/user')) {
     return null;
   }
   return (
@@ -55,7 +54,7 @@ export function Footer() {
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         {/* Tier 1: Logo only */}
         <div className="mb-8 flex justify-start">
-          <div className="relative h-8 w-[120px] lg:h-10 lg:w-[140px]">
+          <div className="relative h-8 w-30 lg:h-10 lg:w-35">
             <Image
               src="/assets/header-assets/clinsight-logo.svg"
               alt="Clinsight Logo"
