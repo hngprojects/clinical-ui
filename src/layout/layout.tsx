@@ -14,7 +14,7 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden">
+    <div className="flex h-screen w-full bg-[#FAFAFA] overflow-hidden">
       {isSidebarOpen ? (
         <button
           type="button"
@@ -26,7 +26,7 @@ export default function DashboardLayout({
 
       <Sidebar user={user} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <div className="flex flex-col flex-1 overflow-hidden bg-yellow-100">
+      <div className="flex flex-col flex-1 overflow-hidden">
         <Header
           user={user}
           isSidebarOpen={isSidebarOpen}
