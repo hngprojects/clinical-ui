@@ -17,7 +17,7 @@ const iconMap: Record<string, unknown> = {
 export default function Sidebar({ user }: { user: 'Doctor' }) {
   const pathname = usePathname();
 
-  const basePath = user === 'Doctor' && '/user';
+  const basePath = user === 'Doctor' ? '/user' : '';
 
   return (
     <div className="hidden w-full sm:w-50 lg:w-62.5 px-4 py-5 shrink-0 bg-white sm:flex h-auto overflow-y-auto flex-col justify-between gap-10">
