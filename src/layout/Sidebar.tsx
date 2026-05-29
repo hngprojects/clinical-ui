@@ -35,7 +35,8 @@ export default function Sidebar({ user }: { user: 'Doctor' }) {
         <div className="flex flex-col gap-2">
           {pages[user].map((page) => {
             const isActive =
-              pathname === page.path || (page.path !== basePath && pathname.startsWith(page.path));
+              pathname === page.path ||
+              (page.path !== basePath && pathname.startsWith(`${page.path}/`));
             const baseCls = 'px-2.5 py-3.5 rounded-[8px] transition-colors flex gap-2.5';
             const activeCls = 'bg-primary-blue text-white';
             const inactiveCls = 'text-text-disabled hover:bg-primary-blue/10';
