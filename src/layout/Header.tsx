@@ -1,10 +1,24 @@
+'use client';
 import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 function UserHeader() {
-  const isOnline = navigator.onLine;
+  const [isOnline, setIsOnline] = useState(true);
+
+  useEffect(() => {
+    const updateStatus = () => setIsOnline(navigator.onLine);
+    updateStatus();
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    return () => {
+      window.removeEventListener('online', updateStatus);
+      window.removeEventListener('offline', updateStatus);
+    };
+  }, []);
+
   return (
     <header className="min-h-20 sm:min-h-26.75 w-full bg-[#FFFFFE] border border-[#F0F0F0] p-4 sm:px-10 sm:py-6 flex justify-between items-center gap-2.5 flex-wrap">
       <div className="flex flex-col gap-1">
