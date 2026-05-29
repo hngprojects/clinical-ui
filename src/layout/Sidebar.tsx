@@ -4,9 +4,10 @@ import Image from 'next/image';
 import { pages } from './pages';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { DashboardSquare03Icon, Folder03Icon, Stethoscope02Icon } from '@hugeicons/core-free-icons';
-import { LogoutIcon } from '../../public/assets/dashboard/logout';
+import { LogoutIcon } from '@/components/icons/LogoutIcon';
 
 const iconMap: Record<string, unknown> = {
   DashboardSquare03Icon,
@@ -16,6 +17,7 @@ const iconMap: Record<string, unknown> = {
 
 export default function Sidebar({ user }: { user: 'Doctor' }) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const basePath = user === 'Doctor' ? '/user' : '';
 
@@ -48,7 +50,7 @@ export default function Sidebar({ user }: { user: 'Doctor' }) {
                 {page.svg ? (
                   <Image src={page.svg} width={20} height={20} alt={`${page.name} icon`} />
                 ) : (
-                  <HugeiconsIcon icon={PageIcon as never} />
+                  <HugeiconsIcon icon={PageIcon as string} />
                 )}
                 {page.name}
               </Link>
@@ -60,6 +62,7 @@ export default function Sidebar({ user }: { user: 'Doctor' }) {
         className="flex text-text-disabled hover:text-red-600 transition-colors items-center gap-2.5 px-2.5 py-2 rounded-md hover:bg-red-50"
         aria-label="Logout"
         type="button"
+        onClick={() => router.push('/login')}
       >
         <LogoutIcon />
         Logout
