@@ -38,11 +38,41 @@ const GRID_FEATURES = [
   },
 ];
 
+import { motion, Variants } from 'motion/react';
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.21, 1.02, 0.73, 1],
+    },
+  },
+};
+
 export function FeaturesGrid() {
   return (
     <section className="relative overflow-hidden bg-[#11519A] py-16 lg:py-24 text-white">
       {/* Background Design SVG - Top Right */}
-      <div className="absolute top-0 right-0 pointer-events-none z-0 opacity-50 lg:opacity-100">
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+        className="absolute top-0 right-0 pointer-events-none z-0 opacity-50 lg:opacity-100"
+      >
         <Image
           src="/assets/landing-page-assets/section-design.svg"
           alt=""
@@ -50,33 +80,56 @@ export function FeaturesGrid() {
           height={500}
           className="w-[200px] lg:w-[400px]"
         />
-      </div>
+      </motion.div>
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         {/* Section Header */}
-        <div className="mb-12 lg:mb-20 flex flex-col items-center text-center">
-          <div className="mb-6 lg:mb-10 flex w-fit h-auto items-center justify-center gap-2 rounded-[64px] bg-[#FFFFFE14] px-4 py-2 text-white">
-            <span className="h-2 w-2 rounded-sm bg-white" />
-            <span className="text-[10px] lg:text-xs font-bold uppercase tracking-wider">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+          variants={containerVariants}
+          className="mb-12 lg:mb-20 flex flex-col items-center text-center"
+        >
+          <motion.div
+            variants={fadeInUp}
+            className="mb-6 lg:mb-10 flex w-fit h-auto items-center justify-center gap-2 rounded-[64px] bg-[#FFFFFE14] px-4 py-2 text-white"
+          >
+            <span className="h-2 w-2 bg-white" />
+            <span className="text-[10px] lg:text-xs font-bold capitalize tracking-wider">
               Clarity, End to End
             </span>
-          </div>
+          </motion.div>
 
-          <h2 className="mb-4 lg:mb-6 max-w-[380px] lg:max-w-[560px] text-[26px] lg:text-[48px] font-bold leading-tight tracking-tight">
+          <motion.h2
+            variants={fadeInUp}
+            className="mb-4 lg:mb-6 max-w-[380px] lg:max-w-[560px] text-[26px] lg:text-[48px] font-bold leading-tight tracking-tight"
+          >
             Everything You Need to <span className="text-[#F59E0B]">Understand</span> Your Results
-          </h2>
+          </motion.h2>
 
-          <p className="max-w-2xl text-[16px] lg:text-[18px] font-normal leading-[1.5] tracking-[-0.01em] text-[#FFFFFE]">
+          <motion.p
+            variants={fadeInUp}
+            className="max-w-2xl text-[16px] lg:text-[18px] font-normal leading-[1.5] tracking-[-0.01em] text-[#FFFFFE]"
+          >
             Clinsight transforms complex laboratory data into structured, easy-to-understand
             insights using AI, with optional doctor validation for added confidence.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Features Grid - 6 individual cards with #1B1B1B52 bg and left border */}
-        <div className="grid grid-cols-1 gap-4 lg:gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+          variants={containerVariants}
+          className="grid grid-cols-1 gap-4 lg:gap-6 md:grid-cols-2 lg:grid-cols-3"
+        >
           {GRID_FEATURES.map((feature) => (
-            <div
+            <motion.div
               key={feature.title}
+              variants={fadeInUp}
+              whileHover={{ x: 5, transition: { duration: 0.2 } }}
               className="flex h-auto min-h-[180px] lg:h-[231px] flex-col gap-4 lg:gap-5 border-l-2 border-[#FFFFFE] bg-[#1B1B1B52] p-6 lg:p-8"
             >
               <div className="flex h-6 w-6 items-center justify-center">
@@ -88,9 +141,9 @@ export function FeaturesGrid() {
                   {feature.description}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -43,7 +43,7 @@ export default function TermsContent() {
       </div>
 
       <div className="flex bg-[#FAFAFA] py-14 md:py-20 justify-center items-center">
-        <div className="flex bg-[#F0F0F0] py-6 px-5 rounded-[12px] w-9/10 flex-col items-center gap-8">
+        <div className="flex bg-[#FFFFFE] py-6 px-5 rounded-[12px] w-9/10 flex-col items-center gap-8">
           {terms.map((term, index) => (
             <motion.div
               key={term.title}

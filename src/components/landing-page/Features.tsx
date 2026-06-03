@@ -33,19 +33,49 @@ const FEATURES = [
   },
 ];
 
+import { motion, Variants } from 'motion/react';
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.21, 1.02, 0.73, 1],
+    },
+  },
+};
+
 export function Features() {
   return (
     <section className="bg-[#FAFAFA] py-16 lg:py-24">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
-        <div className="mb-12 lg:mb-16 grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <div className="flex flex-col items-start gap-8 lg:gap-20">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+          variants={containerVariants}
+          className="mb-12 lg:mb-16 grid grid-cols-1 gap-8 lg:grid-cols-2"
+        >
+          <motion.div variants={itemVariants} className="flex flex-col items-start gap-4 lg:gap-6">
             <div
               className="flex w-fit items-center gap-2 rounded-full bg-[#FFFFFE] 
             px-4 py-2 border border-slate-50"
             >
-              <span className="h-2 w-2 rounded-sm bg-[#F59E0B]" />
-              <span className="text-xs font-bold text-[#F59E0B] uppercase tracking-wider">
+              <span className="h-2 w-2 bg-[#F59E0B]" />
+              <span className="text-xs font-bold text-[#F59E0B] capitalize tracking-wider">
                 Clarity, simplified
               </span>
             </div>
@@ -56,15 +86,18 @@ export function Features() {
             >
               Structured <span className="text-brand-blue">Insights</span> for Every Lab Result
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-col gap-6 items-start lg:justify-between">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col gap-4 lg:gap-4 items-start lg:justify-between"
+          >
             <p
               className="text-[16px] lg:text-[18px] font-normal leading-[1.5] 
             tracking-[-0.01em] text-[#5E5E5E] text-left"
             >
               Clinsight transforms complex laboratory data into structured, easy-to-understand
-              insights using AI, with optional doctor validation for added confidence.
+              insights using AI.
             </p>
 
             <div className="flex items-center justify-start gap-3 w-full lg:justify-start">
@@ -119,14 +152,22 @@ export function Features() {
                 </button>
               </Link>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          variants={containerVariants}
+          className="grid grid-cols-1 gap-6 md:grid-cols-3"
+        >
           {FEATURES.map((feature) => (
-            <div
+            <motion.div
               key={feature.title}
+              variants={itemVariants}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
               className="flex flex-col gap-6 rounded-[24px] border border-slate-50 bg-white 
               p-4 shadow-sm transition-shadow hover:shadow-md h-auto lg:h-[375px]"
             >
@@ -142,9 +183,9 @@ export function Features() {
                 <h3 className="text-xl font-bold text-[#1B1B1B]">{feature.title}</h3>
                 <p className="text-[14px] leading-relaxed text-[#5E5E5E]">{feature.description}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

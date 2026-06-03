@@ -31,14 +31,14 @@ export function BentoGrid() {
           viewport={{ once: true }}
           className="flex flex-col items-start gap-6 mb-12 lg:mb-16 text-left"
         >
-          <div className="flex w-fit items-center gap-2 rounded-full bg-[#FFFFFE] px-4 py-2 shadow-sm border border-slate-50">
-            <div className="h-2 w-2 bg-[#F59E0B] rounded-full" />
-            <span className="text-xl font-medium font-['Inter'] leading-6 text-[#F59E0B] tracking-wider">
+          <div className="flex w-fit items-center gap-2 rounded-full bg-[#FFFFFE] px-4 py-2 border border-slate-50">
+            <div className="h-2 w-2 bg-[#F59E0B]" />
+            <span className="text-xl font-medium font-['Inter'] leading-6 text-[#F59E0B] tracking-wider capitalize">
               Clarity, simplified
             </span>
           </div>
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between w-full gap-6">
-            <h2 className="text-[32px] lg:text-[48px] font-bold leading-[1.2] tracking-[-0.02em] text-[#1B1B1B] lg:max-w-xl">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between w-full gap-6 lg:gap-40">
+            <h2 className="text-[32px] lg:text-[40px] font-bold leading-[1.2] tracking-[-0.02em] text-[#1B1B1B] lg:max-w-none whitespace-nowrap">
               How <span className="text-[#1565C0]">Clinsight</span> Works
             </h2>
             <p className="max-w-xl lg:max-w-2xl text-[16px] lg:text-[18px] font-normal leading-[1.5] tracking-[-0.01em] text-[#5E5E5E]">
@@ -87,7 +87,7 @@ export function BentoGrid() {
                   type="button"
                   className="w-full rounded-2xl py-6 bg-[#1565C0] hover:bg-[#1255A8] font-bold text-base mt-2 transition-all active:scale-[0.98]"
                 >
-                  Get Started on Clinsights
+                  Get Started on Clinsight
                 </Button>
               </Link>
             </div>

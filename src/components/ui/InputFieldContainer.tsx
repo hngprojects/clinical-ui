@@ -21,10 +21,10 @@ export default function InputFieldContainer({
   children,
 }: InputFieldContainerProps) {
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-1.5">
       <label
         htmlFor={htmlFor}
-        className="text-sm text-text-primary leading-[150%] tracking-[-1%] md:text-lg"
+        className="text-xs text-text-primary leading-[150%] tracking-[-1%] md:text-sm"
       >
         {label}
       </label>
