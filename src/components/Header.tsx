@@ -32,7 +32,7 @@ export function Header() {
     '/verification/verification-complete',
   ];
 
-  if (hideOnRoutes.includes(pathname)) {
+  if (hideOnRoutes.includes(pathname) || pathname.startsWith('/user')) {
     return null;
   }
 
@@ -44,7 +44,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-[#F5F5F5] bg-white">
       <div className="container mx-auto flex h-20 items-center justify-between px-6 lg:px-12">
         <Link href="/" className="flex items-center gap-2 cursor-pointer">
-          <div className="relative h-8 w-[120px] lg:h-10 lg:w-[140px]">
+          <div className="relative h-8 w-30 lg:h-10 lg:w-35">
             <Image
               src="/assets/header-assets/clinsight-logo.svg"
               alt="Clinsight Logo"
@@ -78,7 +78,7 @@ export function Header() {
           <button
             type="button"
             onClick={handleDownload}
-            className="flex w-[226px] h-[46.1px] items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 transition-all hover:bg-slate-50"
+            className="flex w-56.5 h-[46.1px] items-center justify-center gap-4 rounded-[12px] border border-[#D0D0D0] bg-[#FFFFFE] px-4 py-3 text-xs font-bold text-slate-900 transition-all hover:bg-slate-50"
           >
             <div className="flex items-center gap-2">
               <Image
