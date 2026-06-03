@@ -9,7 +9,7 @@ interface CaseRequest {
   condition: string;
 }
 
-interface Case {
+export interface Case {
   id: string;
   patientName: string;
   avatar: string;

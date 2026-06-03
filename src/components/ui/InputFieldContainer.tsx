@@ -20,13 +20,25 @@ export default function InputFieldContainer({
   error,
   children,
 }: InputFieldContainerProps) {
+  const renderLabel = (text: string) => {
+    if (text.endsWith('*')) {
+      return (
+        <>
+          {text.slice(0, -1)}
+          <span className="text-red-500">*</span>
+        </>
+      );
+    }
+    return text;
+  };
+
   return (
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={htmlFor}
         className="text-xs text-text-primary leading-[150%] tracking-[-1%] md:text-sm"
       >
-        {label}
+        {renderLabel(label)}
       </label>
       {children}
       <AnimatePresence>
@@ -53,13 +65,25 @@ export function VerificationInputField({
   error,
   children,
 }: VerificationInputFieldProps) {
+  const renderLabel = (text: string) => {
+    if (text.endsWith('*')) {
+      return (
+        <>
+          {text.slice(0, -1)}
+          <span className="text-red-500">*</span>
+        </>
+      );
+    }
+    return text;
+  };
+
   return (
     <div className="flex flex-col gap-2.5">
       <label
         htmlFor={htmlFor}
         className="text-lg text-text-primary leading-[150%] tracking-[-1%] md:text-lg"
       >
-        {label}
+        {renderLabel(label)}
       </label>
       <div className="input__field flex items-center gap-2 focus-within:border-primary-blue focus-within:border">
         {children}
