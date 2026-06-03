@@ -33,6 +33,7 @@ export default function ContactForm() {
       email: '',
       message: '',
       termsAgreement: false,
+      subject: '',
     },
   });
 
@@ -104,18 +105,35 @@ export default function ContactForm() {
 
           <motion.div variants={itemVariants} transition={itemTransition}>
             <InputFieldContainer
-              label="Email address *"
-              htmlFor="email"
-              error={errors?.email?.message}
+              label="Subject *"
+              htmlFor="subject"
+              error={errors?.subject?.message}
             >
               <input
                 type="text"
-                id="email"
+                id="subject"
                 disabled={isSendingMessage}
-                autoComplete="email"
+                autoComplete="subject"
                 className="input__field"
                 placeholder="you@gmail.com"
-                {...register('email')}
+                {...register('subject')}
+              />
+            </InputFieldContainer>
+          </motion.div>
+
+          <motion.div variants={itemVariants} transition={itemTransition}>
+            <InputFieldContainer
+              label="Message *"
+              htmlFor="message"
+              error={errors?.message?.message}
+            >
+              <textarea
+                id="message"
+                autoComplete="off"
+                className="input__field h-33 p-2.5"
+                disabled={isSendingMessage}
+                placeholder="Tell us a little about what you need."
+                {...register('message')}
               />
             </InputFieldContainer>
           </motion.div>
