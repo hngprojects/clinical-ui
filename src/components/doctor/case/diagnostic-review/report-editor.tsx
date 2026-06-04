@@ -2,10 +2,20 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { EditorToolbar } from './editor-toolbar';
 import { EditorContent } from './editor-content';
 import type { EditorMode } from './edit-dropdown';
 import type { EditorBlock, FormatState, TableBlock } from '@/types/editor-types';
+
+const reportFormSchema = z.object({
+  documentName: z.string().min(1, 'Document name is required').trim(),
+});
+
+type ReportFormValues = z.infer<typeof reportFormSchema>;
 
 interface ReportEditorProps {
   caseId: string;
@@ -14,7 +24,18 @@ interface ReportEditorProps {
 export function ReportEditor({ caseId }: ReportEditorProps) {
   const [mode, setMode] = useState<EditorMode>('edit');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [documentName, setDocumentName] = useState('');
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<ReportFormValues>({
+    resolver: zodResolver(reportFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      documentName: '',
+    },
+  });
 
   const [format, setFormat] = useState<FormatState>({
     fontSize: 11,
@@ -90,13 +111,13 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setDocumentName('');
+    reset();
   };
 
-  const handleFinalizeSubmit = () => {
-    toast.success(`Report "${documentName}" for Case ${caseId} submitted successfully!`);
+  const onSubmit = (data: ReportFormValues) => {
+    toast.success(`Report "${data.documentName}" for Case ${caseId} submitted successfully!`);
     setIsModalOpen(false);
-    setDocumentName('');
+    reset();
   };
 
   return (
@@ -107,11 +128,12 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
             type="button"
             onClick={handleOpenSendModal}
             disabled={isReportEmpty}
-            className={`px-5 py-2.5 transition-all duration-150 text-white text-sm font-medium font-['Inter'] rounded-lg shadow-sm ${
+            className={cn(
+              "px-5 py-2.5 transition-all duration-150 text-white text-sm font-medium font-['Inter'] rounded-lg shadow-sm",
               isReportEmpty
                 ? 'bg-[#D4D4D4] cursor-not-allowed'
-                : 'bg-[#1565C0] hover:bg-[#1256A8] active:bg-[#0F4C9E]'
-            }`}
+                : 'bg-[#1565C0] hover:bg-[#1256A8] active:bg-[#0F4C9E]',
+            )}
           >
             Send Report
           </button>
@@ -142,12 +164,16 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[2px] transition-opacity p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-[440px] p-6 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="bg-white rounded-2xl shadow-xl w-full max-w-[440px] p-6 flex flex-col animate-in fade-in zoom-in-95 duration-200"
+          >
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-[#1B1B1B] text-xl font-semibold font-['Inter'] leading-6">
                 Confirm Report Delivery
               </h2>
               <button
+                type="button"
                 onClick={handleCloseModal}
                 className="text-[#1B1B1B] hover:bg-gray-100 transition-colors p-1.5 rounded-full"
                 aria-label="Close modal"
@@ -169,16 +195,29 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
             </div>
 
             <div className="flex flex-col gap-2 mb-4">
-              <label className="text-[#1B1B1B] text-sm font-medium font-['Inter']">
+              <label
+                htmlFor="documentName"
+                className="text-[#1B1B1B] text-sm font-medium font-['Inter']"
+              >
                 Document Name
               </label>
               <input
+                id="documentName"
                 type="text"
-                value={documentName}
-                onChange={(e) => setDocumentName(e.target.value)}
+                {...register('documentName')}
                 placeholder="Report Name"
-                className="w-full px-4 py-3 border border-[#E8E8E8] rounded-xl outline-none focus:border-[#1565C0] text-[#494949] placeholder:text-[#BBBBBB] text-base font-['Inter'] transition-colors"
+                className={cn(
+                  "w-full px-4 py-3 border rounded-xl outline-none text-[#494949] placeholder:text-[#BBBBBB] text-base font-['Inter'] transition-colors",
+                  errors.documentName
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-[#E8E8E8] focus:border-[#1565C0]',
+                )}
               />
+              {errors.documentName && (
+                <span className="text-red-500 text-xs font-medium font-['Inter']">
+                  {errors.documentName.message}
+                </span>
+              )}
             </div>
 
             <p className="text-[#767676] text-sm font-['Inter'] leading-5 mb-6">
@@ -186,17 +225,18 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
             </p>
 
             <button
-              onClick={handleFinalizeSubmit}
-              disabled={!documentName.trim()}
-              className={`w-full py-3.5 rounded-xl text-white text-base font-medium font-['Inter'] transition-all ${
-                documentName.trim()
+              type="submit"
+              disabled={!isValid}
+              className={cn(
+                "w-full py-3.5 rounded-xl text-white text-base font-medium font-['Inter'] transition-all",
+                isValid
                   ? 'bg-[#1565C0] hover:bg-[#1256A8] shadow-sm'
-                  : 'bg-[#D4D4D4] cursor-not-allowed'
-              }`}
+                  : 'bg-[#D4D4D4] cursor-not-allowed',
+              )}
             >
               Finalize & Submit Report
             </button>
-          </div>
+          </form>
         </div>
       )}
     </>

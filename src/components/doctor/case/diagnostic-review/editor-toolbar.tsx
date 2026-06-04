@@ -47,7 +47,11 @@ const IconBtn = memo(function IconBtn({
       className={`w-7 h-7 flex items-center justify-center rounded transition-all duration-150 shrink-0
         ${disabled ? 'opacity-40 cursor-not-allowed' : active ? 'bg-[#E8EEF9] text-[#1565C0]' : 'text-[#1B1B1B] hover:bg-[#F0F0F0]'}`}
     >
-      <HugeiconsIcon icon={icon} size={16} color={active ? '#1565C0' : '#1B1B1B'} />
+      <HugeiconsIcon
+        icon={icon}
+        size={16}
+        color={disabled ? '`#A0A0A0`' : active ? '`#1565C0`' : '`#1B1B1B`'}
+      />
     </button>
   );
 });
