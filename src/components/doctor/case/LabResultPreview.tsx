@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
 import { useRouter, useParams } from 'next/navigation';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -9,7 +8,7 @@ import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
 export default function LabResultPreview() {
   const router = useRouter();
   const params = useParams();
-  const caseId = params?.id;
+  const caseId = params?.id as string | undefined;
 
   const handleBeginDiagnosticReview = () => {
     if (caseId) {

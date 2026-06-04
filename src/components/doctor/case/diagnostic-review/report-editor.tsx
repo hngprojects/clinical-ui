@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
+import { toast } from 'sonner';
 import { EditorToolbar } from './editor-toolbar';
 import { EditorContent } from './editor-content';
 import type { EditorMode } from './edit-dropdown';
@@ -65,14 +66,14 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
   const handleInsertImportantNote = useCallback(() => {
     setBlocks((prev) => [
       ...prev,
-      { id: `note-${Date.now()}`, type: 'important-note', text: '' },
-      { id: `para-${Date.now()}`, type: 'paragraph', text: '' },
+      { id: crypto.randomUUID(), type: 'important-note', text: '' },
+      { id: crypto.randomUUID(), type: 'paragraph', text: '' },
     ]);
   }, []);
 
   const handleInsertTable = useCallback(() => {
     const defaultTable: TableBlock = {
-      id: `table-${Date.now()}`,
+      id: crypto.randomUUID(),
       type: 'table',
       headers: ['Medication', 'Dosage', 'Frequency', 'Duration'],
       rows: [{ cells: ['', '', '', ''] }, { cells: ['', '', '', ''] }],
@@ -81,7 +82,7 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
     setBlocks((prev) => [
       ...prev,
       defaultTable,
-      { id: `para-post-${Date.now()}`, type: 'paragraph', text: '' },
+      { id: crypto.randomUUID(), type: 'paragraph', text: '' },
     ]);
   }, []);
 
@@ -93,13 +94,7 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
   };
 
   const handleFinalizeSubmit = () => {
-    console.log('Dispatching structural data payload:', {
-      caseId,
-      documentName,
-      blocks,
-      typography: format,
-    });
-    alert(`Report "${documentName}" for Case ${caseId} submitted successfully!`);
+    toast.success(`Report "${documentName}" for Case ${caseId} submitted successfully!`);
     setIsModalOpen(false);
     setDocumentName('');
   };

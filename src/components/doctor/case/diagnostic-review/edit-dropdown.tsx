@@ -4,12 +4,13 @@ import { useEffect, useRef, useState, memo } from 'react';
 import { ArrowDown01Icon, PencilEdit01Icon, EyeIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 
-export type EditorMode = 'edit' | 'preview';
+import type { EditorMode } from '@/types/editor-types';
 
 interface EditDropdownProps {
   mode: EditorMode;
   onChange: (mode: EditorMode) => void;
 }
+export type { EditorMode };
 
 export const EditDropdown = memo(function EditDropdown({ mode, onChange }: EditDropdownProps) {
   const [open, setOpen] = useState(false);

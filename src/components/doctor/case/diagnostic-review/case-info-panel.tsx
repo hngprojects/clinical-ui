@@ -76,8 +76,11 @@ export function CaseInfoPanel({ caseId }: CaseInfoPanelProps) {
           onToggle={() => setNoteOpen((v) => !v)}
         >
           <div className="p-4 bg-[#F7F7F7] rounded-xl flex flex-col gap-3">
-            {patientNote.split('\n\n').map((para, i) => (
-              <p key={i} className="text-[#767676] text-base font-medium font-['Inter'] leading-7">
+            {patientNote.split('\n\n').map((para) => (
+              <p
+                key={para.slice(0, 50)}
+                className="text-[#767676] text-base font-medium font-['Inter'] leading-7"
+              >
                 {para}
               </p>
             ))}
@@ -106,7 +109,7 @@ export function CaseInfoPanel({ caseId }: CaseInfoPanelProps) {
           {labOpen && (
             <div className="mt-3 rounded-xl border border-[#E8E8E8] overflow-hidden">
               <Image
-                src="/assets/diagnostic-reviw-assets/Rectangle34624404.png"
+                src="/assets/diagnostic-review-assets/Rectangle34624404.png"
                 alt="Patient lab result report"
                 width={344}
                 height={296}
