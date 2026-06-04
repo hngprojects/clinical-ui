@@ -154,7 +154,7 @@ export default function ContactForm() {
               <textarea
                 id="message"
                 autoComplete="off"
-                className="input__field h-33 p-2.5"
+                className="input__field h-33 p-2.5 resize-none"
                 disabled={isSendingMessage}
                 placeholder="Tell us a little about what you need."
                 {...register('message')}
