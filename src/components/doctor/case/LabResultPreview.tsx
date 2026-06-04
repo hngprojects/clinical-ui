@@ -1,17 +1,25 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
 
 export default function LabResultPreview() {
   const router = useRouter();
+  const params = useParams();
+  const caseId = params?.id as string | undefined;
+
+  const handleBeginDiagnosticReview = () => {
+    if (caseId) {
+      router.push(`/user/case/${caseId}/diagnostic-review`);
+    } else {
+      console.warn('Case ID parameter could not be recovered from active context.');
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6 bg-[#F9FAFB] min-h-screen font-['Inter'] overflow-hidden">
-      {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-[#727783]">
         <span
           onClick={() => router.back()}
@@ -44,7 +52,10 @@ export default function LabResultPreview() {
         <div className="lg:col-span-4 flex flex-col justify-between h-auto lg:h-[calc(100vh-140px)] w-full gap-10 lg:gap-0">
           {/* Action Button at top */}
           <div className="w-full">
-            <button className="bg-primary-blue text-white w-full py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-[0px_4px_12px_rgba(21,101,192,0.2)]">
+            <button
+              onClick={handleBeginDiagnosticReview}
+              className="bg-primary-blue text-white w-full py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-[0px_4px_12px_rgba(21,101,192,0.2)]"
+            >
               Begin Diagnostic Review
             </button>
           </div>
