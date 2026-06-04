@@ -1,6 +1,7 @@
 'use client';
 
 import { memo } from 'react';
+import { cn } from '@/lib/utils';
 import {
   NoteEditIcon,
   LayoutTableIcon,
@@ -44,13 +45,19 @@ const IconBtn = memo(function IconBtn({
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       title={disabled ? 'Coming soon' : label}
-      className={`w-7 h-7 flex items-center justify-center rounded transition-all duration-150 shrink-0
-        ${disabled ? 'opacity-40 cursor-not-allowed' : active ? 'bg-[#E8EEF9] text-[#1565C0]' : 'text-[#1B1B1B] hover:bg-[#F0F0F0]'}`}
+      className={cn(
+        'w-7 h-7 flex items-center justify-center rounded transition-all duration-150 shrink-0',
+        {
+          'opacity-40 cursor-not-allowed': disabled,
+          'bg-[#E8EEF9] text-[#1565C0]': !disabled && active,
+          'text-[#1B1B1B] hover:bg-[#F0F0F0]': !disabled && !active,
+        },
+      )}
     >
       <HugeiconsIcon
         icon={icon}
         size={16}
-        color={disabled ? '`#A0A0A0`' : active ? '`#1565C0`' : '`#1B1B1B`'}
+        color={disabled ? '#A0A0A0' : active ? '#1565C0' : '#1B1B1B'}
       />
     </button>
   );
@@ -70,8 +77,13 @@ const Row1Btn = memo(function Row1Btn({ icon, label, disabled = false, onClick }
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       title={disabled ? 'Coming soon' : label}
-      className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium font-['Inter'] rounded-full transition-colors whitespace-nowrap
-        ${disabled ? 'bg-[#F5F5F5] text-[#A0A0A0] cursor-not-allowed opacity-60' : 'text-[#1B1B1B] bg-[#F5F5F5] hover:bg-[#EAEAEA] active:bg-[#E0E0E0]'}`}
+      className={cn(
+        "flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium font-['Inter'] rounded-full transition-colors whitespace-nowrap",
+        {
+          'bg-[#F5F5F5] text-[#A0A0A0] cursor-not-allowed opacity-60': disabled,
+          'text-[#1B1B1B] bg-[#F5F5F5] hover:bg-[#EAEAEA] active:bg-[#E0E0E0]': !disabled,
+        },
+      )}
     >
       <HugeiconsIcon icon={icon} size={15} color={disabled ? '#A0A0A0' : '#1B1B1B'} />
       <span>{label}</span>
@@ -102,7 +114,10 @@ export function EditorToolbar({
 
   return (
     <div
-      className={`bg-white select-none transition-all duration-200 border-b border-[#E8E8E8] ${isPreview ? 'pb-1' : ''}`}
+      className={cn(
+        'bg-white select-none transition-all duration-200 border-b border-[#E8E8E8]',
+        isPreview && 'pb-1',
+      )}
     >
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         {!isPreview ? (

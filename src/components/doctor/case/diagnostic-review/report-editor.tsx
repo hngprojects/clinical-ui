@@ -12,7 +12,7 @@ import type { EditorMode } from './edit-dropdown';
 import type { EditorBlock, FormatState, TableBlock } from '@/types/editor-types';
 
 const reportFormSchema = z.object({
-  documentName: z.string().min(1, 'Document name is required').trim(),
+  documentName: z.string().trim().min(1, 'Document name is required'),
 });
 
 type ReportFormValues = z.infer<typeof reportFormSchema>;
