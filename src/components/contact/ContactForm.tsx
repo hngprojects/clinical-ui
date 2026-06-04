@@ -37,7 +37,6 @@ export default function ContactForm() {
       subject: undefined,
       message: '',
       termsAgreement: false,
-      subject: '',
     },
   });
 
