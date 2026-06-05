@@ -130,7 +130,7 @@ export default function Page() {
           {/* specialities */}
           <div className="profile__sections space-y-[26.46px]">
             <header className="flex items-center justify-between">
-              <h2 className="font-semibold leading-normal font-inter text-text-settings-header-text text-[23.462px]">
+              <h2 className="font-semibold leading-normal font-inter text-settings-header-text text-[23.462px]">
                 Specialities
               </h2>
               <EditButton />

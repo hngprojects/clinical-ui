@@ -116,9 +116,8 @@ export default function ContactForm() {
                 type="text"
                 id="subject"
                 disabled={isSendingMessage}
-                autoComplete="subject"
                 className="input__field"
-                placeholder="you@gmail.com"
+                placeholder="Add a subject"
                 {...register('subject')}
               />
             </InputFieldContainer>
