@@ -98,20 +98,39 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
       return prev.filter((_, idx) => !indicesToRemove.includes(idx));
     });
   }, []);
-
   const handleToggleFormat = useCallback((key: keyof Omit<FormatState, 'fontSize'>) => {
-    if (typeof document !== 'undefined') {
-      document.execCommand(key, false, undefined);
-
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       const selection = window.getSelection();
+
       if (selection && selection.rangeCount > 0) {
-        let node: Node | null = selection.getRangeAt(0).startContainer;
-        while (node && node !== document.body) {
-          if (node instanceof HTMLElement && node.hasAttribute('contenteditable')) {
-            node.dispatchEvent(new Event('input', { bubbles: true }));
-            break;
+        if (!selection.isCollapsed) {
+          const range = selection.getRangeAt(0);
+
+          const tagMap: Record<string, string> = {
+            bold: 'strong',
+            italic: 'em',
+            underline: 'u',
+          };
+          const tagName = tagMap[key];
+
+          if (tagName) {
+            const element = document.createElement(tagName);
+            const contents = range.extractContents();
+            element.appendChild(contents);
+            range.insertNode(element);
+            selection.removeAllRanges();
+            const newRange = document.createRange();
+            newRange.selectNodeContents(element);
+            selection.addRange(newRange);
           }
-          node = node.parentNode;
+          let node: Node | null = selection.getRangeAt(0).startContainer;
+          while (node && node !== document.body) {
+            if (node instanceof HTMLElement && node.hasAttribute('contenteditable')) {
+              node.dispatchEvent(new Event('input', { bubbles: true }));
+              break;
+            }
+            node = node.parentNode;
+          }
         }
       }
     }
@@ -240,7 +259,6 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
             <EditorContent
               blocks={blocks}
               editable={mode === 'edit'}
-              format={format}
               onUpdateBlock={handleUpdateBlock}
               onDeleteBlock={handleDeleteBlock}
             />

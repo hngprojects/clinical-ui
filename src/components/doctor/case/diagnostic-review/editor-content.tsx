@@ -6,7 +6,6 @@ import { Delete02Icon } from '@hugeicons/core-free-icons';
 import DOMPurify from 'dompurify';
 import type {
   EditorBlock,
-  FormatState,
   ParagraphBlock,
   ImportantNoteBlock,
   TableBlock,
@@ -25,14 +24,19 @@ const ImportantNoteBlockView = memo(function ImportantNoteBlockView({
   onChange,
   onDelete,
 }: ImportantNoteProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    if (editorRef.current && editorRef.current.innerHTML !== block.text) {
+      editorRef.current.innerHTML = DOMPurify.sanitize(block.text);
     }
   }, [block.text]);
+
+  const handleContentUpdate = () => {
+    if (editorRef.current) {
+      onChange(DOMPurify.sanitize(editorRef.current.innerHTML));
+    }
+  };
 
   return (
     <div className="my-6 flex p-4 rounded-xl bg-[#FAFAFA] flex-col gap-2 transition-all duration-200 relative group">
@@ -53,21 +57,24 @@ const ImportantNoteBlockView = memo(function ImportantNoteBlockView({
       </div>
 
       {editable ? (
-        <textarea
-          ref={textareaRef}
-          value={block.text}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Type important notes here..."
-          className="w-full resize-none overflow-y-auto outline-none bg-transparent text-[#4B5563] text-base font-medium font-['Inter'] leading-7 placeholder:text-[#B0C4DE] max-h-[250px]"
+        <div
+          ref={editorRef}
+          contentEditable={true}
+          suppressContentEditableWarning={true}
+          onBlur={handleContentUpdate}
+          onInput={handleContentUpdate}
+          data-placeholder="Type important notes here..."
+          className="w-full outline-none bg-transparent text-[#4B5563] text-base font-medium font-['Inter'] leading-7 empty:before:content-[attr(data-placeholder)] empty:before:text-[#B0C4DE] max-h-[250px] overflow-y-auto"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#B0C4DE transparent' }}
         />
       ) : (
-        <p
-          className="text-[#4B5563] text-base font-medium font-['Inter'] leading-7 whitespace-pre-line max-h-[250px] overflow-y-auto pr-2"
+        <div
+          className="text-[#4B5563] text-base font-medium font-['Inter'] leading-7 whitespace-pre-wrap break-words max-h-[250px] overflow-y-auto pr-2"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#B0C4DE transparent' }}
-        >
-          {block.text || 'No annotation provided.'}
-        </p>
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(block.text) || 'No annotation provided.',
+          }}
+        />
       )}
     </div>
   );
@@ -205,8 +212,11 @@ const ParagraphBlockView = memo(function ParagraphBlockView({
   const editorRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== block.text) {
-      editorRef.current.innerHTML = DOMPurify.sanitize(block.text);
+    if (editorRef.current) {
+      const sanitized = DOMPurify.sanitize(block.text);
+      if (editorRef.current.innerHTML !== sanitized) {
+        editorRef.current.innerHTML = sanitized;
+      }
     }
   }, [block.text]);
 
@@ -257,7 +267,6 @@ const ParagraphBlockView = memo(function ParagraphBlockView({
 interface EditorContentProps {
   blocks: EditorBlock[];
   editable: boolean;
-  format: FormatState;
   onUpdateBlock: (id: string, updated: Partial<EditorBlock>) => void;
   onDeleteBlock: (id: string) => void;
 }
@@ -265,7 +274,6 @@ interface EditorContentProps {
 export function EditorContent({
   blocks,
   editable,
-  format,
   onUpdateBlock,
   onDeleteBlock,
 }: EditorContentProps) {
