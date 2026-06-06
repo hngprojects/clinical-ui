@@ -51,38 +51,38 @@ export default function LabResultPreview() {
         {/* Sidebar: Fixed/Sticky on Desktop - Stacked with spacing on Mobile */}
         <div className="lg:col-span-4 flex flex-col justify-between h-auto lg:h-[calc(100vh-140px)] w-full gap-10 lg:gap-0">
           {/* Action Button at top */}
-          <div className="w-full">
+          <div className="w-full flex justify-center lg:justify-end">
             <button
               onClick={handleBeginDiagnosticReview}
-              className="bg-primary-blue text-white w-full py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-[0px_4px_12px_rgba(21,101,192,0.2)]"
+              className="bg-primary-blue text-white px-6 py-3 rounded-xl font-bold text-sm md:text-base hover:bg-blue-700 transition-all shadow-[0px_4px_12px_rgba(21,101,192,0.2)] whitespace-nowrap"
             >
               Begin Diagnostic Review
             </button>
           </div>
 
-          {/* Page Selectors at bottom */}
-          <div className="flex flex-row gap-4 md:gap-6 justify-center lg:justify-start">
+          {/* Page Selectors at bottom - Re-applied Grid Fix */}
+          <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-[340px] mx-auto lg:mx-0">
             {/* Page 1 */}
-            <div className="flex flex-col items-center gap-2 md:gap-3">
-              <div className="bg-white p-1 rounded-xl md:rounded-2xl border-2 border-primary-blue shadow-md overflow-hidden w-[100px] md:w-[150px] aspect-[3/4] relative cursor-pointer hover:shadow-lg transition-all">
+            <div className="flex flex-col items-center gap-2 md:gap-3 w-full">
+              <div className="bg-white p-1 rounded-none border-2 border-primary-blue shadow-md overflow-hidden w-full aspect-[3/4] relative cursor-pointer hover:shadow-lg transition-all">
                 <Image
                   src="/assets/dashboard-case-assets/PAGE 1.svg"
                   alt="Page 1"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <span className="text-xs md:text-sm font-medium text-[#727783]">Page 1</span>
             </div>
 
             {/* Page 2 */}
-            <div className="flex flex-col items-center gap-2 md:gap-3">
-              <div className="bg-white p-1 rounded-xl md:rounded-2xl border border-[#F0F0F0] shadow-sm overflow-hidden w-[100px] md:w-[150px] aspect-[3/4] relative cursor-pointer hover:shadow-lg transition-all">
+            <div className="flex flex-col items-center gap-2 md:gap-3 w-full">
+              <div className="bg-white p-1 rounded-none border border-[#F0F0F0] shadow-sm overflow-hidden w-full aspect-[3/4] relative cursor-pointer hover:shadow-lg transition-all">
                 <Image
                   src="/assets/dashboard-case-assets/PAGE 2.svg"
                   alt="Page 2"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <span className="text-xs md:text-sm font-medium text-[#727783]">Page 2</span>
