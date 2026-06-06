@@ -153,7 +153,7 @@ export default function ForgotPasswordContent() {
         </span>
       </header>
       <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
-        <div className="w-full max-w-[540px] bg-white rounded-[24px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-6 md:px-10 md:py-7 flex flex-col items-center gap-4 transition-all duration-300">
+        <div className="w-full max-w-[500px] bg-white rounded-[24px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-6 md:px-10 md:py-7 flex flex-col items-center gap-4 transition-all duration-300">
           <div className="w-full flex flex-col items-center justify-start">
             {' '}
             {step === 'email' && (

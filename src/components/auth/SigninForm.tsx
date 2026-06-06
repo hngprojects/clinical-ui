@@ -65,7 +65,7 @@ export function SignInForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-150 rounded-[24px] bg-white shadow-2xl flex flex-col p-5 md:px-12 md:py-6"
+      className="w-full max-w-[500px] rounded-[24px] bg-white shadow-2xl flex flex-col px-6 md:px-10 py-4 md:py-6"
     >
       <div className="flex flex-col h-full gap-3 md:gap-4">
         {/* Header */}

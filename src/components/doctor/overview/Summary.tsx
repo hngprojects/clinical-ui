@@ -24,21 +24,21 @@ function SummaryCard({
   iconColor: string;
 }) {
   return (
-    <div className="rounded-[20px] p-5 bg-[#FFFFFE] border border-[#F0F0F0]">
-      <div className="flex flex-col gap-5">
+    <div className="rounded-[20px] p-4 lg:p-5 bg-[#FFFFFE] border border-[#F0F0F0]">
+      <div className="flex flex-col gap-3 md:gap-5">
         <div className="flex justify-between items-center gap-1">
-          <div className="flex gap-2">
-            <HugeiconsIcon icon={icon ?? Task01Icon} size={24} color={iconColor ?? '#935F07'} />
-            <span className="text-secondary-3">{title}</span>
+          <div className="flex items-center gap-2 min-w-0">
+            <HugeiconsIcon icon={icon ?? Task01Icon} size={20} color={iconColor ?? '#935F07'} />
+            <span className="text-secondary-3 text-xs md:text-sm truncate">{title}</span>
           </div>
           {subtitle ? (
-            <span className="text-sm px-2.5 py-0.75 bg-[#DEF6E7] text-[#147638] rounded-[6px] flex items-center gap-2.5">
-              <HugeiconsIcon icon={ArrowUpRight03Icon} size={24} color="currentColor" />
+            <span className="text-[10px] md:text-xs px-2 py-0.5 bg-[#DEF6E7] text-[#147638] rounded-[6px] flex items-center gap-1 shrink-0">
+              <HugeiconsIcon icon={ArrowUpRight03Icon} size={14} color="currentColor" />
               {subtitle}
             </span>
           ) : null}
         </div>
-        <span className="text-2xl lg:text-[40px] font-semibold">{value}</span>
+        <span className="text-xl md:text-2xl lg:text-[32px] font-semibold truncate">{value}</span>
       </div>
     </div>
   );
@@ -94,7 +94,7 @@ export default function Summary({ overview }: { overview: Overview | null }) {
   ];
 
   return (
-    <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(271px,1fr))]">
+    <div className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
       {cards.map((c) => (
         <SummaryCard
           key={c.key}
