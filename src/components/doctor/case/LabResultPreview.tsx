@@ -64,12 +64,12 @@ export default function LabResultPreview() {
           <div className="grid grid-cols-2 gap-4 md:gap-6 w-full max-w-[340px] mx-auto lg:mx-0">
             {/* Page 1 */}
             <div className="flex flex-col items-center gap-2 md:gap-3 w-full">
-              <div className="bg-white p-1 rounded-none border-2 border-primary-blue shadow-md overflow-hidden w-full aspect-[3/4] relative cursor-pointer hover:shadow-lg transition-all">
+              <div className="relative w-full aspect-[3/4] cursor-pointer hover:opacity-80 transition-all rounded-2xl overflow-hidden">
                 <Image
                   src="/assets/dashboard-case-assets/PAGE 1.svg"
                   alt="Page 1"
                   fill
-                  className="object-contain"
+                  className="object-cover"
                 />
               </div>
               <span className="text-xs md:text-sm font-medium text-[#727783]">Page 1</span>
@@ -77,12 +77,12 @@ export default function LabResultPreview() {
 
             {/* Page 2 */}
             <div className="flex flex-col items-center gap-2 md:gap-3 w-full">
-              <div className="bg-white p-1 rounded-none border border-[#F0F0F0] shadow-sm overflow-hidden w-full aspect-[3/4] relative cursor-pointer hover:shadow-lg transition-all">
+              <div className="relative w-full aspect-[3/4] cursor-pointer hover:opacity-80 transition-all rounded-2xl overflow-hidden">
                 <Image
                   src="/assets/dashboard-case-assets/PAGE 2.svg"
                   alt="Page 2"
                   fill
-                  className="object-contain"
+                  className="object-cover"
                 />
               </div>
               <span className="text-xs md:text-sm font-medium text-[#727783]">Page 2</span>
