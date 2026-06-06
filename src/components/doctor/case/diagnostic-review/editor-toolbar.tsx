@@ -1,7 +1,8 @@
 'use client';
 
-import { memo } from 'react';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
   NoteEditIcon,
   LayoutTableIcon,
@@ -10,95 +11,23 @@ import {
   TextUnderlineIcon,
   Link01Icon,
   ImageUpload01Icon,
+  Copy01Icon,
   ListViewIcon,
   LeftToRightListBulletIcon,
   TextIndentIcon,
 } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
 import { EditDropdown, type EditorMode } from './edit-dropdown';
-import type { FormatState } from '@/types/editor-types';
-
-const VDivider = memo(function VDivider() {
-  return <div className="w-px h-4 bg-[#E0E0E0] mx-1 shrink-0" aria-hidden="true" />;
-});
-
-interface IconBtnProps {
-  icon: React.ComponentProps<typeof HugeiconsIcon>['icon'];
-  label: string;
-  active?: boolean;
-  disabled?: boolean;
-  onClick?: () => void;
-}
-
-const IconBtn = memo(function IconBtn({
-  icon,
-  label,
-  active = false,
-  disabled = false,
-  onClick,
-}: IconBtnProps) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-pressed={active}
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
-      title={disabled ? 'Coming soon' : label}
-      className={cn(
-        'w-7 h-7 flex items-center justify-center rounded transition-all duration-150 shrink-0',
-        {
-          'opacity-40 cursor-not-allowed': disabled,
-          'bg-[#E8EEF9] text-[#1565C0]': !disabled && active,
-          'text-[#1B1B1B] hover:bg-[#F0F0F0]': !disabled && !active,
-        },
-      )}
-    >
-      <HugeiconsIcon
-        icon={icon}
-        size={16}
-        color={disabled ? '#A0A0A0' : active ? '#1565C0' : '#1B1B1B'}
-      />
-    </button>
-  );
-});
-
-interface Row1BtnProps {
-  icon: React.ComponentProps<typeof HugeiconsIcon>['icon'];
-  label: string;
-  disabled?: boolean;
-  onClick?: () => void;
-}
-
-const Row1Btn = memo(function Row1Btn({ icon, label, disabled = false, onClick }: Row1BtnProps) {
-  return (
-    <button
-      type="button"
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
-      title={disabled ? 'Coming soon' : label}
-      className={cn(
-        "flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium font-['Inter'] rounded-full transition-colors whitespace-nowrap",
-        {
-          'bg-[#F5F5F5] text-[#A0A0A0] cursor-not-allowed opacity-60': disabled,
-          'text-[#1B1B1B] bg-[#F5F5F5] hover:bg-[#EAEAEA] active:bg-[#E0E0E0]': !disabled,
-        },
-      )}
-    >
-      <HugeiconsIcon icon={icon} size={15} color={disabled ? '#A0A0A0' : '#1B1B1B'} />
-      <span>{label}</span>
-    </button>
-  );
-});
+import type { FormatState, EditorBlock } from '@/types/editor-types';
 
 interface EditorToolbarProps {
   mode: EditorMode;
-  onModeChange: (m: EditorMode) => void;
+  onModeChange: (mode: EditorMode) => void;
   format: FormatState;
   onFormat: (key: keyof Omit<FormatState, 'fontSize'>) => void;
   onFontSize: (delta: 1 | -1) => void;
   onInsertImportantNote: () => void;
   onInsertTable: () => void;
+  blocks?: EditorBlock[];
 }
 
 export function EditorToolbar({
@@ -109,25 +38,91 @@ export function EditorToolbar({
   onFontSize,
   onInsertImportantNote,
   onInsertTable,
+  blocks = [],
 }: EditorToolbarProps) {
-  const isPreview = mode === 'preview';
+  const isEditable = mode === 'edit';
+
+  const handleCopyContent = () => {
+    if (blocks.length === 0) {
+      toast.error('There is no content to copy yet.');
+      return;
+    }
+
+    try {
+      const compiledText = blocks
+        .map((block) => {
+          if (block.type === 'paragraph' || block.type === 'important-note') {
+            const plainText = block.text
+              .replace(/<[^>]*>/g, '')
+              .replace(/&nbsp;/g, ' ')
+              .trim();
+
+            return block.type === 'important-note' ? `[IMPORTANT NOTE]\n${plainText}` : plainText;
+          }
+
+          if (block.type === 'table') {
+            const headerRow = `| ${block.headers.join(' | ')} |`;
+            const separator = `| ${block.headers.map(() => '---').join(' | ')} |`;
+            const dataRows = block.rows
+              .map((row) => `| ${row.cells.map((c) => c || '--').join(' | ')} |`)
+              .join('\n');
+
+            return `[TABLE]\n${headerRow}\n${separator}\n${dataRows}`;
+          }
+          return '';
+        })
+        .filter(Boolean)
+        .join('\n\n');
+
+      if (!compiledText.trim()) {
+        toast.error('The document text is currently empty.');
+        return;
+      }
+
+      navigator.clipboard.writeText(compiledText);
+      toast.success('Document text copied to clipboard successfully!');
+    } catch (err) {
+      toast.error('Failed to copy text automatically.');
+    }
+  };
 
   return (
-    <div
-      className={cn(
-        'bg-white select-none transition-all duration-200 border-b border-[#E8E8E8]',
-        isPreview && 'pb-1',
-      )}
-    >
-      <div className="flex items-center justify-between px-4 pt-4 pb-3">
-        {!isPreview ? (
-          <div className="flex items-center gap-2">
-            <Row1Btn icon={LayoutTableIcon} label="Template" disabled />
-            <Row1Btn icon={NoteEditIcon} label="Important Note" onClick={onInsertImportantNote} />
-            <Row1Btn icon={LayoutTableIcon} label="Table" onClick={onInsertTable} />
+    <div className="w-full bg-white flex flex-col shrink-0 select-none border-b border-[#E8E8E8]">
+      <div
+        className={cn(
+          'flex items-center px-6 py-3.5 border-b border-[#FAF9F9]',
+          isEditable ? 'justify-between' : 'justify-end',
+        )}
+      >
+        {isEditable && (
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              disabled
+              className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium font-['Inter'] text-[#1B1B1B] bg-[#FAF9F9] rounded-xl opacity-35 cursor-not-allowed"
+            >
+              <HugeiconsIcon icon={LayoutTableIcon} size={16} />
+              Template
+            </button>
+
+            <button
+              type="button"
+              onClick={onInsertImportantNote}
+              className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium font-['Inter'] text-[#1B1B1B] bg-[#FAF9F9] hover:bg-[#F2F1F1] rounded-xl transition-all"
+            >
+              <HugeiconsIcon icon={NoteEditIcon} size={16} color="#1565C0" />
+              Important Note
+            </button>
+
+            <button
+              type="button"
+              onClick={onInsertTable}
+              className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium font-['Inter'] text-[#1B1B1B] bg-[#FAF9F9] hover:bg-[#F2F1F1] rounded-xl transition-all"
+            >
+              <HugeiconsIcon icon={LayoutTableIcon} size={16} />
+              Table
+            </button>
           </div>
-        ) : (
-          <div aria-hidden="true" />
         )}
 
         <div>
@@ -135,70 +130,132 @@ export function EditorToolbar({
         </div>
       </div>
 
-      {!isPreview && (
-        <div className="flex items-center px-4 pb-3 gap-0.5 animate-fadeIn">
-          <button
-            type="button"
-            aria-label="Decrease font size"
-            onClick={() => onFontSize(-1)}
-            className="w-6 h-6 flex items-center justify-center text-[#1B1B1B] hover:bg-[#F0F0F0] rounded text-base leading-none transition-colors shrink-0"
-          >
-            −
-          </button>
-          <span className="mx-0.5 min-w-[2rem] px-1 h-6 flex items-center justify-center border border-[#D0D0D0] rounded text-sm text-[#1B1B1B] font-medium font-['Inter']">
-            {format.fontSize}
-          </span>
-          <button
-            type="button"
-            aria-label="Increase font size"
-            onClick={() => onFontSize(1)}
-            className="w-6 h-6 flex items-center justify-center text-[#1B1B1B] hover:bg-[#F0F0F0] rounded text-base leading-none transition-colors shrink-0"
-          >
-            +
-          </button>
+      {isEditable && (
+        <div className="flex items-center gap-1.5 px-6 py-2.5 bg-white min-h-[48px] overflow-x-auto">
+          <div className="flex items-center gap-1 bg-[#FAF9F9] rounded-lg p-0.5 border border-[#E8E8E8]/30">
+            <button
+              type="button"
+              onClick={() => onFontSize(-1)}
+              className="w-7 h-7 flex items-center justify-center text-base font-bold text-[#494949] hover:bg-white rounded transition-colors"
+            >
+              −
+            </button>
+            <div className="w-9 text-center text-xs font-semibold font-['Inter'] text-[#1B1B1B]">
+              {format.fontSize}
+            </div>
+            <button
+              type="button"
+              onClick={() => onFontSize(1)}
+              className="w-7 h-7 flex items-center justify-center text-base font-bold text-[#494949] hover:bg-white rounded transition-colors"
+            >
+              +
+            </button>
+          </div>
 
-          <VDivider />
+          <div className="h-4 w-[1px] bg-[#E8E8E8] mx-1" />
 
-          <IconBtn
-            icon={TextBoldIcon}
-            label="Bold"
-            active={format.bold}
-            onClick={() => onFormat('bold')}
-          />
-          <IconBtn
-            icon={TextUnderlineIcon}
-            label="Underline"
-            active={format.underline}
-            onClick={() => onFormat('underline')}
-          />
-          <IconBtn
-            icon={TextItalicIcon}
-            label="Italic"
-            active={format.italic}
-            onClick={() => onFormat('italic')}
-          />
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              onClick={() => onFormat('bold')}
+              className={cn(
+                'w-8 h-8 flex items-center justify-center rounded-lg transition-colors',
+                format.bold
+                  ? 'bg-[#1565C0]/10 text-[#1565C0]'
+                  : 'text-[#494949] hover:bg-[#FAF9F9]',
+              )}
+            >
+              <HugeiconsIcon icon={TextBoldIcon} size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={() => onFormat('underline')}
+              className={cn(
+                'w-8 h-8 flex items-center justify-center rounded-lg transition-colors',
+                format.underline
+                  ? 'bg-[#1565C0]/10 text-[#1565C0]'
+                  : 'text-[#494949] hover:bg-[#FAF9F9]',
+              )}
+            >
+              <HugeiconsIcon icon={TextUnderlineIcon} size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={() => onFormat('italic')}
+              className={cn(
+                'w-8 h-8 flex items-center justify-center rounded-lg transition-colors',
+                format.italic
+                  ? 'bg-[#1565C0]/10 text-[#1565C0]'
+                  : 'text-[#494949] hover:bg-[#FAF9F9]',
+              )}
+            >
+              <HugeiconsIcon icon={TextItalicIcon} size={18} />
+            </button>
 
-          <button
-            type="button"
-            aria-label="Text colour"
-            disabled
-            title="Coming soon"
-            className="w-7 h-7 flex flex-col items-center justify-center rounded transition-colors shrink-0 opacity-40 cursor-not-allowed"
-          >
-            <span className="text-sm font-bold text-[#1B1B1B] leading-none">A</span>
-            <span className="w-3.5 h-[3px] rounded-full bg-[#1B1B1B] mt-0.5" />
-          </button>
+            <button
+              type="button"
+              disabled
+              className="w-8 h-8 flex flex-col items-center justify-center rounded-lg text-[#494949] opacity-35 cursor-not-allowed relative"
+            >
+              <span className="text-sm font-bold leading-none mt-0.5">A</span>
+              <div className="w-3.5 h-[3px] bg-[#1B1B1B] rounded-full mt-0.5" />
+            </button>
+          </div>
 
-          <VDivider />
+          <div className="h-4 w-[1px] bg-[#E8E8E8] mx-1" />
 
-          <IconBtn icon={Link01Icon} label="Insert link" disabled />
-          <IconBtn icon={ImageUpload01Icon} label="Insert image" disabled />
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              disabled
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-[#494949] opacity-35 cursor-not-allowed"
+            >
+              <HugeiconsIcon icon={Link01Icon} size={18} />
+            </button>
 
-          <VDivider />
+            <button
+              type="button"
+              disabled
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-[#494949] opacity-35 cursor-not-allowed"
+            >
+              <HugeiconsIcon icon={ImageUpload01Icon} size={18} />
+            </button>
 
-          <IconBtn icon={TextIndentIcon} label="Indent" disabled />
-          <IconBtn icon={ListViewIcon} label="Outdent" disabled />
-          <IconBtn icon={LeftToRightListBulletIcon} label="Bullet list" disabled />
+            <button
+              type="button"
+              onClick={handleCopyContent}
+              title="Copy Document Text"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-[#494949] hover:bg-[#FAF9F9] active:text-[#1565C0] transition-colors"
+            >
+              <HugeiconsIcon icon={Copy01Icon} size={18} />
+            </button>
+          </div>
+
+          <div className="h-4 w-[1px] bg-[#E8E8E8] mx-1" />
+
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              disabled
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-[#494949] opacity-35 cursor-not-allowed"
+            >
+              <HugeiconsIcon icon={TextIndentIcon} size={18} />
+            </button>
+            <button
+              type="button"
+              disabled
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-[#494949] opacity-35 cursor-not-allowed"
+            >
+              <HugeiconsIcon icon={ListViewIcon} size={18} />
+            </button>
+            <button
+              type="button"
+              disabled
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-[#494949] opacity-35 cursor-not-allowed"
+            >
+              <HugeiconsIcon icon={LeftToRightListBulletIcon} size={18} />
+            </button>
+          </div>
         </div>
       )}
     </div>

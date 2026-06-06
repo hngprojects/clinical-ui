@@ -51,7 +51,11 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
   const isReportEmpty = useMemo(() => {
     return blocks.every((block) => {
       if (block.type === 'paragraph' || block.type === 'important-note') {
-        return !block.text.trim();
+        const cleanText = block.text
+          .replace(/<[^>]*>/g, '')
+          .replace(/&nbsp;/g, '')
+          .trim();
+        return !cleanText;
       }
       if (block.type === 'table') {
         return block.rows.every((row) => row.cells.every((cell) => !cell.trim()));
@@ -70,18 +74,81 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
   }, []);
 
   const handleDeleteBlock = useCallback((id: string) => {
-    setBlocks((prev) => prev.filter((block) => block.id !== id));
+    setBlocks((prev) => {
+      const index = prev.findIndex((block) => block.id === id);
+      if (index === -1) return prev;
+
+      const blockToDelete = prev[index];
+      const indicesToRemove = [index];
+      if (blockToDelete.type === 'table' || blockToDelete.type === 'important-note') {
+        const nextBlock = prev[index + 1];
+        if (nextBlock && nextBlock.type === 'paragraph' && !nextBlock.text.trim()) {
+          indicesToRemove.push(index + 1);
+        }
+      }
+
+      return prev.filter((_, idx) => !indicesToRemove.includes(idx));
+    });
   }, []);
 
   const handleToggleFormat = useCallback((key: keyof Omit<FormatState, 'fontSize'>) => {
+    if (typeof document !== 'undefined') {
+      document.execCommand(key, false, undefined);
+
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        let node: Node | null = selection.getRangeAt(0).startContainer;
+        while (node && node !== document.body) {
+          if (node instanceof HTMLElement && node.hasAttribute('contenteditable')) {
+            node.dispatchEvent(new Event('input', { bubbles: true }));
+            break;
+          }
+          node = node.parentNode;
+        }
+      }
+    }
     setFormat((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
   const handleFontSizeShift = useCallback((delta: 1 | -1) => {
-    setFormat((prev) => ({
-      ...prev,
-      fontSize: Math.min(72, Math.max(8, prev.fontSize + delta)),
-    }));
+    setFormat((prev) => {
+      const nextSize = Math.min(72, Math.max(8, prev.fontSize + delta));
+
+      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
+          document.execCommand('styleWithCSS', false, 'true');
+
+          const dummyColor = 'rgb(0, 0, 1)';
+          document.execCommand('foreColor', false, '#000001');
+
+          const containers = document.querySelectorAll('[contenteditable="true"]');
+          containers.forEach((container) => {
+            const elements = container.querySelectorAll('span, font');
+            elements.forEach((el) => {
+              const htmlEl = el as HTMLElement;
+              if (htmlEl.style.color === dummyColor || htmlEl.getAttribute('color') === '#000001') {
+                htmlEl.style.color = '';
+                if (htmlEl.style.length === 0) {
+                  htmlEl.removeAttribute('style');
+                }
+                htmlEl.style.fontSize = `${nextSize}pt`;
+              }
+            });
+          });
+
+          let node: Node | null = selection.getRangeAt(0).startContainer;
+          while (node && node !== document.body) {
+            if (node instanceof HTMLElement && node.hasAttribute('contenteditable')) {
+              node.dispatchEvent(new Event('input', { bubbles: true }));
+              break;
+            }
+            node = node.parentNode;
+          }
+        }
+      }
+      return { ...prev, fontSize: nextSize };
+    });
   }, []);
 
   const handleInsertImportantNote = useCallback(() => {
@@ -97,7 +164,7 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
       id: crypto.randomUUID(),
       type: 'table',
       headers: ['Medication', 'Dosage', 'Frequency', 'Duration'],
-      rows: [{ cells: ['', '', '', ''] }, { cells: ['', '', '', ''] }],
+      rows: [{ cells: ['', '', '', ''] }],
     };
 
     setBlocks((prev) => [
@@ -148,6 +215,7 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
             onFontSize={handleFontSizeShift}
             onInsertImportantNote={handleInsertImportantNote}
             onInsertTable={handleInsertTable}
+            blocks={blocks}
           />
 
           <div className="flex-1 overflow-y-auto w-full">

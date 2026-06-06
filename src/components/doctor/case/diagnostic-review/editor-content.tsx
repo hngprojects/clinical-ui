@@ -94,6 +94,18 @@ const TableBlockView = memo(function TableBlockView({
     onChange({ ...block, rows: updatedRows });
   }
 
+  function handleAddRow() {
+    const updatedRows = [...block.rows, { cells: ['', '', '', ''] }];
+    onChange({ ...block, rows: updatedRows });
+  }
+
+  function handleRemoveLastRow() {
+    if (block.rows.length > 1) {
+      const updatedRows = block.rows.slice(0, -1);
+      onChange({ ...block, rows: updatedRows });
+    }
+  }
+
   return (
     <div className="my-6 relative group pt-2">
       {editable && (
@@ -138,7 +150,7 @@ const TableBlockView = memo(function TableBlockView({
                         type="text"
                         value={cell}
                         onChange={(e) => updateCell(ri, ci, e.target.value)}
-                        placeholder="--"
+                        placeholder=""
                         className="w-full outline-none bg-transparent font-['Inter'] text-sm text-[#767676] placeholder:text-[#D0D0D0]"
                       />
                     ) : (
@@ -151,6 +163,27 @@ const TableBlockView = memo(function TableBlockView({
           </tbody>
         </table>
       </div>
+
+      {editable && (
+        <div className="mt-2.5 flex gap-2 select-none">
+          <button
+            type="button"
+            onClick={handleAddRow}
+            className="text-xs font-semibold text-[#1565C0] border border-[#1565C0]/20 hover:bg-blue-50/60 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all"
+          >
+            + Add Row
+          </button>
+          {block.rows.length > 1 && (
+            <button
+              type="button"
+              onClick={handleRemoveLastRow}
+              className="text-xs font-semibold text-[#EF4444] border border-[#EF4444]/10 hover:bg-red-50/60 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all"
+            >
+              - Remove Row
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 });
@@ -166,48 +199,50 @@ interface ParagraphProps {
 const ParagraphBlockView = memo(function ParagraphBlockView({
   block,
   editable,
-  format,
   onChange,
   isFirst,
 }: ParagraphProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const textStyle = {
-    fontSize: `${format.fontSize}pt`,
-    fontWeight: format.bold ? 700 : 400,
-    fontStyle: format.italic ? 'italic' : 'normal',
-    textDecoration: format.underline ? 'underline' : 'none',
-  } as React.CSSProperties;
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    if (editorRef.current && editorRef.current.innerHTML !== block.text) {
+      editorRef.current.innerHTML = block.text;
     }
-  }, [block.text, format]);
+  }, [block.text]);
+
+  const handleContentUpdate = () => {
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
+  };
+
+  const textStyle = {
+    fontSize: '11pt',
+  } as React.CSSProperties;
 
   if (!editable) {
     return (
-      <p
-        className="text-[#1B1B1B] font-['Inter'] leading-7 mb-3 whitespace-pre-line break-words max-h-[400px] overflow-y-auto pr-2"
+      <div
+        className="text-[#1B1B1B] font-['Inter'] leading-7 mb-3 whitespace-pre-wrap break-words max-h-[400px] overflow-y-auto pr-2"
         style={{
           ...textStyle,
           scrollbarWidth: 'thin',
           scrollbarColor: '#D0D0D0 transparent',
         }}
-      >
-        {block.text || (isFirst ? '' : '\u00A0')}
-      </p>
+        dangerouslySetInnerHTML={{ __html: block.text || (isFirst ? '' : '&nbsp;') }}
+      />
     );
   }
 
   return (
-    <textarea
-      ref={textareaRef}
-      value={block.text}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={isFirst ? 'Start typing medical findings here...' : 'Continue typing...'}
-      className="w-full resize-none overflow-y-auto outline-none bg-transparent text-[#1B1B1B] font-['Inter'] leading-7 placeholder:text-[#C0C0C0] mb-3 focus:placeholder:opacity-50 transition-opacity max-h-[400px]"
+    <div
+      ref={editorRef}
+      contentEditable={true}
+      suppressContentEditableWarning={true}
+      onBlur={handleContentUpdate}
+      onInput={handleContentUpdate}
+      data-placeholder={isFirst ? 'Start typing...' : 'Continue typing...'}
+      className="w-full outline-none bg-transparent text-[#1B1B1B] font-['Inter'] leading-7 mb-3 min-h-[1.5em] empty:before:content-[attr(data-placeholder)] empty:before:text-[#C0C0C0] focus:empty:before:opacity-50 transition-opacity max-h-[400px] overflow-y-auto"
       style={{
         ...textStyle,
         scrollbarWidth: 'thin',
