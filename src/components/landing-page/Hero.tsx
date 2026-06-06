@@ -103,18 +103,6 @@ export function Hero() {
                 AI-assisted interpretation, not a medical diagnosis.
               </p>
             </motion.div>
-
-            <motion.div variants={fadeInUp} className="w-full flex justify-center lg:justify-start">
-              <Link href="/waitlist" className="w-full max-w-[200px] lg:max-w-none lg:w-auto">
-                <Button
-                  variant="brand"
-                  className="w-full lg:w-auto rounded-lg lg:rounded-xl py-6 px-10 text-sm font-bold shadow-lg transition-all bg-[#1565C0] text-white hover:bg-[#1565C0]/90"
-                >
-                  Get Started
-                  <HugeiconsIcon icon={ArrowRight01Icon} size={16} className="ml-2" />
-                </Button>
-              </Link>
-            </motion.div>
           </motion.div>
 
           {/* Right Column */}
