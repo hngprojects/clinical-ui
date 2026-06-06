@@ -10,7 +10,7 @@ interface FailedViewProps {
 
 export function FailedView({ onRetry, onContactSupport, isLoading = false }: FailedViewProps) {
   return (
-    <div className="w-full flex flex-col items-center justify-center flex-1 max-w-[521px] mx-auto animate-fadeIn">
+    <div className="w-full flex flex-col items-center justify-center max-w-[480px] mx-auto animate-fadeIn">
       <div className="w-full bg-[#EF44440D] rounded-[24px] p-6 sm:p-8 flex flex-col items-center mb-8 border border-red-500/5">
         <div className="size-20 mb-6 flex items-center justify-center bg-[#EF44441F] rounded-full">
           <div className="size-10 bg-[#EF444426] rounded-full flex items-center justify-center">

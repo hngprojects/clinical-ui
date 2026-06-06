@@ -15,6 +15,11 @@
   --color-primary-subtle: #e8f0f9;
   --color-secondary-3: #5e5e5e;
   --color-neutral-color: #979c9c;
+  --color-settings-header-text: #0b1c30;
+  --color-settings-img-placeholder: #def6e7;
+  --color-settings-subheader-text: #64748b;
+  --color-blue-1: #104ead;
+  --color-withdraw-card: rgba(16, 78, 173, 0.10);
 }
 
 @theme inline {
@@ -167,6 +172,7 @@
     @apply font-semibold text-sm leading-[150%] tracking-[-1%];
   }
 
+
   /* forms */
 
   .input__field {
@@ -180,4 +186,40 @@
   .btn__primary {
     @apply flex items-center justify-center rounded-[8px] gap-3 px-4 py-4 hover:opacity-90 transition-all;
   }
+
+  /* settings */
+  .profile__sections {
+    @apply border border-primary-blue rounded-[26.462px] p-10;
+  }
+
+  
+  .personal_info_title {
+    @apply text-[#94A3B8]  text-[13.231px] leading-[19.846px] tracking-[1.323px] uppercase;
+  }
+
+  .personal_info_value {
+    @apply text-settings-header-text  text-[18.523px] leading-[25.463px];
+  }
+}
+
+@layer utilities {
+  .rounded-settings-radius {
+    border-radius: 10.585px;
+  }
+
+  .payment_overview_card_shadow{
+    box-shadow:  0 1.732px 3.464px 0 rgba(0, 0, 0, 0.05);
+  }
+}
+
+@utility leading-normal {
+  @apply leading-[130%];
+}
+
+@utility border-0.8{
+  border-width: 0.866px;
+}
+
+@utility card-radius{
+  border-radius: 6.928px;
 }

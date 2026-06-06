@@ -3,9 +3,9 @@
 import { memo, useLayoutEffect, useRef } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete02Icon } from '@hugeicons/core-free-icons';
+import DOMPurify from 'dompurify';
 import type {
   EditorBlock,
-  FormatState,
   ParagraphBlock,
   ImportantNoteBlock,
   TableBlock,
@@ -24,14 +24,19 @@ const ImportantNoteBlockView = memo(function ImportantNoteBlockView({
   onChange,
   onDelete,
 }: ImportantNoteProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    if (editorRef.current && editorRef.current.innerHTML !== block.text) {
+      editorRef.current.innerHTML = DOMPurify.sanitize(block.text);
     }
   }, [block.text]);
+
+  const handleContentUpdate = () => {
+    if (editorRef.current) {
+      onChange(DOMPurify.sanitize(editorRef.current.innerHTML));
+    }
+  };
 
   return (
     <div className="my-6 flex p-4 rounded-xl bg-[#FAFAFA] flex-col gap-2 transition-all duration-200 relative group">
@@ -52,21 +57,24 @@ const ImportantNoteBlockView = memo(function ImportantNoteBlockView({
       </div>
 
       {editable ? (
-        <textarea
-          ref={textareaRef}
-          value={block.text}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Type important notes here..."
-          className="w-full resize-none overflow-y-auto outline-none bg-transparent text-[#4B5563] text-base font-medium font-['Inter'] leading-7 placeholder:text-[#B0C4DE] max-h-[250px]"
+        <div
+          ref={editorRef}
+          contentEditable={true}
+          suppressContentEditableWarning={true}
+          onBlur={handleContentUpdate}
+          onInput={handleContentUpdate}
+          data-placeholder="Type important notes here..."
+          className="w-full outline-none bg-transparent text-[#4B5563] text-base font-medium font-['Inter'] leading-7 empty:before:content-[attr(data-placeholder)] empty:before:text-[#B0C4DE] max-h-[250px] overflow-y-auto"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#B0C4DE transparent' }}
         />
       ) : (
-        <p
-          className="text-[#4B5563] text-base font-medium font-['Inter'] leading-7 whitespace-pre-line max-h-[250px] overflow-y-auto pr-2"
+        <div
+          className="text-[#4B5563] text-base font-medium font-['Inter'] leading-7 whitespace-pre-wrap break-words max-h-[250px] overflow-y-auto pr-2"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#B0C4DE transparent' }}
-        >
-          {block.text || 'No annotation provided.'}
-        </p>
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(block.text) || 'No annotation provided.',
+          }}
+        />
       )}
     </div>
   );
@@ -92,6 +100,18 @@ const TableBlockView = memo(function TableBlockView({
         : row,
     );
     onChange({ ...block, rows: updatedRows });
+  }
+
+  function handleAddRow() {
+    const updatedRows = [...block.rows, { cells: block.headers.map(() => '') }];
+    onChange({ ...block, rows: updatedRows });
+  }
+
+  function handleRemoveLastRow() {
+    if (block.rows.length > 1) {
+      const updatedRows = block.rows.slice(0, -1);
+      onChange({ ...block, rows: updatedRows });
+    }
   }
 
   return (
@@ -138,7 +158,7 @@ const TableBlockView = memo(function TableBlockView({
                         type="text"
                         value={cell}
                         onChange={(e) => updateCell(ri, ci, e.target.value)}
-                        placeholder="--"
+                        placeholder=""
                         className="w-full outline-none bg-transparent font-['Inter'] text-sm text-[#767676] placeholder:text-[#D0D0D0]"
                       />
                     ) : (
@@ -151,6 +171,27 @@ const TableBlockView = memo(function TableBlockView({
           </tbody>
         </table>
       </div>
+
+      {editable && (
+        <div className="mt-2.5 flex gap-2 select-none">
+          <button
+            type="button"
+            onClick={handleAddRow}
+            className="text-xs font-semibold text-[#1565C0] border border-[#1565C0]/20 hover:bg-blue-50/60 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all"
+          >
+            + Add Row
+          </button>
+          {block.rows.length > 1 && (
+            <button
+              type="button"
+              onClick={handleRemoveLastRow}
+              className="text-xs font-semibold text-[#EF4444] border border-[#EF4444]/10 hover:bg-red-50/60 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all"
+            >
+              - Remove Row
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 });
@@ -158,7 +199,6 @@ const TableBlockView = memo(function TableBlockView({
 interface ParagraphProps {
   block: ParagraphBlock;
   editable: boolean;
-  format: FormatState;
   onChange: (text: string) => void;
   isFirst: boolean;
 }
@@ -166,48 +206,55 @@ interface ParagraphProps {
 const ParagraphBlockView = memo(function ParagraphBlockView({
   block,
   editable,
-  format,
   onChange,
   isFirst,
 }: ParagraphProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const textStyle = {
-    fontSize: `${format.fontSize}pt`,
-    fontWeight: format.bold ? 700 : 400,
-    fontStyle: format.italic ? 'italic' : 'normal',
-    textDecoration: format.underline ? 'underline' : 'none',
-  } as React.CSSProperties;
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    if (editorRef.current) {
+      const sanitized = DOMPurify.sanitize(block.text);
+      if (editorRef.current.innerHTML !== sanitized) {
+        editorRef.current.innerHTML = sanitized;
+      }
     }
-  }, [block.text, format]);
+  }, [block.text]);
+
+  const handleContentUpdate = () => {
+    if (editorRef.current) {
+      onChange(DOMPurify.sanitize(editorRef.current.innerHTML));
+    }
+  };
+
+  const textStyle = {
+    fontSize: '11pt',
+  } as React.CSSProperties;
 
   if (!editable) {
     return (
-      <p
-        className="text-[#1B1B1B] font-['Inter'] leading-7 mb-3 whitespace-pre-line break-words max-h-[400px] overflow-y-auto pr-2"
+      <div
+        className="text-[#1B1B1B] font-['Inter'] leading-7 mb-3 whitespace-pre-wrap break-words max-h-[400px] overflow-y-auto pr-2"
         style={{
           ...textStyle,
           scrollbarWidth: 'thin',
           scrollbarColor: '#D0D0D0 transparent',
         }}
-      >
-        {block.text || (isFirst ? '' : '\u00A0')}
-      </p>
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(block.text) || (isFirst ? '' : '&nbsp;'),
+        }}
+      />
     );
   }
 
   return (
-    <textarea
-      ref={textareaRef}
-      value={block.text}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={isFirst ? 'Start typing medical findings here...' : 'Continue typing...'}
-      className="w-full resize-none overflow-y-auto outline-none bg-transparent text-[#1B1B1B] font-['Inter'] leading-7 placeholder:text-[#C0C0C0] mb-3 focus:placeholder:opacity-50 transition-opacity max-h-[400px]"
+    <div
+      ref={editorRef}
+      contentEditable={true}
+      suppressContentEditableWarning={true}
+      onBlur={handleContentUpdate}
+      onInput={handleContentUpdate}
+      data-placeholder={isFirst ? 'Start typing...' : 'Continue typing...'}
+      className="w-full outline-none bg-transparent text-[#1B1B1B] font-['Inter'] leading-7 mb-3 min-h-[1.5em] empty:before:content-[attr(data-placeholder)] empty:before:text-[#C0C0C0] focus:empty:before:opacity-50 transition-opacity max-h-[400px] overflow-y-auto"
       style={{
         ...textStyle,
         scrollbarWidth: 'thin',
@@ -220,7 +267,6 @@ const ParagraphBlockView = memo(function ParagraphBlockView({
 interface EditorContentProps {
   blocks: EditorBlock[];
   editable: boolean;
-  format: FormatState;
   onUpdateBlock: (id: string, updated: Partial<EditorBlock>) => void;
   onDeleteBlock: (id: string) => void;
 }
@@ -228,7 +274,6 @@ interface EditorContentProps {
 export function EditorContent({
   blocks,
   editable,
-  format,
   onUpdateBlock,
   onDeleteBlock,
 }: EditorContentProps) {
@@ -245,7 +290,6 @@ export function EditorContent({
                 key={block.id}
                 block={block}
                 editable={editable}
-                format={format}
                 isFirst={idx === 0}
                 onChange={(text) => onUpdateBlock(block.id, { text })}
               />
