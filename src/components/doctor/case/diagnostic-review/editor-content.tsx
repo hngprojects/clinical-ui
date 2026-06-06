@@ -3,6 +3,7 @@
 import { memo, useLayoutEffect, useRef } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete02Icon } from '@hugeicons/core-free-icons';
+import DOMPurify from 'dompurify';
 import type {
   EditorBlock,
   FormatState,
@@ -95,7 +96,7 @@ const TableBlockView = memo(function TableBlockView({
   }
 
   function handleAddRow() {
-    const updatedRows = [...block.rows, { cells: ['', '', '', ''] }];
+    const updatedRows = [...block.rows, { cells: block.headers.map(() => '') }];
     onChange({ ...block, rows: updatedRows });
   }
 
@@ -191,7 +192,6 @@ const TableBlockView = memo(function TableBlockView({
 interface ParagraphProps {
   block: ParagraphBlock;
   editable: boolean;
-  format: FormatState;
   onChange: (text: string) => void;
   isFirst: boolean;
 }
@@ -206,13 +206,13 @@ const ParagraphBlockView = memo(function ParagraphBlockView({
 
   useLayoutEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML !== block.text) {
-      editorRef.current.innerHTML = block.text;
+      editorRef.current.innerHTML = DOMPurify.sanitize(block.text);
     }
   }, [block.text]);
 
   const handleContentUpdate = () => {
     if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
+      onChange(DOMPurify.sanitize(editorRef.current.innerHTML));
     }
   };
 
@@ -229,7 +229,9 @@ const ParagraphBlockView = memo(function ParagraphBlockView({
           scrollbarWidth: 'thin',
           scrollbarColor: '#D0D0D0 transparent',
         }}
-        dangerouslySetInnerHTML={{ __html: block.text || (isFirst ? '' : '&nbsp;') }}
+        dangerouslySetInnerHTML={{
+          __html: DOMPurify.sanitize(block.text) || (isFirst ? '' : '&nbsp;'),
+        }}
       />
     );
   }
@@ -280,7 +282,6 @@ export function EditorContent({
                 key={block.id}
                 block={block}
                 editable={editable}
-                format={format}
                 isFirst={idx === 0}
                 onChange={(text) => onUpdateBlock(block.id, { text })}
               />

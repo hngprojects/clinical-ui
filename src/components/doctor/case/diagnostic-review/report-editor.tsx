@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
@@ -24,6 +24,8 @@ interface ReportEditorProps {
 export function ReportEditor({ caseId }: ReportEditorProps) {
   const [mode, setMode] = useState<EditorMode>('edit');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
+
   const {
     register,
     handleSubmit,
@@ -82,8 +84,14 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
       const indicesToRemove = [index];
       if (blockToDelete.type === 'table' || blockToDelete.type === 'important-note') {
         const nextBlock = prev[index + 1];
-        if (nextBlock && nextBlock.type === 'paragraph' && !nextBlock.text.trim()) {
-          indicesToRemove.push(index + 1);
+        if (nextBlock && nextBlock.type === 'paragraph') {
+          const isNextBlockEmpty = !nextBlock.text
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, '')
+            .trim();
+          if (isNextBlockEmpty) {
+            indicesToRemove.push(index + 1);
+          }
         }
       }
 
@@ -122,20 +130,27 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
           const dummyColor = 'rgb(0, 0, 1)';
           document.execCommand('foreColor', false, '#000001');
 
-          const containers = document.querySelectorAll('[contenteditable="true"]');
-          containers.forEach((container) => {
-            const elements = container.querySelectorAll('span, font');
-            elements.forEach((el) => {
-              const htmlEl = el as HTMLElement;
-              if (htmlEl.style.color === dummyColor || htmlEl.getAttribute('color') === '#000001') {
-                htmlEl.style.color = '';
-                if (htmlEl.style.length === 0) {
-                  htmlEl.removeAttribute('style');
+          if (editorContainerRef.current) {
+            const containers = editorContainerRef.current.querySelectorAll(
+              '[contenteditable="true"]',
+            );
+            containers.forEach((container) => {
+              const elements = container.querySelectorAll('span, font');
+              elements.forEach((el) => {
+                const htmlEl = el as HTMLElement;
+                if (
+                  htmlEl.style.color === dummyColor ||
+                  htmlEl.getAttribute('color') === '#000001'
+                ) {
+                  htmlEl.style.color = '';
+                  if (htmlEl.style.length === 0) {
+                    htmlEl.removeAttribute('style');
+                  }
+                  htmlEl.style.fontSize = `${nextSize}pt`;
                 }
-                htmlEl.style.fontSize = `${nextSize}pt`;
-              }
+              });
             });
-          });
+          }
 
           let node: Node | null = selection.getRangeAt(0).startContainer;
           while (node && node !== document.body) {
@@ -206,7 +221,10 @@ export function ReportEditor({ caseId }: ReportEditorProps) {
           </button>
         </div>
 
-        <div className="flex-1 bg-white rounded-2xl border border-[#E8E8E8] flex flex-col overflow-hidden shadow-sm h-full">
+        <div
+          ref={editorContainerRef}
+          className="flex-1 bg-white rounded-2xl border border-[#E8E8E8] flex flex-col overflow-hidden shadow-sm h-full"
+        >
           <EditorToolbar
             mode={mode}
             onModeChange={setMode}

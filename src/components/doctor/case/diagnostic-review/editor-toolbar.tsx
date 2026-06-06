@@ -42,7 +42,7 @@ export function EditorToolbar({
 }: EditorToolbarProps) {
   const isEditable = mode === 'edit';
 
-  const handleCopyContent = () => {
+  const handleCopyContent = async () => {
     if (blocks.length === 0) {
       toast.error('There is no content to copy yet.');
       return;
@@ -78,11 +78,16 @@ export function EditorToolbar({
         toast.error('The document text is currently empty.');
         return;
       }
-
-      navigator.clipboard.writeText(compiledText);
+      if (!navigator?.clipboard?.writeText) {
+        toast.error('Clipboard copying is not supported in your browser.');
+        return;
+      }
+      await navigator.clipboard.writeText(compiledText);
       toast.success('Document text copied to clipboard successfully!');
-    } catch (err) {
-      toast.error('Failed to copy text automatically.');
+    } catch (err: unknown) {
+      console.error('Clipboard write error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      toast.error(`Failed to copy text automatically: ${errorMessage}`);
     }
   };
 
