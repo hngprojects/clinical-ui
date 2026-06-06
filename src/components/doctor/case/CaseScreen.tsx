@@ -67,10 +67,7 @@ export default function CaseScreen({ caseData }: { caseData: CaseDetail }) {
           </div>
         </div>
 
-        <button
-          onClick={() => router.push(`/user/case/${caseData.id}/lab-result`)}
-          className="bg-primary-blue text-white px-6 py-3 rounded-xl font-bold text-sm md:text-base hover:bg-blue-700 transition-all shadow-[0px_4px_12px_rgba(21,101,192,0.2)] whitespace-nowrap"
-        >
+        <button className="bg-primary-blue text-white px-6 py-3 rounded-xl font-bold text-sm md:text-base hover:bg-blue-700 transition-all shadow-[0px_4px_12px_rgba(21,101,192,0.2)] whitespace-nowrap">
           Begin Diagnostic Review
         </button>
       </div>
@@ -226,7 +223,10 @@ export default function CaseScreen({ caseData }: { caseData: CaseDetail }) {
                 className="object-cover"
               />
             </div>
-            <button className="w-full flex items-center justify-center gap-2 py-3 bg-primary-blue text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-lg">
+            <button
+              onClick={() => router.push(`/user/case/${caseData.id}/lab-result`)}
+              className="w-full flex items-center justify-center gap-2 py-3 bg-primary-blue text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-lg"
+            >
               Preview Lab Result
               <HugeiconsIcon icon={ArrowRight02Icon} size={18} />
             </button>
