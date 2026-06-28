@@ -68,7 +68,7 @@ export function LeadForm() {
     return (
       <div
         role="status"
-        className="flex w-full max-w-md items-start gap-3 rounded-xl border border-[#CDE0F4] bg-[#EAF1FB] p-5"
+        className="flex w-full max-w-md items-start gap-3 rounded-xl border border-[#CDE0F4] bg-[#EAF1FB] p-5 text-left"
       >
         <HugeiconsIcon
           icon={CheckmarkCircle02Icon}
@@ -87,7 +87,11 @@ export function LeadForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex w-full max-w-md flex-col gap-3">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="flex w-full max-w-md flex-col gap-3 text-left"
+    >
       <div>
         <label htmlFor="lead-first-name" className="sr-only">
           First name
