@@ -17,6 +17,7 @@ const FOOTER_LINKS = {
   legal: [
     { name: 'Privacy Policy', href: '/privacy-policy' },
     { name: 'Terms and Conditions', href: '/terms-and-conditions' },
+    { name: 'Delete Account', href: '/delete-account' },
   ],
 };
 

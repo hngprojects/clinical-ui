@@ -21,6 +21,7 @@ export function Header() {
 
   const hideOnRoutes = [
     '/waitlist',
+    '/delete-account',
     '/signup',
     '/signin',
     '/forgot-password',
