@@ -116,7 +116,13 @@ export function WaitlistForm() {
         {/* Logo */}
         <div className="flex justify-center">
           <div className="flex h-15 w-15 items-center justify-center rounded-2xl border-b-[5px] border-r-[5px] border-[#DCE8F6] bg-blue-600 p-2.5">
-            <MyIcon />
+            {/* <MyIcon /> */}
+            <Image
+              src="/assets/waitlist-assets/vector.svg"
+              alt="Clinsight Logo"
+              width={60}
+              height={60}
+            />
           </div>
         </div>
 

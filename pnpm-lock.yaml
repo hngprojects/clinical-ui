@@ -21,13 +21,13 @@ importers:
         specifier: ^1.1.6
         version: 1.1.6(react@19.2.6)
       '@tanstack/react-query':
-        specifier: ^5.100.10
+        specifier: ^5.100.11
         version: 5.100.11(react@19.2.6)
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       axios:
-        specifier: ^1.16.0
+        specifier: ^1.16.1
         version: 1.16.1
       class-variance-authority:
         specifier: ^0.7.1
@@ -39,10 +39,10 @@ importers:
         specifier: ^3.4.8
         version: 3.4.8
       lucide-react:
-        specifier: ^1.14.0
+        specifier: ^1.16.0
         version: 1.16.0(react@19.2.6)
       motion:
-        specifier: ^12.38.0
+        specifier: ^12.39.0
         version: 12.39.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       next:
         specifier: 16.2.6
@@ -63,7 +63,7 @@ importers:
         specifier: ^15.0.0
         version: 15.0.0(react@19.2.6)
       react-hook-form:
-        specifier: ^7.75.0
+        specifier: ^7.76.0
         version: 7.76.0(react@19.2.6)
       shadcn:
         specifier: ^4.7.0
@@ -88,7 +88,7 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0
       '@types/node':
-        specifier: ^25.7.0
+        specifier: ^25.9.0
         version: 25.9.0
       '@types/react':
         specifier: ^19.2.14
@@ -109,7 +109,7 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       lint-staged:
-        specifier: ^17.0.4
+        specifier: ^17.0.5
         version: 17.0.5
       prettier:
         specifier: ^3.8.3
@@ -2615,8 +2615,8 @@ packages:
   hermes-parser@0.25.1:
     resolution: {integrity: sha512-6pEjquH3rqaI6cYAXYPcz9MS4rY6R4ngRgrgfDshRptUZIc3lw0MCIJIGDj9++mfySOuPTHB4nrSW99BCvOPIA==}
 
-  hono@4.12.19:
-    resolution: {integrity: sha512-xa3eYXYXx68XTT4hZ7dRzsXBhaq85ToSrlUJNoR0gwz/1Ap/CNwX47wfvV7pc/xWhjKVVkLT7zBJy8chhNguqQ==}
+  hono@4.12.25:
+    resolution: {integrity: sha512-2NFaIyNVgJmBs/ecmtGzlmluTFs5cHEWGTdu0t1HBwYzoGXOL5nUQBRMXsXWla5i4KkG//QMzVP88m1+I3fdAQ==}
     engines: {node: '>=16.9.0'}
 
   http-errors@2.0.1:
@@ -4323,9 +4323,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.11': {}
 
-  '@hono/node-server@1.19.14(hono@4.12.19)':
+  '@hono/node-server@1.19.14(hono@4.12.25)':
     dependencies:
-      hono: 4.12.19
+      hono: 4.12.25
 
   '@hookform/resolvers@5.2.2(react-hook-form@7.76.0(react@19.2.6))':
     dependencies:
@@ -4499,7 +4499,7 @@ snapshots:
 
   '@modelcontextprotocol/sdk@1.29.0(zod@3.25.76)':
     dependencies:
-      '@hono/node-server': 1.19.14(hono@4.12.19)
+      '@hono/node-server': 1.19.14(hono@4.12.25)
       ajv: 8.20.0
       ajv-formats: 3.0.1(ajv@8.20.0)
       content-type: 1.0.5
@@ -4509,7 +4509,7 @@ snapshots:
       eventsource-parser: 3.0.8
       express: 5.2.1
       express-rate-limit: 8.5.2(express@5.2.1)
-      hono: 4.12.19
+      hono: 4.12.25
       jose: 6.2.3
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
@@ -6699,7 +6699,7 @@ snapshots:
     dependencies:
       hermes-estree: 0.25.1
 
-  hono@4.12.19: {}
+  hono@4.12.25: {}
 
   http-errors@2.0.1:
     dependencies:
