@@ -10,7 +10,6 @@ import {
   MailBlock01Icon,
 } from '@hugeicons/core-free-icons';
 import Image from 'next/image';
-import MyIcon from '@/components/icons/MyIcon';
 import { isValidEmail } from '@/lib/validation';
 
 export function WaitlistForm() {
@@ -45,7 +44,7 @@ export function WaitlistForm() {
       const response = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, firstName }),
+        body: JSON.stringify({ email, first_name: firstName }),
         signal: controller.signal,
       });
 

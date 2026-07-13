@@ -4,7 +4,7 @@ import { EMAIL_REGEX } from '@/lib/validation';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email } = body;
+    const { email, first_name } = body;
 
     if (!email || !EMAIL_REGEX.test(email.trim())) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       const response = await fetch(WAITLIST_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, first_name }),
         signal: controller.signal,
       });
 
