@@ -52,6 +52,11 @@ export function LeadForm() {
 
       setIsDone(true);
       toast.success("You're all set! Check your inbox for the free guide.");
+      window.open(
+        '/guides/5-lab-values-every-nigerian-should-understand.pdf',
+        '_blank',
+        'noopener,noreferrer',
+      );
     } catch (err) {
       clearTimeout(timeoutId);
       if (err instanceof Error && err.name === 'AbortError') {

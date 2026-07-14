@@ -20,7 +20,12 @@ export async function POST(request: Request) {
       const response = await fetch(SUBSCRIBE_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, first_name }),
+        body: JSON.stringify({
+          email,
+          first_name,
+          group_id: process.env.MAILERLITE_GROUP_ID,
+          tags: ['lead_magnet_guide'],
+        }),
         signal: controller.signal,
       });
 

@@ -29,7 +29,7 @@ else
 fi
 
 # Files to exclude from long-line checks (regex)
-LONG_LINE_EXCLUDE="pnpm-lock.yaml|yarn.lock|package-lock.json|.*\.min\.js|.*\.min\.css|.*\.map|.*\.lockb|.*\.svg|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.webp"
+LONG_LINE_EXCLUDE="pnpm-lock.yaml|yarn.lock|package-lock.json|.*\.min\.js|.*\.min\.css|.*\.map|.*\.lockb|.*\.svg|.*\.png|.*\.jpg|.*\.jpeg|.*\.gif|.*\.webp|.*\.pdf"
 
 # ── Helper: strip long-line injection from a file ─────────────────────────────
 fix_long_lines() {
