@@ -11,9 +11,14 @@ export async function POST(request: Request) {
     }
 
     const { email, first_name } = result.data;
+    const groupId = process.env.MAILERLITE_GROUP_ID?.trim();
+
+    if (!groupId) {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+    }
 
     // Call backend with timeout
-    const SUBSCRIBE_API_URL = `${process.env.API_BASE_URL}/api/v1/subscribe`;
+    const SUBSCRIBE_API_URL = `${process.env.API_BASE_URL || 'https://api.staging.clinsight.hng14.com'}/api/v1/subscribe`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -25,7 +30,7 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           email,
           first_name,
-          group_id: process.env.MAILERLITE_GROUP_ID,
+          group_id: groupId,
           tags: ['lead_magnet_guide'],
         }),
         signal: controller.signal,
