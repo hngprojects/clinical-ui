@@ -1,55 +1,53 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Download01Icon, Loading03Icon, CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
-import { isValidEmail } from '@/lib/validation';
+import { submitLeadFormAction } from '@/actions/lead-form-actions';
 import { cn } from '@/lib/utils';
+import { leadFormSchema, type LeadFormValues } from '@/schemas/lead-form-schema';
 
 export function LeadForm() {
-  const [firstName, setFirstName] = useState('');
-  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState('');
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<LeadFormValues>({
+    resolver: zodResolver(leadFormSchema),
+    defaultValues: {
+      firstName: '',
+      email: '',
+    },
+  });
+
+  const [firstName, setFirstName] = useState('');
+  const [email, setEmail] = useState('');
   const isButtonEnabled = firstName.trim() !== '' && email.trim() !== '';
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: LeadFormValues) => {
     if (isLoading) return;
 
     setError('');
-    if (!isValidEmail(email)) {
-      setError('Enter a valid email address');
-      return;
-    }
-
     setIsLoading(true);
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      const response = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, first_name: firstName }),
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
+      const result = await submitLeadFormAction(data);
 
-      if (!response.ok && response.status !== 409) {
-        let message = 'Something went wrong. Please try again.';
-        try {
-          const data = (await response.json()) as { error?: unknown };
-          if (typeof data?.error === 'string') message = data.error;
-        } catch {
-          /* keep default message */
-        }
-        throw new Error(message);
+      if (result.error) {
+        setError(result.error);
+        toast.error(result.error);
+        return;
       }
 
+      reset();
       setIsDone(true);
       toast.success("You're all set! Check your inbox for the free guide.");
       window.open(
@@ -57,13 +55,6 @@ export function LeadForm() {
         '_blank',
         'noopener,noreferrer',
       );
-    } catch (err) {
-      clearTimeout(timeoutId);
-      if (err instanceof Error && err.name === 'AbortError') {
-        setError('Request took too long. Please try again.');
-      } else {
-        setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-      }
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +84,7 @@ export function LeadForm() {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       noValidate
       className="flex w-full max-w-md flex-col gap-3 text-left"
     >
@@ -105,13 +96,19 @@ export function LeadForm() {
           id="lead-first-name"
           type="text"
           placeholder="Enter your first name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value.slice(0, 50))}
+          {...register('firstName')}
+          onChange={(e) => {
+            setFirstName(e.target.value);
+            register('firstName').onChange(e);
+          }}
           disabled={isLoading}
           maxLength={50}
           autoComplete="given-name"
           className="w-full rounded-xl border border-[#E4E4E7] bg-white px-4 py-3.5 text-sm text-slate-900 transition-colors placeholder:text-slate-400 hover:border-slate-300 focus:border-primary-blue focus:outline-none disabled:bg-slate-50"
         />
+        {errors.firstName?.message && (
+          <p className="mt-1.5 text-xs text-red-500">{errors.firstName.message}</p>
+        )}
       </div>
 
       <div>
@@ -122,25 +119,25 @@ export function LeadForm() {
           id="lead-email"
           type="email"
           placeholder="Enter your email address"
-          value={email}
+          {...register('email')}
           onChange={(e) => {
             setEmail(e.target.value);
-            if (error) setError('');
+            register('email').onChange(e);
           }}
           disabled={isLoading}
           autoComplete="email"
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? 'lead-email-error' : undefined}
+          aria-invalid={Boolean(error || errors.email)}
+          aria-describedby={error || errors.email ? 'lead-email-error' : undefined}
           className={cn(
             'w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:outline-none disabled:bg-slate-50',
-            error
+            error || errors.email
               ? 'border-red-500 focus:border-red-500'
               : 'border-[#E4E4E7] hover:border-slate-300 focus:border-primary-blue',
           )}
         />
-        {error && (
+        {(error || errors.email?.message) && (
           <p id="lead-email-error" className="mt-1.5 text-xs text-red-500">
-            {error}
+            {error || errors.email?.message}
           </p>
         )}
       </div>
