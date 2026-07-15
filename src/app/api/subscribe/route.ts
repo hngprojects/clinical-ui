@@ -3,7 +3,14 @@ import { subscribeSchema } from '@/schemas/subscribe-schema';
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    let body: unknown;
+
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+    }
+
     const result = subscribeSchema.safeParse(body);
 
     if (!result.success) {
