@@ -10,12 +10,12 @@ export const metadata = pageMetadata(
 
 export default function VerifyOtpPage() {
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center p-4 bg-white">
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-start bg-white p-4">
       {/* Logo - Top Left */}
-      <div className="absolute top-6 left-6 md:top-10 md:left-12 z-10">
-        <div className="relative w-35 h-10 md:w-45 md:h-12.5">
+      <div className="absolute top-6 left-6 md:top-10 md:left-12 z-20">
+        <div className="relative w-35 h-10 md:w-[154px] md:h-[39px]">
           <Image
-            src="/assets/otp-page-assets/footer-logo.svg"
+            src="/assets/signup-page-assets/auth-logo-blue.svg"
             alt="Clinsights Logo"
             fill
             className="object-contain"
@@ -25,7 +25,7 @@ export default function VerifyOtpPage() {
       </div>
 
       {/* OTP Verification Form */}
-      <div className="relative z-10 w-full flex justify-center py-12">
+      <div className="relative z-10 w-full max-w-[480px] flex justify-center pt-[85px] md:pt-[75px] pb-12">
         <VerifyOtpForm />
       </div>
     </div>
