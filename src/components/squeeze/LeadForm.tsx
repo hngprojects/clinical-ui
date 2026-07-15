@@ -38,10 +38,16 @@ export function LeadForm() {
     setError('');
     setIsLoading(true);
 
+    const downloadWindow = window.open('', '_blank', 'noopener,noreferrer');
+
     try {
       const result = await submitLeadFormAction(data);
 
       if (result.error) {
+        if (downloadWindow) {
+          downloadWindow.close();
+        }
+
         setError(result.error);
         toast.error(result.error);
         return;
@@ -50,11 +56,16 @@ export function LeadForm() {
       reset();
       setIsDone(true);
       toast.success("You're all set! Check your inbox for the free guide.");
-      window.open(
-        '/guides/5-lab-values-every-nigerian-should-understand.pdf',
-        '_blank',
-        'noopener,noreferrer',
-      );
+
+      if (downloadWindow) {
+        downloadWindow.location.href = '/guides/5-lab-values-every-nigerian-should-understand.pdf';
+      } else {
+        window.open(
+          '/guides/5-lab-values-every-nigerian-should-understand.pdf',
+          '_blank',
+          'noopener,noreferrer',
+        );
+      }
     } finally {
       setIsLoading(false);
     }
