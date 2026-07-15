@@ -11,13 +11,13 @@ export async function POST(request: Request) {
     }
 
     // Call backend with timeout
-    const WAITLIST_API_URL = `${process.env.API_BASE_URL}/api/v1/waitlist`;
+    const SUBSCRIBE_API_URL = `${process.env.API_BASE_URL}/api/v1/subscribe`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
-      const response = await fetch(WAITLIST_API_URL, {
+      const response = await fetch(SUBSCRIBE_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, first_name }),
@@ -42,7 +42,6 @@ export async function POST(request: Request) {
           errorMessage = await response.text();
         }
 
-        // ✅ Catch duplicate email specifically
         const isDuplicate =
           response.status === 409 ||
           errorMessage.toLowerCase().includes('already') ||
@@ -50,10 +49,7 @@ export async function POST(request: Request) {
           errorMessage.toLowerCase().includes('duplicate');
 
         if (isDuplicate) {
-          return NextResponse.json(
-            { error: 'This email is already on the waitlist!' },
-            { status: 409 },
-          );
+          return NextResponse.json({ error: 'This email is already subscribed!' }, { status: 409 });
         }
 
         throw new Error(errorMessage);
@@ -65,7 +61,7 @@ export async function POST(request: Request) {
       clearTimeout(timeoutId);
 
       if (fetchError instanceof Error && fetchError.name === 'AbortError') {
-        console.error('Waitlist API timeout:', fetchError.message);
+        console.error('Subscribe API timeout:', fetchError.message);
         return NextResponse.json({ error: 'Request timeout' }, { status: 504 });
       }
       throw fetchError;
@@ -73,10 +69,8 @@ export async function POST(request: Request) {
   } catch (error) {
     const err = error as Error;
 
-    // Log full error for debugging
-    console.error('Waitlist API error:', err.message, err.stack);
+    console.error('Subscribe API error:', err.message, err.stack);
 
-    // Classify errors
     if (err.message.includes('timeout') || err.name === 'AbortError') {
       return NextResponse.json({ error: 'Request timeout' }, { status: 504 });
     }
@@ -85,9 +79,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unable to reach backend service' }, { status: 502 });
     }
 
-    // Return error details in dev, hide in prod
     const isDev = process.env.NODE_ENV === 'development';
-    const errorMessage = isDev ? err.message : 'Failed to join waitlist';
+    const errorMessage = isDev ? err.message : 'Failed to subscribe';
 
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }

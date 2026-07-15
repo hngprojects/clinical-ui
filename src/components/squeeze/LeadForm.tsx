@@ -31,10 +31,10 @@ export function LeadForm() {
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      const response = await fetch('/api/waitlist', {
+      const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, firstName }),
+        body: JSON.stringify({ email, first_name: firstName }),
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
