@@ -7,6 +7,6 @@ export const subscribeSchema = z.object({
   first_name: z
     .string()
     .trim()
-    .min(1, 'Valid email required')
-    .max(MAX_FIRST_NAME_LENGTH, 'Valid email required'),
+    .min(1, 'First name is required')
+    .max(MAX_FIRST_NAME_LENGTH, 'First name is too long'),
 });
