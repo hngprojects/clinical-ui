@@ -50,12 +50,14 @@ export async function POST(request: Request) {
         const contentType = response.headers.get('content-type');
 
         if (contentType && contentType.includes('application/json')) {
+          const rawBody = await response.text();
+
           try {
-            const err = await response.json();
+            const err = JSON.parse(rawBody);
             errorMessage =
               err.detail || err.message || err.error || JSON.stringify(err) || 'Backend error';
           } catch {
-            errorMessage = await response.text();
+            errorMessage = rawBody || 'Backend error';
           }
         } else {
           errorMessage = await response.text();
