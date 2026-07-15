@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
-import { EMAIL_REGEX } from '@/lib/validation';
+import { subscribeSchema } from '@/schemas/subscribe-schema';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, first_name } = body;
+    const result = subscribeSchema.safeParse(body);
 
-    if (!email || !EMAIL_REGEX.test(email.trim())) {
+    if (!result.success) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
     }
+
+    const { email, first_name } = result.data;
 
     // Call backend with timeout
     const SUBSCRIBE_API_URL = `${process.env.API_BASE_URL}/api/v1/subscribe`;
