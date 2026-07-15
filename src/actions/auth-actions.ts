@@ -2,16 +2,16 @@
 
 const SIGNUP_URL =
   process.env.NEXT_PUBLIC_SIGNUP_API_URL ||
-  'https://api.staging.clinsight.hng14.com/api/v1/auth/signup';
+  'https://api.staging.useclinsight.com/api/v1/auth/signup';
 const SIGNIN_URL =
   process.env.NEXT_PUBLIC_SIGNIN_API_URL ||
-  'https://api.staging.clinsight.hng14.com/api/v1/auth/login';
+  'https://api.staging.useclinsight.com/api/v1/auth/login';
 const VERIFY_OTP_URL =
   process.env.NEXT_PUBLIC_VERIFY_OTP_API_URL ||
-  'https://api.staging.clinsight.hng14.com/api/v1/auth/verify-otp';
+  'https://api.staging.useclinsight.com/api/v1/auth/verify-otp';
 const RESEND_OTP_URL =
   process.env.NEXT_PUBLIC_RESEND_OTP_API_URL ||
-  'https://api.staging.clinsight.hng14.com/api/v1/auth/resend-otp';
+  'https://api.staging.useclinsight.com/api/v1/auth/resend-otp';
 
 async function handleApiResponse(response: Response, defaultError: string) {
   if (!response.ok) {
@@ -66,21 +66,23 @@ export async function verifyOtpAction(email: string, code: string) {
   }
 }
 
-export async function signupAction(data: { fullName: string; email: string; password: string }) {
-  const nameParts = data.fullName.trim().split(' ');
-  const first_name = nameParts[0] || '';
-  const last_name = nameParts.slice(1).join(' ') || first_name;
-
+export async function signupAction(data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}) {
   try {
     const response = await fetch(SIGNUP_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        first_name,
-        last_name,
+        first_name: data.firstName,
+        last_name: data.lastName,
         email: data.email,
         password: data.password,
-        confirm_password: data.password,
+        confirm_password: data.confirmPassword,
       }),
     });
 
@@ -124,4 +126,11 @@ export async function resendOtpAction(email: string) {
     console.error('Resend OTP Error:', error);
     return { error: 'Unable to reach the server. Please check your connection.' };
   }
+}
+
+export async function getGoogleAuthUrlAction() {
+  return (
+    process.env.NEXT_PUBLIC_GOOGLE_AUTH_API_URL ||
+    'https://api.staging.useclinsight.com/api/v1/auth/google'
+  );
 }
