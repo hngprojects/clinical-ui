@@ -65,12 +65,7 @@ export default function Sidebar({
       <div className="hidden w-full sm:w-50 lg:w-62.5 px-4 py-5 shrink-0 bg-white sm:flex h-auto overflow-y-auto flex-col justify-between gap-10">
         <div className="flex flex-col gap-8">
           <div className="flex">
-            <Image
-              src="/assets/dashboard/dashboard_logo.png"
-              width={48}
-              height={48}
-              alt="Dashboard Logo"
-            />
+            <Image src="/assets/dashboard/vector.svg" width={48} height={48} alt="Dashboard Logo" />
           </div>
           <div className="flex flex-col gap-2">{NavItems()}</div>
         </div>
@@ -88,7 +83,7 @@ export default function Sidebar({
       {isOpen && (
         <aside className="sm:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white p-4 overflow-y-auto shadow-lg">
           <div className="flex items-center justify-between mb-6">
-            <Image src="/assets/dashboard/dashboard_logo.png" width={40} height={40} alt="Logo" />
+            <Image src="/assets/dashboard/vector.svg" width={40} height={40} alt="Logo" />
             <button
               type="button"
               aria-label="Close sidebar"

@@ -1,26 +1,45 @@
 import { NextResponse } from 'next/server';
-import { EMAIL_REGEX } from '@/lib/validation';
+import { subscribeSchema } from '@/schemas/subscribe-schema';
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { email, first_name } = body;
+    let body: unknown;
 
-    if (!email || !EMAIL_REGEX.test(email.trim())) {
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+    }
+
+    const result = subscribeSchema.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+    }
+
+    const { email, first_name } = result.data;
+    const groupId = process.env.MAILERLITE_GROUP_ID?.trim();
+
+    if (!groupId) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
     }
 
     // Call backend with timeout
-    const WAITLIST_API_URL = `${process.env.API_BASE_URL}/api/v1/waitlist`;
+    const SUBSCRIBE_API_URL = `${process.env.API_BASE_URL || 'https://api.staging.clinsight.hng14.com'}/api/v1/subscribe`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
-      const response = await fetch(WAITLIST_API_URL, {
+      const response = await fetch(SUBSCRIBE_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, first_name }),
+        body: JSON.stringify({
+          email,
+          first_name,
+          group_id: groupId,
+          tags: ['lead_magnet_guide'],
+        }),
         signal: controller.signal,
       });
 
@@ -31,18 +50,19 @@ export async function POST(request: Request) {
         const contentType = response.headers.get('content-type');
 
         if (contentType && contentType.includes('application/json')) {
+          const rawBody = await response.text();
+
           try {
-            const err = await response.json();
+            const err = JSON.parse(rawBody);
             errorMessage =
               err.detail || err.message || err.error || JSON.stringify(err) || 'Backend error';
           } catch {
-            errorMessage = await response.text();
+            errorMessage = rawBody || 'Backend error';
           }
         } else {
           errorMessage = await response.text();
         }
 
-        // ✅ Catch duplicate email specifically
         const isDuplicate =
           response.status === 409 ||
           errorMessage.toLowerCase().includes('already') ||
@@ -50,10 +70,7 @@ export async function POST(request: Request) {
           errorMessage.toLowerCase().includes('duplicate');
 
         if (isDuplicate) {
-          return NextResponse.json(
-            { error: 'This email is already on the waitlist!' },
-            { status: 409 },
-          );
+          return NextResponse.json({ error: 'This email is already subscribed!' }, { status: 409 });
         }
 
         throw new Error(errorMessage);
@@ -65,7 +82,7 @@ export async function POST(request: Request) {
       clearTimeout(timeoutId);
 
       if (fetchError instanceof Error && fetchError.name === 'AbortError') {
-        console.error('Waitlist API timeout:', fetchError.message);
+        console.error('Subscribe API timeout:', fetchError.message);
         return NextResponse.json({ error: 'Request timeout' }, { status: 504 });
       }
       throw fetchError;
@@ -73,10 +90,8 @@ export async function POST(request: Request) {
   } catch (error) {
     const err = error as Error;
 
-    // Log full error for debugging
-    console.error('Waitlist API error:', err.message, err.stack);
+    console.error('Subscribe API error:', err.message, err.stack);
 
-    // Classify errors
     if (err.message.includes('timeout') || err.name === 'AbortError') {
       return NextResponse.json({ error: 'Request timeout' }, { status: 504 });
     }
@@ -85,9 +100,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unable to reach backend service' }, { status: 502 });
     }
 
-    // Return error details in dev, hide in prod
     const isDev = process.env.NODE_ENV === 'development';
-    const errorMessage = isDev ? err.message : 'Failed to join waitlist';
+    const errorMessage = isDev ? err.message : 'Failed to subscribe';
 
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
