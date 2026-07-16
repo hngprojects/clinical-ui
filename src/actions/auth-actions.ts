@@ -73,6 +73,25 @@ export async function signupAction(data: {
   password: string;
   confirmPassword: string;
 }) {
+  if (
+    !data.firstName?.trim() ||
+    !data.lastName?.trim() ||
+    !data.email?.trim() ||
+    !data.password ||
+    !data.confirmPassword
+  ) {
+    return { error: 'All fields are required.' };
+  }
+  if (data.password !== data.confirmPassword) {
+    return { error: 'Passwords do not match.' };
+  }
+  if (data.password.length < 8) {
+    return { error: 'Password must be at least 8 characters long.' };
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+    return { error: 'Invalid email address.' };
+  }
+
   try {
     const response = await fetch(SIGNUP_URL, {
       method: 'POST',
