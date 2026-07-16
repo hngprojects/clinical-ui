@@ -88,6 +88,12 @@ export async function signupAction(data: {
   if (data.password.length < 8) {
     return { error: 'Password must be at least 8 characters long.' };
   }
+  if (!/[A-Z]/.test(data.password)) {
+    return { error: 'Password must contain at least one uppercase letter.' };
+  }
+  if (!/[^A-Za-z0-9]/.test(data.password)) {
+    return { error: 'Password must contain at least one special character.' };
+  }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
     return { error: 'Invalid email address.' };
   }
