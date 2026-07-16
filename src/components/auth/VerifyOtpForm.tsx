@@ -1,25 +1,36 @@
 'use client';
 
-import { useState, useRef } from 'react';
-// import { useRouter, useSearchParams } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'motion/react';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-// import { verifyOtpAction, resendOtpAction } from '@/actions/auth-actions';
-// import { toast } from 'sonner';
-import { triggerComingSoonModal } from '@/components/coming-soon';
+import { verifyOtpAction, resendOtpAction } from '@/actions/auth-actions';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 export function VerifyOtpForm() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  // const [isVerifying, setIsVerifying] = useState(false);
-  // const [isResending, setIsResending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [resendSuccess, setResendSuccess] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds resend cooldown
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  // const router = useRouter();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
+
+  // Timer Effect
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -28,6 +39,7 @@ export function VerifyOtpForm() {
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
 
+    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -53,114 +65,204 @@ export function VerifyOtpForm() {
   };
 
   const handleVerify = async () => {
-    // const otpString = otp.join('');
-    // if (otpString.length !== 6) {
-    //   toast.error('Please enter the full 6-digit OTP');
-    //   return;
-    // }
+    const otpString = otp.join('');
+    if (otpString.length !== 6) return;
 
-    // setIsVerifying(true);
-    // try {
-    //   const result = await verifyOtpAction(email, otpString);
-    //   if (result.error) {
-    //     toast.error(result.error);
-    //   } else {
-    //     toast.success('Email verified successfully!');
-    //     router.push('/signin'); // Or dashboard if logged in
-    //   }
-    // } catch {
-    //   toast.error('An unexpected error occurred');
-    // } finally {
-    //   setIsVerifying(false);
-    // }
+    setIsVerifying(true);
+    setApiError(null);
+    setResendSuccess(false);
 
-    triggerComingSoonModal({
-      title: 'OTP verification is coming soon',
-      description: email
-        ? `We are still completing the OTP verification flow for ${email}.`
-        : 'We are still completing the OTP verification flow.',
-    });
+    try {
+      const result = await verifyOtpAction(email, otpString);
+      if (result.error) {
+        setApiError(result.error);
+        toast.error(result.error);
+      } else {
+        toast.success('Email verified successfully!');
+        router.push('/user');
+      }
+    } catch {
+      const errorMsg = 'An unexpected error occurred';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const handleResend = async () => {
-    // if (!email) {
-    //   toast.error('Email not found. Please try signing up again.');
-    //   return;
-    // }
-    // setIsResending(true);
-    // try {
-    //   const result = await resendOtpAction(email);
-    //   if (result.error) {
-    //     toast.error(result.error);
-    //   } else {
-    //     toast.success('OTP resent successfully! Please check your email.');
-    //   }
-    // } catch {
-    //   toast.error('An unexpected error occurred');
-    // } finally {
-    //   setIsResending(false);
-    // }
+    if (!email) {
+      const errorMsg = 'Email not found. Please try signing up again.';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+
+    setIsResending(true);
+    setApiError(null);
+    setResendSuccess(false);
+
+    try {
+      const result = await resendOtpAction(email);
+      if (result.error) {
+        setApiError(result.error);
+        toast.error(result.error);
+      } else {
+        setResendSuccess(true);
+        toast.success('OTP code resent successfully!');
+        setTimeLeft(30); // Reset timer to 30 seconds
+        setOtp(['', '', '', '', '', '']); // Clear digits
+        inputRefs.current[0]?.focus(); // Refocus first input
+      }
+    } catch {
+      const errorMsg = 'An unexpected error occurred while resending';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsResending(false);
+    }
   };
+
+  const isOtpComplete = otp.every((digit) => digit !== '');
+
+  // Turn borders red only if it's an actual incorrect/invalid code error from the server (not network timeouts or missing fields)
+  const isCodeError =
+    apiError && !/reach|server|network|timeout|gateway|connect|email/i.test(apiError);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-[661px] rounded-[32px] bg-white shadow-2xl flex flex-col items-center border border-[#E0E0E0] p-6 md:px-20 md:py-10 gap-6 md:gap-10"
+      className="w-full max-w-[338px] flex flex-col items-center gap-5 md:gap-6 font-sans"
     >
-      <div className="text-center">
-        <h1 className="text-xl md:text-[32px] font-bold text-[#1B1B1B] mb-2 whitespace-nowrap">
-          Received an OTP?
+      {/* Go Back Button */}
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => router.back()}
+        className="self-start flex items-center gap-1 text-[#5E5E5E] text-sm font-semibold hover:text-primary-blue hover:bg-transparent transition-colors cursor-pointer select-none -mb-3 p-0 h-auto"
+      >
+        <HugeiconsIcon icon={ArrowLeft02Icon} size={16} />
+        <span>Go back</span>
+      </Button>
+
+      {/* Headings */}
+      <div className="text-center select-none">
+        <h1 className="text-2xl md:text-[32px] font-bold text-[#1B1B1B] mb-2 leading-tight">
+          Verify Your Email
         </h1>
-        <p className="text-sm md:text-base text-[#5E5E5E]">Input it below</p>
+        <p className="text-sm md:text-base text-[#5E5E5E] font-normal max-w-[400px] mx-auto">
+          Enter the 6 digit code we sent to{' '}
+          <span className="font-semibold text-[#1B1B1B]">{email || 'your email'}</span>
+        </p>
       </div>
 
-      <div className="flex gap-2 md:gap-4 justify-center px-4 w-full" onPaste={handlePaste}>
-        {otp.map((digit, index) => (
-          <input
-            key={index}
-            ref={(el) => {
-              inputRefs.current[index] = el;
-            }}
-            type="text"
-            inputMode="numeric"
-            maxLength={1}
-            value={digit}
-            onChange={(e) => handleChange(index, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(index, e)}
-            className={cn(
-              'w-10 h-12 md:w-16 md:h-20 text-center text-xl md:text-2xl font-bold rounded-xl border border-[#E0E0E0] bg-white outline-none transition-all',
-              'focus:border-brand-blue',
-              digit && 'border-brand-blue',
-            )}
-          />
-        ))}
+      {/* Input Boxes and Alerts */}
+      <div className="flex flex-col items-center w-full">
+        <div className="flex gap-2.5 justify-center w-full" onPaste={handlePaste}>
+          {otp.map((digit, index) => (
+            <input
+              key={index}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={digit}
+              onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              aria-label={`Digit ${index + 1} of 6`}
+              className={cn(
+                'w-12 h-12 text-center text-xl font-bold rounded-lg border border-[#E0E0E0] bg-transparent text-[#1B1B1B] outline-none transition-all',
+                'focus:border-primary-blue focus:ring-1 focus:ring-primary-blue',
+                digit && 'border-primary-blue',
+                isCodeError && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+              )}
+            />
+          ))}
+        </div>
+
+        {/* Inline Feedback Alerts */}
+        {apiError && (
+          <div className="text-red-500 text-[11px] md:text-xs font-medium text-left w-full mt-2.5">
+            {apiError}
+          </div>
+        )}
+
+        {resendSuccess && (
+          <div className="text-green-600 text-[11px] md:text-xs font-medium text-left w-full mt-2.5">
+            OTP code resent successfully!
+          </div>
+        )}
       </div>
 
-      <div className="w-full space-y-4">
+      {/* Verify Button & Resend Link */}
+      <div className="w-full flex flex-col items-center gap-4">
         <Button
-          variant="brand"
+          type="button"
           onClick={handleVerify}
-          // disabled={isVerifying || isResending || otp.some((d) => !d)}
-          // disabled={isResending}
-          className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
+          disabled={!isOtpComplete || isVerifying || isResending}
+          className={cn(
+            'h-14 w-full rounded-2xl text-base font-bold transition-colors select-none flex items-center justify-center gap-2 border-transparent',
+            isOtpComplete && !isVerifying && !isResending
+              ? 'bg-primary-blue text-white hover:bg-primary-blue/90 cursor-pointer'
+              : 'bg-[#F5F5F5] text-[#767676] cursor-not-allowed',
+          )}
         >
-          {/* {isVerifying ? 'Verifying...' : 'Begin verification'}
-          {!isVerifying && <HugeiconsIcon icon={ArrowRight02Icon} size={20} className="ml-2" />} */}
-          Begin verification
-          <HugeiconsIcon icon={ArrowRight02Icon} size={20} className="ml-2" />
+          {isVerifying ? (
+            <>
+              <svg
+                className="animate-spin h-5 w-5 text-[#767676]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <span>verifying email...</span>
+            </>
+          ) : (
+            'Verify Email'
+          )}
         </Button>
 
-        <button
-          type="button"
-          onClick={handleResend}
-          // disabled={isVerifying || isResending}
-          className="h-15 w-full rounded-2xl border border-[#1565C0] text-[#1565C0] text-base font-bold transition-colors hover:bg-blue-50 disabled:opacity-50"
-        >
-          {/* {isResending ? 'Sending...' : 'Resend OTP'} */}
-          Resend OTP
-        </button>
+        <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center">
+          {timeLeft > 0 ? (
+            <p>
+              Code expires in{' '}
+              <span className="font-semibold text-[#1B1B1B]">
+                00:{timeLeft.toString().padStart(2, '0')}
+              </span>
+            </p>
+          ) : (
+            <p>
+              <span>{"Didn't receive the code? "}</span>
+              <Button
+                type="button"
+                variant="link"
+                onClick={handleResend}
+                disabled={isVerifying || isResending}
+                className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1 p-0 h-auto inline"
+              >
+                {isResending ? 'Resending...' : 'Resend Code'}
+              </Button>
+            </p>
+          )}
+        </div>
       </div>
     </motion.div>
   );
