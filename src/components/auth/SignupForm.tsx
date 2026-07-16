@@ -1,284 +1,487 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'motion/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  User02Icon,
-  SmartPhone01Icon,
-  Mail01Icon,
-  LockPasswordIcon,
-  ViewIcon,
-  ViewOffIcon,
-  ArrowRight02Icon,
-} from '@hugeicons/core-free-icons';
-import { Button } from '@/components/ui/button';
-import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { cn } from '@/lib/utils';
-import { triggerComingSoonModal } from '@/components/coming-soon';
+import { signupAction } from '@/actions/auth-actions';
+import { EMAIL_REGEX } from '@/lib/validation';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
+import { toast } from 'sonner';
 
-const signupSchema = z.object({
-  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
-  phone: z
-    .string()
-    .min(1, 'Phone number is required')
-    .regex(/^0?[789]\d{9}$/, 'Enter a valid phone number (e.g., 08012345678)'),
-  email: z.string().email('Enter a valid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  agreed: z.boolean().refine((val) => val === true, {
-    message: 'You must agree to the terms',
-  }),
-});
+const signupSchema = z
+  .object({
+    firstName: z.string().min(1, { message: 'First name is required' }),
+    lastName: z.string().min(1, { message: 'Last name is required' }),
+    email: z.string().email({ message: 'Enter a valid email address' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters' })
+      .regex(/[A-Z]/, { message: 'Password must have one upper case' })
+      .regex(/[^A-Za-z0-9]/, { message: 'Password must have one special character' }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: 'Confirm password must be at least 8 characters' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 type SignupValues = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
-    mode: 'onBlur',
     defaultValues: {
-      fullName: '',
-      phone: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
-      agreed: false,
+      confirmPassword: '',
     },
   });
 
+  const { ref: passwordRef, onBlur: passwordOnBlur, ...passwordRegister } = register('password');
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const values = watch();
+  const passwordValue = values.password || '';
+  const hasMinLength = passwordValue.length >= 8;
+  const hasUpperCase = /[A-Z]/.test(passwordValue);
+  const hasSpecialChar = /[^A-Za-z0-9]/.test(passwordValue);
+  const isPasswordValid = hasMinLength && hasUpperCase && hasSpecialChar;
+
+  const isEmailValid = values.email ? EMAIL_REGEX.test(values.email.trim()) : false;
+
+  const isFormValid =
+    values.firstName &&
+    values.lastName &&
+    isEmailValid &&
+    values.password &&
+    isPasswordValid &&
+    values.confirmPassword &&
+    values.password === values.confirmPassword;
+
   const onSubmit = async (data: SignupValues) => {
-    triggerComingSoonModal({
-      title: 'Sign up is coming soon',
-      description: `We are still preparing the account creation flow for ${data.fullName}.`,
+    setApiError(null);
+    const result = await signupAction({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
     });
+
+    if (result.error) {
+      setApiError(result.error);
+      toast.error(result.error);
+    } else {
+      toast.success('Account created successfully! Please verify your email.');
+      router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+    }
+  };
+
+  const handleGoogleSignup = () => {
+    try {
+      const url =
+        process.env.NEXT_PUBLIC_GOOGLE_AUTH_API_URL ||
+        'https://api.staging.useclinsight.com/api/v1/auth/google';
+      window.location.href = url;
+    } catch {
+      const errorMsg = 'Unable to initiate Google authentication. Please try again.';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+    }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-[500px] rounded-[24px] bg-white shadow-2xl flex flex-col px-6 md:px-10 py-4 md:py-6"
-    >
-      <div className="flex flex-col gap-1.5 md:gap-2">
-        {/* Header */}
-        <div className="flex flex-col gap-0.5">
-          <h1 className="font-bold text-[#1B1B1B] text-lg md:text-[22px] leading-[120%] tracking-[-0.02em]">
-            Create your doctor account
-          </h1>
-          <p className="font-medium text-[#5E5E5E] text-[10px] md:text-xs leading-[140%] tracking-[-0.01em]">
-            Start your verification to begin reviewing cases
-          </p>
+    <div className="w-full flex flex-col justify-start items-start gap-5">
+      {/* Mobile Logo */}
+      <div className="lg:hidden mb-4 self-start">
+        <div className="relative w-[140px] h-[36px]">
+          <Image
+            src="/assets/header-assets/clinsight-logo.svg"
+            alt="Clinsight Logo"
+            fill
+            className="object-contain"
+            priority
+          />
         </div>
+      </div>
 
-        {/* Social Sign up */}
-        <button
-          type="button"
-          className="flex h-8 md:h-9 w-full items-center justify-center gap-2 rounded-xl border border-[#E0E0E0] bg-white text-[11px] md:text-sm font-medium text-[#313131] transition-colors hover:bg-slate-50"
-        >
-          <span>Sign up with Google</span>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-3.3 3.28-8.19 3.28-8.09z"
-              fill="#4285F4"
-            />
-            <path
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              fill="#34A853"
-            />
-            <path
-              d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z"
-              fill="#FBBC05"
-            />
-            <path
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-              fill="#EA4335"
-            />
-          </svg>
-        </button>
+      {/* Header */}
+      <div className="self-stretch flex flex-col justify-start items-start gap-4 lg:gap-2 mb-2 lg:mb-0">
+        <h1 className="self-stretch text-text-primary text-4xl font-semibold leading-10 font-sans tracking-tight">
+          Create Account
+        </h1>
+        <p className="self-stretch text-text-secondary-3 text-base font-normal leading-6 font-sans">
+          Sign up to access your Clinsight doctor dashboard and start reviewing patient cases.
+        </p>
+      </div>
 
-        {/* Divider */}
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-[#E0E0E0]" />
-          <span className="text-[9px] md:text-[10px] font-medium text-[#313131]">
-            or Sign up with Email
-          </span>
-          <div className="h-px flex-1 bg-[#E0E0E0]" />
-        </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="self-stretch flex flex-col justify-start items-end gap-8 lg:gap-4 w-full"
+        noValidate
+      >
+        {/* Form Inputs Container */}
+        <div className="self-stretch flex flex-col justify-start items-start gap-4 lg:gap-3 overflow-hidden w-full">
+          {/* First Name & Last Name */}
+          <div className="self-stretch flex flex-col justify-start items-start gap-4 lg:gap-3 w-full">
+            {/* First Name */}
+            <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
+              <label
+                htmlFor="firstName"
+                className="self-stretch text-text-primary text-sm font-normal leading-5 font-sans"
+              >
+                First Name
+              </label>
+              <Input
+                id="firstName"
+                {...register('firstName')}
+                type="text"
+                placeholder="Enter your name"
+                error={!!errors.firstName}
+              />
+              {errors.firstName && (
+                <span className="text-xs text-red-500 mt-1 font-sans">
+                  {errors.firstName.message}
+                </span>
+              )}
+            </div>
 
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-1.5 md:gap-2.5"
-          autoComplete="off"
-          noValidate
-        >
-          <div className="flex flex-col gap-1 md:gap-1.5">
-            {/* Full Name */}
-            <InputFieldContainer
-              label="Full name"
-              htmlFor="fullName"
-              error={errors.fullName?.message}
-            >
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={User02Icon} size={14} />
-                </div>
-                <input
-                  id="fullName"
-                  {...register('fullName')}
-                  type="text"
-                  placeholder="Enter full name"
-                  autoComplete="off"
-                  className={cn(
-                    'h-8 md:h-9 w-full rounded-lg border border-[#E0E0E0] bg-white pl-9 pr-3 text-[11px] md:text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-[9px] md:placeholder:text-[11px]',
-                    errors.fullName && 'border-red-500',
-                  )}
-                />
-              </div>
-            </InputFieldContainer>
+            {/* Last Name */}
+            <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
+              <label
+                htmlFor="lastName"
+                className="self-stretch text-text-primary text-sm font-normal leading-5 font-sans"
+              >
+                Last Name
+              </label>
+              <Input
+                id="lastName"
+                {...register('lastName')}
+                type="text"
+                placeholder="Enter your name"
+                error={!!errors.lastName}
+              />
+              {errors.lastName && (
+                <span className="text-xs text-red-500 mt-1 font-sans">
+                  {errors.lastName.message}
+                </span>
+              )}
+            </div>
+          </div>
 
-            {/* Phone No */}
-            <InputFieldContainer label="Phone no." htmlFor="phone" error={errors.phone?.message}>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={SmartPhone01Icon} size={14} />
-                </div>
-                <input
-                  id="phone"
-                  {...register('phone')}
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  autoComplete="off"
-                  className={cn(
-                    'h-8 md:h-9 w-full rounded-lg border border-[#E0E0E0] bg-white pl-9 pr-3 text-[11px] md:text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-[9px] md:placeholder:text-[11px]',
-                    errors.phone && 'border-red-500',
-                  )}
-                />
-              </div>
-            </InputFieldContainer>
+          {/* Email */}
+          <div className="self-stretch flex flex-col justify-start items-start gap-6 lg:gap-3 w-full">
+            <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
+              <label
+                htmlFor="email"
+                className="self-stretch text-text-primary text-sm font-normal leading-5 font-sans"
+              >
+                Email
+              </label>
+              <Input
+                id="email"
+                {...register('email')}
+                type="email"
+                placeholder="Enter your email"
+                error={!!errors.email}
+              />
+              {errors.email && (
+                <span className="text-xs text-red-500 mt-1 font-sans">{errors.email.message}</span>
+              )}
+            </div>
+          </div>
 
-            {/* Email */}
-            <InputFieldContainer
-              label="Email address"
-              htmlFor="email"
-              error={errors.email?.message}
-            >
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={Mail01Icon} size={14} />
-                </div>
-                <input
-                  id="email"
-                  {...register('email')}
-                  type="email"
-                  placeholder="Enter email address"
-                  autoComplete="off"
-                  className={cn(
-                    'h-8 md:h-9 w-full rounded-lg border border-[#E0E0E0] bg-white pl-9 pr-3 text-[11px] md:text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-[9px] md:placeholder:text-[11px]',
-                    errors.email && 'border-red-500',
-                  )}
-                />
-              </div>
-            </InputFieldContainer>
-
-            {/* Password */}
-            <InputFieldContainer
-              label="Password"
-              htmlFor="password"
-              error={errors.password?.message}
-            >
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]">
-                  <HugeiconsIcon icon={LockPasswordIcon} size={14} />
-                </div>
-                <input
+          {/* Password */}
+          <div className="self-stretch flex flex-col justify-start items-start gap-6 lg:gap-3 w-full">
+            <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
+              <label
+                htmlFor="password"
+                className="self-stretch text-text-primary text-sm font-normal leading-5 font-sans"
+              >
+                Password
+              </label>
+              <div className="relative w-full">
+                <Input
                   id="password"
-                  {...register('password')}
+                  {...passwordRegister}
+                  ref={(e) => {
+                    passwordRef(e);
+                  }}
+                  onFocus={() => setIsPasswordFocused(true)}
+                  onBlur={(e) => {
+                    passwordOnBlur(e);
+                    setIsPasswordFocused(false);
+                  }}
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="At least 8 characters"
-                  autoComplete="new-password"
-                  className={cn(
-                    'h-8 md:h-9 w-full rounded-lg border border-[#E0E0E0] bg-white pl-9 pr-10 text-[11px] md:text-sm outline-none transition-all focus:border-brand-blue focus:bg-[#E8F0FE] not-placeholder-shown:bg-[#E8F0FE] placeholder:text-[9px] md:placeholder:text-[11px]',
-                    errors.password && 'border-red-500',
-                  )}
+                  placeholder="Enter your password"
+                  className="pr-12"
+                  error={!!errors.password}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#98A2B3] transition-colors hover:text-[#1B1B1B]"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-primary transition-colors cursor-pointer"
                 >
-                  <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={14} />
+                  <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={18} />
                 </button>
               </div>
-            </InputFieldContainer>
-          </div>
 
-          {/* Terms & Privacy */}
-          <div className="flex flex-col gap-0.5">
-            <div className="flex items-center gap-2">
-              <input
-                id="agreed"
-                {...register('agreed')}
-                type="checkbox"
-                className="h-3.5 w-3.5 rounded-md border-[#E0E0E0] text-brand-blue accent-brand-blue cursor-pointer"
-              />
-              <label
-                htmlFor="agreed"
-                className="text-[9px] md:text-[11px] text-[#5E5E5E] cursor-pointer"
-              >
-                I agree to the{' '}
-                <Link href="/terms-and-conditions" className="font-bold underline">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link href="/privacy-policy" className="font-bold underline">
-                  Privacy Policy
-                </Link>
-              </label>
+              {/* Password Validation checklist */}
+              {(isPasswordFocused || passwordValue.length > 0) && (
+                <div className="flex flex-col gap-1.5 mt-1.5">
+                  <div className="flex items-center gap-2">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={cn(
+                        'size-3.5 flex-shrink-0 transition-colors',
+                        hasMinLength ? 'text-success-green' : 'text-text-disabled',
+                      )}
+                    >
+                      <path
+                        d="M10 3L4.5 8.5L2 6"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span
+                      className={cn(
+                        'text-xs font-normal font-sans transition-colors',
+                        hasMinLength ? 'text-success-green' : 'text-text-disabled',
+                      )}
+                    >
+                      Password must have 8 characters
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={cn(
+                        'size-3.5 flex-shrink-0 transition-colors',
+                        hasUpperCase ? 'text-success-green' : 'text-text-disabled',
+                      )}
+                    >
+                      <path
+                        d="M10 3L4.5 8.5L2 6"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span
+                      className={cn(
+                        'text-xs font-normal font-sans transition-colors',
+                        hasUpperCase ? 'text-success-green' : 'text-text-disabled',
+                      )}
+                    >
+                      Password must have one upper case
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={cn(
+                        'size-3.5 flex-shrink-0 transition-colors',
+                        hasSpecialChar ? 'text-success-green' : 'text-text-disabled',
+                      )}
+                    >
+                      <path
+                        d="M10 3L4.5 8.5L2 6"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span
+                      className={cn(
+                        'text-xs font-normal font-sans transition-colors',
+                        hasSpecialChar ? 'text-success-green' : 'text-text-disabled',
+                      )}
+                    >
+                      Password must have one special character
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
-            {errors.agreed && (
-              <p className="text-[8px] italic text-red-500 font-medium text-right">
-                {errors.agreed.message}
-              </p>
-            )}
           </div>
 
-          {/* Submit */}
+          {/* Confirm Password */}
+          <div className="self-stretch flex flex-col justify-start items-start gap-6 lg:gap-3 w-full">
+            <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
+              <label
+                htmlFor="confirmPassword"
+                className="self-stretch text-text-primary text-sm font-normal leading-5 font-sans"
+              >
+                Confirm Password
+              </label>
+              <div className="relative w-full">
+                <Input
+                  id="confirmPassword"
+                  {...register('confirmPassword')}
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="Retype your password"
+                  className="pr-12"
+                  error={!!errors.confirmPassword}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={
+                    showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-primary transition-colors cursor-pointer"
+                >
+                  <HugeiconsIcon icon={showConfirmPassword ? ViewOffIcon : ViewIcon} size={18} />
+                </button>
+              </div>
+              {errors.confirmPassword ? (
+                <span className="text-xs text-red-500 mt-1 font-sans">
+                  {errors.confirmPassword.message}
+                </span>
+              ) : (
+                values.confirmPassword &&
+                passwordValue !== values.confirmPassword && (
+                  <span className="text-xs text-red-500 mt-1 font-sans">
+                    Passwords do not match
+                  </span>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Buttons and Divider Section */}
+        <div className="self-stretch flex flex-col justify-center items-center gap-4 lg:gap-3 w-full">
+          {apiError && (
+            <div className="self-stretch text-red-500 text-xs font-sans text-left mt-1">
+              {apiError}
+            </div>
+          )}
+          {/* Submit/Continue Button */}
           <Button
-            variant="brand"
             type="submit"
-            disabled={isSubmitting}
-            className="h-9 md:h-10 w-full rounded-xl text-[11px] md:text-sm font-bold shadow-lg text-white"
+            disabled={isSubmitting || !isFormValid}
+            className={cn(
+              'self-stretch h-12 px-6 py-3 rounded-xl inline-flex justify-center items-center gap-2 text-base font-medium leading-6 transition-colors font-sans w-full select-none cursor-pointer border-transparent',
+              isFormValid
+                ? 'bg-primary-blue text-white hover:bg-primary-blue/90'
+                : 'bg-[#F5F5F5] text-text-disabled cursor-not-allowed',
+            )}
           >
-            {isSubmitting ? 'Sending...' : 'Send me OTP'}
-            <HugeiconsIcon icon={ArrowRight02Icon} size={16} className="ml-2" />
+            {isSubmitting ? 'Registering...' : 'Continue'}
           </Button>
 
-          {/* Footer Link */}
-          <div className="text-center text-[11px] md:text-xs text-[#5E5E5E]">
-            Already verified?{' '}
-            <Link href="/signin" className="font-bold text-[#1565C0] hover:underline">
-              Sign in
+          {/* Divider */}
+          <div className="self-stretch h-5 relative my-1">
+            <div className="w-full flex justify-center items-center gap-1.5">
+              <div className="flex-1 h-0 border-t border-[#F0F0F0]" />
+              <span className="text-text-disabled text-sm font-normal leading-5 font-sans">or</span>
+              <div className="flex-1 h-0 border-t border-[#F0F0F0]" />
+            </div>
+          </div>
+
+          {/* Google Button */}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleGoogleSignup}
+            className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#E0E0E0] bg-white text-base font-medium text-[#313131] transition-colors hover:bg-slate-50 font-sans cursor-pointer"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-5"
+            >
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-3.3 3.28-8.19 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                fill="#EA4335"
+              />
+            </svg>
+            Google
+          </Button>
+
+          {/* Login Link */}
+          <div className="text-center mt-2 font-sans">
+            <span className="text-text-secondary-3 text-sm font-normal leading-5">
+              Already have an account?{' '}
+            </span>
+            <Link
+              href="/signin"
+              className="text-primary-blue text-sm font-normal underline leading-5"
+            >
+              Log in
             </Link>
           </div>
-        </form>
-      </div>
-    </motion.div>
+        </div>
+
+        {/* Footer Terms */}
+        <div className="self-stretch p-2.5 flex justify-center items-center w-full mt-2 lg:mt-0">
+          <div className="w-72 text-center text-xs font-normal text-text-primary leading-4 font-sans">
+            By continuing, you have read and agreed to Clinsight’s{' '}
+            <Link
+              href="/terms-and-conditions"
+              className="text-primary-blue font-medium underline leading-4"
+            >
+              Terms and Conditions.
+            </Link>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 }

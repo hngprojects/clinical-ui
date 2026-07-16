@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     const FORGOT_PASSWORD_API_URL =
       process.env.NEXT_PUBLIC_AUTH_API_URL ||
-      'https://api.staging.clinsight.hng14.com/api/v1/auth/forgot-password';
+      'https://api.staging.useclinsight.com/api/v1/auth/forgot-password';
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);

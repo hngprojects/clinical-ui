@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
     const BACKEND_URL =
       process.env.NEXT_PUBLIC_RESEND_OTP_API_URL ||
-      'https://api.staging.clinsight.hng14.com/api/v1/auth/resend-otp';
+      'https://api.staging.useclinsight.com/api/v1/auth/resend-otp';
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
