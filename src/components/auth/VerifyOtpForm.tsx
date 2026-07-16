@@ -4,8 +4,10 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { ChevronLeft } from 'lucide-react';
 import { verifyOtpAction, resendOtpAction } from '@/actions/auth-actions';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
+import { toast } from 'sonner';
 
 export function VerifyOtpForm() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -72,12 +74,16 @@ export function VerifyOtpForm() {
     try {
       const result = await verifyOtpAction(email, otpString);
       if (result.error) {
-        setApiError('The code you entered was incorrect, check again.');
+        setApiError(result.error);
+        toast.error(result.error);
       } else {
-        router.push('/signin');
+        toast.success('Email verified successfully!');
+        router.push('/user');
       }
     } catch {
-      setApiError('An unexpected error occurred');
+      const errorMsg = 'An unexpected error occurred';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setIsVerifying(false);
     }
@@ -85,7 +91,9 @@ export function VerifyOtpForm() {
 
   const handleResend = async () => {
     if (!email) {
-      setApiError('Email not found. Please try signing up again.');
+      const errorMsg = 'Email not found. Please try signing up again.';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
@@ -97,20 +105,28 @@ export function VerifyOtpForm() {
       const result = await resendOtpAction(email);
       if (result.error) {
         setApiError(result.error);
+        toast.error(result.error);
       } else {
         setResendSuccess(true);
+        toast.success('OTP code resent successfully!');
         setTimeLeft(30); // Reset timer to 30 seconds
         setOtp(['', '', '', '', '', '']); // Clear digits
         inputRefs.current[0]?.focus(); // Refocus first input
       }
     } catch {
-      setApiError('An unexpected error occurred while resending');
+      const errorMsg = 'An unexpected error occurred while resending';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setIsResending(false);
     }
   };
 
   const isOtpComplete = otp.every((digit) => digit !== '');
+
+  // Turn borders red only if it's an actual incorrect/invalid code error from the server (not network timeouts or missing fields)
+  const isCodeError =
+    apiError && !/reach|server|network|timeout|gateway|connect|email/i.test(apiError);
 
   return (
     <motion.div
@@ -123,9 +139,9 @@ export function VerifyOtpForm() {
       <button
         type="button"
         onClick={() => router.back()}
-        className="self-start flex items-center gap-1 text-[#5E5E5E] text-sm font-semibold hover:text-[#1565C0] transition-colors cursor-pointer select-none -mb-3"
+        className="self-start flex items-center gap-1 text-[#5E5E5E] text-sm font-semibold hover:text-primary-blue transition-colors cursor-pointer select-none -mb-3"
       >
-        <ChevronLeft size={16} />
+        <HugeiconsIcon icon={ArrowLeft02Icon} size={16} />
         <span>Go back</span>
       </button>
 
@@ -155,11 +171,12 @@ export function VerifyOtpForm() {
               value={digit}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
+              aria-label={`Digit ${index + 1} of 6`}
               className={cn(
                 'w-12 h-12 text-center text-xl font-bold rounded-lg border border-[#E0E0E0] bg-transparent text-[#1B1B1B] outline-none transition-all',
-                'focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0]',
-                digit && 'border-[#1565C0]',
-                apiError && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+                'focus:border-primary-blue focus:ring-1 focus:ring-primary-blue',
+                digit && 'border-primary-blue',
+                isCodeError && 'border-red-500 focus:border-red-500 focus:ring-red-500',
               )}
             />
           ))}
@@ -186,9 +203,9 @@ export function VerifyOtpForm() {
           onClick={handleVerify}
           disabled={!isOtpComplete || isVerifying || isResending}
           className={cn(
-            'h-14 w-full rounded-2xl text-base font-bold transition-colors select-none flex items-center justify-center gap-2',
+            'h-14 w-full rounded-2xl text-base font-bold transition-colors select-none flex items-center justify-center gap-2 border-transparent',
             isOtpComplete && !isVerifying && !isResending
-              ? 'bg-[#1565C0] text-white hover:bg-[#1565C0]/90 cursor-pointer'
+              ? 'bg-primary-blue text-white hover:bg-primary-blue/90 cursor-pointer'
               : 'bg-[#F5F5F5] text-[#767676] cursor-not-allowed',
           )}
         >
@@ -236,7 +253,7 @@ export function VerifyOtpForm() {
                 type="button"
                 onClick={handleResend}
                 disabled={isVerifying || isResending}
-                className="text-[#1565C0] font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1"
+                className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
               </button>
