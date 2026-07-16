@@ -8,6 +8,7 @@ import { verifyOtpAction, resendOtpAction } from '@/actions/auth-actions';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 export function VerifyOtpForm() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -136,14 +137,15 @@ export function VerifyOtpForm() {
       className="w-full max-w-[338px] flex flex-col items-center gap-5 md:gap-6 font-sans"
     >
       {/* Go Back Button */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => router.back()}
-        className="self-start flex items-center gap-1 text-[#5E5E5E] text-sm font-semibold hover:text-primary-blue transition-colors cursor-pointer select-none -mb-3"
+        className="self-start flex items-center gap-1 text-[#5E5E5E] text-sm font-semibold hover:text-primary-blue hover:bg-transparent transition-colors cursor-pointer select-none -mb-3 p-0 h-auto"
       >
         <HugeiconsIcon icon={ArrowLeft02Icon} size={16} />
         <span>Go back</span>
-      </button>
+      </Button>
 
       {/* Headings */}
       <div className="text-center select-none">
@@ -198,7 +200,7 @@ export function VerifyOtpForm() {
 
       {/* Verify Button & Resend Link */}
       <div className="w-full flex flex-col items-center gap-4">
-        <button
+        <Button
           type="button"
           onClick={handleVerify}
           disabled={!isOtpComplete || isVerifying || isResending}
@@ -236,7 +238,7 @@ export function VerifyOtpForm() {
           ) : (
             'Verify Email'
           )}
-        </button>
+        </Button>
 
         <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center">
           {timeLeft > 0 ? (
@@ -249,14 +251,15 @@ export function VerifyOtpForm() {
           ) : (
             <p>
               <span>{"Didn't receive the code? "}</span>
-              <button
+              <Button
                 type="button"
+                variant="link"
                 onClick={handleResend}
                 disabled={isVerifying || isResending}
-                className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1"
+                className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1 p-0 h-auto inline"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
-              </button>
+              </Button>
             </p>
           )}
         </div>
