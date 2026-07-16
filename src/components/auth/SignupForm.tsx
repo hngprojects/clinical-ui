@@ -400,7 +400,7 @@ export function SignupForm() {
           {/* Submit/Continue Button */}
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isFormValid}
             className={cn(
               'self-stretch h-12 px-6 py-3 rounded-xl inline-flex justify-center items-center gap-2 text-base font-medium leading-6 transition-colors font-sans w-full select-none cursor-pointer border-transparent',
               isFormValid
