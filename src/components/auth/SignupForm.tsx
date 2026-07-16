@@ -1,27 +1,34 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { signupAction, getGoogleAuthUrlAction } from '@/actions/auth-actions';
+import { signupAction } from '@/actions/auth-actions';
+import { EMAIL_REGEX } from '@/lib/validation';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
+import { toast } from 'sonner';
 
 const signupSchema = z
   .object({
-    firstName: z.string().min(1, 'First name is required'),
-    lastName: z.string().min(1, 'Last name is required'),
-    email: z.string().email('Enter a valid email address'),
+    firstName: z.string().min(1, { message: 'First name is required' }),
+    lastName: z.string().min(1, { message: 'Last name is required' }),
+    email: z.string().email({ message: 'Enter a valid email address' }),
     password: z
       .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(/[A-Z]/, 'Password must have one upper case')
-      .regex(/[^A-Za-z0-9]/, 'Password must have one special character'),
-    confirmPassword: z.string().min(8, 'Confirm password must be at least 8 characters'),
+      .min(8, { message: 'Password must be at least 8 characters' })
+      .regex(/[A-Z]/, { message: 'Password must have one upper case' })
+      .regex(/[^A-Za-z0-9]/, { message: 'Password must have one special character' }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: 'Confirm password must be at least 8 characters' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -44,7 +51,6 @@ export function SignupForm() {
     formState: { errors, isSubmitting },
   } = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
-    mode: 'onBlur',
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -64,10 +70,12 @@ export function SignupForm() {
   const hasSpecialChar = /[^A-Za-z0-9]/.test(passwordValue);
   const isPasswordValid = hasMinLength && hasUpperCase && hasSpecialChar;
 
+  const isEmailValid = values.email ? EMAIL_REGEX.test(values.email.trim()) : false;
+
   const isFormValid =
     values.firstName &&
     values.lastName &&
-    values.email &&
+    isEmailValid &&
     values.password &&
     isPasswordValid &&
     values.confirmPassword &&
@@ -85,14 +93,24 @@ export function SignupForm() {
 
     if (result.error) {
       setApiError(result.error);
+      toast.error(result.error);
     } else {
+      toast.success('Account created successfully! Please verify your email.');
       router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
     }
   };
 
-  const handleGoogleSignup = async () => {
-    const url = await getGoogleAuthUrlAction();
-    window.location.href = url;
+  const handleGoogleSignup = () => {
+    try {
+      const url =
+        process.env.NEXT_PUBLIC_GOOGLE_AUTH_API_URL ||
+        'https://api.staging.useclinsight.com/api/v1/auth/google';
+      window.location.href = url;
+    } catch {
+      const errorMsg = 'Unable to initiate Google authentication. Please try again.';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+    }
   };
 
   return (
@@ -127,7 +145,7 @@ export function SignupForm() {
       >
         {/* Form Inputs Container */}
         <div className="self-stretch flex flex-col justify-start items-start gap-4 lg:gap-3 overflow-hidden w-full">
-          {/* First Name & Last Name (Stacked exactly as design specifies, gap-4) */}
+          {/* First Name & Last Name */}
           <div className="self-stretch flex flex-col justify-start items-start gap-4 lg:gap-3 w-full">
             {/* First Name */}
             <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
@@ -137,15 +155,12 @@ export function SignupForm() {
               >
                 First Name
               </label>
-              <input
+              <Input
                 id="firstName"
                 {...register('firstName')}
                 type="text"
                 placeholder="Enter your name"
-                className={cn(
-                  'self-stretch h-12 px-5 py-3 bg-white rounded-xl border border-outline-border text-sm font-normal text-text-primary placeholder:text-text-disabled outline-none focus:border-primary-blue transition-colors w-full font-sans',
-                  errors.firstName && 'border-red-500',
-                )}
+                error={!!errors.firstName}
               />
               {errors.firstName && (
                 <span className="text-xs text-red-500 mt-1 font-sans">
@@ -162,15 +177,12 @@ export function SignupForm() {
               >
                 Last Name
               </label>
-              <input
+              <Input
                 id="lastName"
                 {...register('lastName')}
                 type="text"
                 placeholder="Enter your name"
-                className={cn(
-                  'self-stretch h-12 px-5 py-3 bg-white rounded-xl border border-outline-border text-sm font-normal text-text-primary placeholder:text-text-disabled outline-none focus:border-primary-blue transition-colors w-full font-sans',
-                  errors.lastName && 'border-red-500',
-                )}
+                error={!!errors.lastName}
               />
               {errors.lastName && (
                 <span className="text-xs text-red-500 mt-1 font-sans">
@@ -180,7 +192,7 @@ export function SignupForm() {
             </div>
           </div>
 
-          {/* Email (gap-6) */}
+          {/* Email */}
           <div className="self-stretch flex flex-col justify-start items-start gap-6 lg:gap-3 w-full">
             <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
               <label
@@ -189,15 +201,12 @@ export function SignupForm() {
               >
                 Email
               </label>
-              <input
+              <Input
                 id="email"
                 {...register('email')}
                 type="email"
                 placeholder="Enter your email"
-                className={cn(
-                  'self-stretch h-12 px-5 py-3 bg-white rounded-xl border border-outline-border text-sm font-normal text-text-primary placeholder:text-text-disabled outline-none focus:border-primary-blue transition-colors w-full font-sans',
-                  errors.email && 'border-red-500',
-                )}
+                error={!!errors.email}
               />
               {errors.email && (
                 <span className="text-xs text-red-500 mt-1 font-sans">{errors.email.message}</span>
@@ -205,7 +214,7 @@ export function SignupForm() {
             </div>
           </div>
 
-          {/* Password (gap-6) */}
+          {/* Password */}
           <div className="self-stretch flex flex-col justify-start items-start gap-6 lg:gap-3 w-full">
             <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
               <label
@@ -215,10 +224,12 @@ export function SignupForm() {
                 Password
               </label>
               <div className="relative w-full">
-                <input
+                <Input
                   id="password"
                   {...passwordRegister}
-                  ref={passwordRef}
+                  ref={(e) => {
+                    passwordRef(e);
+                  }}
                   onFocus={() => setIsPasswordFocused(true)}
                   onBlur={(e) => {
                     passwordOnBlur(e);
@@ -226,17 +237,16 @@ export function SignupForm() {
                   }}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
-                  className={cn(
-                    'self-stretch w-full h-12 pl-5 pr-12 py-3 bg-white rounded-xl border border-outline-border text-sm font-normal text-text-primary placeholder:text-text-disabled outline-none focus:border-primary-blue transition-colors font-sans',
-                    errors.password && 'border-red-500',
-                  )}
+                  className="pr-12"
+                  error={!!errors.password}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-primary transition-colors cursor-pointer"
                 >
-                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                  <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={18} />
                 </button>
               </div>
 
@@ -335,7 +345,7 @@ export function SignupForm() {
             </div>
           </div>
 
-          {/* Confirm Password (gap-6) */}
+          {/* Confirm Password */}
           <div className="self-stretch flex flex-col justify-start items-start gap-6 lg:gap-3 w-full">
             <div className="self-stretch flex flex-col justify-start items-start gap-1.5 w-full">
               <label
@@ -345,22 +355,23 @@ export function SignupForm() {
                 Confirm Password
               </label>
               <div className="relative w-full">
-                <input
+                <Input
                   id="confirmPassword"
                   {...register('confirmPassword')}
                   type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Retype your password"
-                  className={cn(
-                    'self-stretch w-full h-12 pl-5 pr-12 py-3 bg-white rounded-xl border border-outline-border text-sm font-normal text-text-primary placeholder:text-text-disabled outline-none focus:border-primary-blue transition-colors font-sans',
-                    errors.confirmPassword && 'border-red-500',
-                  )}
+                  className="pr-12"
+                  error={!!errors.confirmPassword}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={
+                    showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'
+                  }
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-primary transition-colors cursor-pointer"
                 >
-                  {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                  <HugeiconsIcon icon={showConfirmPassword ? ViewOffIcon : ViewIcon} size={18} />
                 </button>
               </div>
               {errors.confirmPassword ? (
@@ -387,18 +398,18 @@ export function SignupForm() {
             </div>
           )}
           {/* Submit/Continue Button */}
-          <button
+          <Button
             type="submit"
             disabled={isSubmitting}
             className={cn(
-              'self-stretch h-12 px-6 py-3 rounded-xl inline-flex justify-center items-center gap-2 text-base font-medium leading-6 transition-colors font-sans',
+              'self-stretch h-12 px-6 py-3 rounded-xl inline-flex justify-center items-center gap-2 text-base font-medium leading-6 transition-colors font-sans w-full select-none cursor-pointer border-transparent',
               isFormValid
-                ? 'bg-primary-blue text-white hover:opacity-90 cursor-pointer'
+                ? 'bg-primary-blue text-white hover:bg-primary-blue/90'
                 : 'bg-[#F5F5F5] text-text-disabled cursor-not-allowed',
             )}
           >
             {isSubmitting ? 'Registering...' : 'Continue'}
-          </button>
+          </Button>
 
           {/* Divider */}
           <div className="self-stretch h-5 relative my-1">
@@ -410,10 +421,11 @@ export function SignupForm() {
           </div>
 
           {/* Google Button */}
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={handleGoogleSignup}
-            className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#E0E0E0] bg-white text-base font-medium text-[#313131] transition-colors hover:bg-slate-50 font-sans"
+            className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#E0E0E0] bg-white text-base font-medium text-[#313131] transition-colors hover:bg-slate-50 font-sans cursor-pointer"
           >
             <svg
               width="20"
@@ -441,7 +453,7 @@ export function SignupForm() {
               />
             </svg>
             Google
-          </button>
+          </Button>
 
           {/* Login Link */}
           <div className="text-center mt-2 font-sans">
