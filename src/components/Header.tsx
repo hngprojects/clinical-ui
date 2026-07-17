@@ -34,7 +34,11 @@ export function Header() {
     '/verification/verification-complete',
   ];
 
-  if (hideOnRoutes.includes(pathname) || pathname.startsWith('/user')) {
+  if (
+    hideOnRoutes.includes(pathname) ||
+    pathname.startsWith('/user') ||
+    pathname.startsWith('/verification')
+  ) {
     return null;
   }
 

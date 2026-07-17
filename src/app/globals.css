@@ -20,6 +20,20 @@
   --color-settings-subheader-text: #64748b;
   --color-blue-1: #104ead;
   --color-withdraw-card: rgba(16, 78, 173, 0.10);
+
+  --animate-hourglass: hourglass-flip 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+
+  @keyframes hourglass-flip {
+    0% {
+      transform: rotate(0deg);
+    }
+    12% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(180deg);
+    }
+  }
 }
 
 @theme inline {

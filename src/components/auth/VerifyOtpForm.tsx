@@ -79,7 +79,7 @@ export function VerifyOtpForm() {
         toast.error(result.error);
       } else {
         toast.success('Email verified successfully!');
-        router.push('/user');
+        router.push('/verification');
       }
     } catch {
       const errorMsg = 'An unexpected error occurred';
