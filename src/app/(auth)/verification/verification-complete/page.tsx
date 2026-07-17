@@ -1,32 +1,24 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { HourglassIcon } from '@hugeicons/core-free-icons';
 
 export default function VerificationCompletePage() {
-  const [formattedDate, setFormattedDate] = useState<string>('');
-
-  useEffect(() => {
-    // Format date inside an asynchronous timeout to prevent hydration mismatch and avoid synchronous setState warnings
-    const timer = setTimeout(() => {
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      });
-      const timeStr = now.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      });
-      setFormattedDate(`${dateStr} at ${timeStr}`);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  const timeStr = now.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+  const formattedDate = `${dateStr} at ${timeStr}`;
 
   return (
     <div className="h-screen w-full flex flex-col bg-[#F9FAFB] relative font-sans overflow-hidden">
@@ -77,8 +69,11 @@ export default function VerificationCompletePage() {
             </div>
             <div className="flex justify-between items-center text-sm md:text-base">
               <span className="text-[#5e5e5e] font-medium">Submitted On</span>
-              <span className="text-[#1b1b1b] font-semibold text-[13px] md:text-sm text-right">
-                {formattedDate || 'Loading...'}
+              <span
+                className="text-[#1b1b1b] font-semibold text-[13px] md:text-sm text-right"
+                suppressHydrationWarning
+              >
+                {formattedDate}
               </span>
             </div>
             <div className="flex justify-between items-start text-sm md:text-base">
@@ -93,7 +88,7 @@ export default function VerificationCompletePage() {
           {/* Action Button */}
           <Link
             href="/user"
-            className="w-full mt-5 py-3.5 bg-primary-blue hover:bg-[#104ead] text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer shadow-sm shadow-primary-blue/10 flex items-center justify-center text-sm md:text-base"
+            className="w-full mt-5 py-3.5 bg-primary-blue hover:bg-blue-1 text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer shadow-sm shadow-primary-blue/10 flex items-center justify-center text-sm md:text-base"
           >
             Continue to Dashboard
           </Link>
