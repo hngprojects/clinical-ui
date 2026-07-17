@@ -37,7 +37,11 @@ export function Footer() {
     '/verification/verification-complete',
     '/squeeze',
   ];
-  if (hideOnRoutes.includes(pathname) || pathname.startsWith('/user')) {
+  if (
+    hideOnRoutes.includes(pathname) ||
+    pathname.startsWith('/user') ||
+    pathname.startsWith('/verification')
+  ) {
     return null;
   }
   return (
