@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
+import { toast } from 'sonner';
 import {
   professionalInfoSchema,
   type ProfessionalInfoInput,
@@ -44,7 +45,7 @@ export default function ProfessionalInfoPage() {
   const {
     control,
     handleSubmit,
-    watch,
+    getValues,
     formState: { errors, isValid },
   } = useForm<ProfessionalInfoInput>({
     resolver: zodResolver(professionalInfoSchema),
@@ -74,7 +75,7 @@ export default function ProfessionalInfoPage() {
   };
 
   const handleSave = () => {
-    const values = watch();
+    const values = getValues();
     updateState({
       specialization: values.specialization || '',
       yearsOfExperience: values.yearsOfExperience || '',
@@ -84,6 +85,7 @@ export default function ProfessionalInfoPage() {
       state: values.state || '',
       passportPhoto: values.passportPhoto || null,
     });
+    toast.success('Progress saved successfully!');
   };
 
   return (
@@ -97,19 +99,6 @@ export default function ProfessionalInfoPage() {
           <HugeiconsIcon icon={ArrowLeft02Icon} className="w-3.5 h-3.5" />
           <span>Back</span>
         </Link>
-
-        {/* Step Progress */}
-        <div className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1565C0]"></span>
-            <span className="text-xs font-semibold text-[#1565C0]">Step 1</span>
-          </div>
-          <div className="flex-1 mx-3 border-t border-dashed border-slate-300"></div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#94A3B8]"></span>
-            <span className="text-xs font-medium text-[#94A3B8]">Step 2</span>
-          </div>
-        </div>
       </div>
 
       {/* Heading */}
@@ -259,7 +248,7 @@ export default function ProfessionalInfoPage() {
           <button
             type="submit"
             disabled={!isValid}
-            className="flex-1 py-2.5 bg-[#1565c0] hover:bg-[#104ead] text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer disabled:bg-[#F5F5F5] disabled:text-text-disabled disabled:cursor-not-allowed text-xs md:text-sm flex items-center justify-center"
+            className="flex-1 py-2.5 bg-primary-blue hover:bg-[#104ead] text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer disabled:bg-[#F5F5F5] disabled:text-text-disabled disabled:cursor-not-allowed text-xs md:text-sm flex items-center justify-center"
           >
             Continue
           </button>
