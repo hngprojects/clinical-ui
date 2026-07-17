@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
@@ -16,17 +16,17 @@ import { Input } from '@/components/ui/input';
 import VerificationFileUpload from '@/components/verification/VerificationFileUpload';
 import InputFieldContainer from '@/components/ui/InputFieldContainer';
 import { useVerification } from '@/components/verification/VerificationContext';
+import { submitVerificationAction } from '@/actions/auth-actions';
 
 export default function CredentialsVerificationPage() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { state: verificationState, updateState } = useVerification();
+  const { state: verificationState, updateState, clearState } = useVerification();
 
   const {
     control,
     handleSubmit,
-    watch,
-    formState: { errors, isValid },
+    getValues,
+    formState: { errors, isValid, isSubmitting },
   } = useForm<CredentialsVerificationInput>({
     resolver: zodResolver(credentialsVerificationSchema),
     mode: 'onChange',
@@ -38,28 +38,45 @@ export default function CredentialsVerificationPage() {
   });
 
   const onSubmit = async (data: CredentialsVerificationInput) => {
-    setIsSubmitting(true);
-    try {
-      updateState({
-        nin: data.nin,
-        medicalDegree: data.medicalDegree,
-        mdcnLicense: data.mdcnLicense,
-      });
-      // Simulate API submission
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Construct FormData to send files to the server
+    const formData = new FormData();
+    formData.append('specialization', verificationState.specialization);
+    formData.append('yearsOfExperience', verificationState.yearsOfExperience);
+    formData.append('hospitalName', verificationState.hospitalName);
+    formData.append('address', verificationState.address);
+    formData.append('city', verificationState.city);
+    formData.append('state', verificationState.state);
 
-      toast.success('Verification documents submitted successfully!');
-      router.push('/verification/verification-complete');
+    if (verificationState.passportPhoto) {
+      formData.append('passportPhoto', verificationState.passportPhoto);
+    }
+
+    formData.append('nin', data.nin);
+
+    if (data.medicalDegree) {
+      formData.append('medicalDegree', data.medicalDegree);
+    }
+    if (data.mdcnLicense) {
+      formData.append('mdcnLicense', data.mdcnLicense);
+    }
+
+    try {
+      const result = await submitVerificationAction(formData);
+      if (result.success) {
+        clearState();
+        toast.success('Verification documents submitted successfully!');
+        router.push('/verification/verification-complete');
+      } else {
+        toast.error('Failed to submit verification. Please try again.');
+      }
     } catch (e) {
       toast.error('Failed to submit verification. Please try again.');
       console.error(e);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleSave = () => {
-    const values = watch();
+    const values = getValues();
     updateState({
       nin: values.nin || '',
       medicalDegree: values.medicalDegree || null,
@@ -79,19 +96,6 @@ export default function CredentialsVerificationPage() {
           <HugeiconsIcon icon={ArrowLeft02Icon} className="w-3.5 h-3.5" />
           <span>Back</span>
         </Link>
-
-        {/* Step Progress */}
-        <div className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1565C0]"></span>
-            <span className="text-xs font-semibold text-[#1565C0]">Step 1</span>
-          </div>
-          <div className="flex-1 mx-3 border-t border-solid border-[#1565C0]"></div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1565C0]"></span>
-            <span className="text-xs font-semibold text-[#1565C0]">Step 2</span>
-          </div>
-        </div>
       </div>
 
       {/* Heading */}
@@ -189,7 +193,7 @@ export default function CredentialsVerificationPage() {
           <button
             type="submit"
             disabled={!isValid || isSubmitting}
-            className="flex-1 py-2.5 bg-[#1565c0] hover:bg-[#104ead] text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer disabled:bg-[#F5F5F5] disabled:text-text-disabled disabled:cursor-not-allowed text-xs md:text-sm flex items-center justify-center"
+            className="flex-1 py-2.5 bg-primary-blue hover:bg-[#104ead] text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer disabled:bg-[#F5F5F5] disabled:text-text-disabled disabled:cursor-not-allowed text-xs md:text-sm flex items-center justify-center"
           >
             {isSubmitting ? 'Submitting...' : 'Submit to review'}
           </button>
