@@ -18,6 +18,8 @@ interface VerificationFileUploadProps {
   error?: string;
 }
 
+const ALLOWED_MIME_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+
 export default function VerificationFileUpload({
   label,
   acceptText,
@@ -27,11 +29,31 @@ export default function VerificationFileUpload({
 }: VerificationFileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const displayError = error || localError;
+
+  const validateAndChange = (file: File | null) => {
+    if (!file) {
+      onChange(null);
+      setLocalError(null);
+      return;
+    }
+
+    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+      onChange(null);
+      setLocalError('Only PDF, PNG, and JPG files are allowed');
+      return;
+    }
+
+    onChange(file);
+    setLocalError(null);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      onChange(files[0]);
+      validateAndChange(files[0]);
     }
   };
 
@@ -50,13 +72,13 @@ export default function VerificationFileUpload({
     setIsDragActive(false);
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
-      onChange(files[0]);
+      validateAndChange(files[0]);
     }
   };
 
   const removeFile = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onChange(null);
+    validateAndChange(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -90,9 +112,9 @@ export default function VerificationFileUpload({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          'w-full h-[143px] px-3.5 border border-dashed border-[#E2E8F0] rounded-xl bg-white hover:bg-slate-50/50 hover:border-[#1565c0]/50 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center select-none',
-          isDragActive && 'border-[#1565c0] bg-slate-50',
-          error && 'border-red-500 hover:border-red-500 bg-red-50/5',
+          'w-full h-[143px] px-3.5 border border-dashed border-[#E2E8F0] rounded-xl bg-white hover:bg-slate-50/50 hover:border-primary-blue/50 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center select-none',
+          isDragActive && 'border-primary-blue bg-slate-50',
+          displayError && 'border-red-500 hover:border-red-500 bg-red-50/5',
         )}
       >
         {value ? (
@@ -129,10 +151,10 @@ export default function VerificationFileUpload({
         )}
       </div>
 
-      {error && (
+      {displayError && (
         <div className="flex items-center gap-1.5 text-xs text-red-500 font-medium">
           <HugeiconsIcon icon={AlertCircleIcon} className="w-3.5 h-3.5" />
-          <span>{error}</span>
+          <span>{displayError}</span>
         </div>
       )}
     </div>
