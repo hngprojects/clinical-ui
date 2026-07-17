@@ -159,3 +159,36 @@ export async function getGoogleAuthUrlAction() {
     'https://api.staging.useclinsight.com/api/v1/auth/google'
   );
 }
+
+export async function submitVerificationAction(formData: FormData) {
+  console.log('--- Verification Submission Server Action ---');
+  console.log('Specialization:', formData.get('specialization'));
+  console.log('Years of Experience:', formData.get('yearsOfExperience'));
+  console.log('Hospital Name:', formData.get('hospitalName'));
+  console.log('Address:', formData.get('address'));
+  console.log('City:', formData.get('city'));
+  console.log('State:', formData.get('state'));
+  console.log('NIN:', formData.get('nin'));
+
+  const passportPhoto = formData.get('passportPhoto') as File | null;
+  const medicalDegree = formData.get('medicalDegree') as File | null;
+  const mdcnLicense = formData.get('mdcnLicense') as File | null;
+
+  console.log(
+    'Passport Photo File:',
+    passportPhoto ? `${passportPhoto.name} (${passportPhoto.size} bytes)` : 'None',
+  );
+  console.log(
+    'Medical Degree File:',
+    medicalDegree ? `${medicalDegree.name} (${medicalDegree.size} bytes)` : 'None',
+  );
+  console.log(
+    'MDCN License File:',
+    mdcnLicense ? `${mdcnLicense.name} (${mdcnLicense.size} bytes)` : 'None',
+  );
+
+  // Simulate server processing delay
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  return { success: true };
+}
