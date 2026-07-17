@@ -193,7 +193,7 @@ export default function CredentialsVerificationPage() {
           <button
             type="submit"
             disabled={!isValid || isSubmitting}
-            className="flex-1 py-2.5 bg-primary-blue hover:bg-[#104ead] text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer disabled:bg-[#F5F5F5] disabled:text-text-disabled disabled:cursor-not-allowed text-xs md:text-sm flex items-center justify-center"
+            className="flex-1 py-2.5 bg-primary-blue hover:bg-blue-1 text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer disabled:bg-[#F5F5F5] disabled:text-text-disabled disabled:cursor-not-allowed text-xs md:text-sm flex items-center justify-center"
           >
             {isSubmitting ? 'Submitting...' : 'Submit to review'}
           </button>
