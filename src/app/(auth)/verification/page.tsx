@@ -55,7 +55,7 @@ export default function VerificationPage() {
       {/* Start Button */}
       <Link
         href="/verification/professional-info"
-        className="w-full mt-8 py-3.5 bg-[#1565c0] hover:bg-[#104ead] text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer shadow-sm shadow-[#1565c0]/10 flex items-center justify-center text-sm md:text-base"
+        className="w-full mt-8 py-3.5 bg-primary-blue hover:bg-[#104ead] text-white font-semibold text-center rounded-xl transition-all duration-200 cursor-pointer shadow-sm shadow-primary-blue/10 flex items-center justify-center text-sm md:text-base"
       >
         Start Verification
       </Link>
