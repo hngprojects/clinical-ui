@@ -72,6 +72,11 @@ export function VerifyOtpForm() {
           setFailedAttempts(0);
           setApiError(null);
         }
+      } else {
+        // No stored lockout for this email - clear stale lockout state
+        setIsLockedOut(false);
+        setFailedAttempts(0);
+        setApiError(null);
       }
       return false;
     };
