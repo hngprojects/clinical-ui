@@ -17,6 +17,33 @@ function escapeRegExp(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+const RECOGNIZED_AUTH_FIELDS = new Set([
+  'first_name',
+  'firstName',
+  'last_name',
+  'lastName',
+  'email',
+  'password',
+  'confirm_password',
+  'confirmPassword',
+  'otp',
+  'code',
+  'username',
+  'specialization',
+  'yoe',
+  'years_of_experience',
+  'current_hospital',
+  'currentHospital',
+  'passport_photograph',
+  'passportPhotograph',
+  'license_number',
+  'licenseNumber',
+  'mdcn_license',
+  'nin',
+  'medical_license',
+  'medicalLicense',
+]);
+
 function extractErrorMessage(err: unknown, defaultError: string): string {
   if (!err || typeof err !== 'object') {
     return defaultError;
@@ -82,33 +109,6 @@ function extractErrorMessage(err: unknown, defaultError: string): string {
   }
 
   // 2. Check root-level field errors (e.g. { first_name: ["exceeds maximum length."] })
-  const RECOGNIZED_AUTH_FIELDS = new Set([
-    'first_name',
-    'firstName',
-    'last_name',
-    'lastName',
-    'email',
-    'password',
-    'confirm_password',
-    'confirmPassword',
-    'otp',
-    'code',
-    'username',
-    'specialization',
-    'yoe',
-    'years_of_experience',
-    'current_hospital',
-    'currentHospital',
-    'passport_photograph',
-    'passportPhotograph',
-    'license_number',
-    'licenseNumber',
-    'mdcn_license',
-    'nin',
-    'medical_license',
-    'medicalLicense',
-  ]);
-
   const rootFieldErrors: string[] = [];
   for (const [key, val] of Object.entries(errObj)) {
     if (
