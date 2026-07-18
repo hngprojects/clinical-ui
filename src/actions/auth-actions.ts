@@ -13,6 +13,10 @@ const RESEND_OTP_URL =
   process.env.NEXT_PUBLIC_RESEND_OTP_API_URL ||
   'https://api.staging.useclinsight.com/api/v1/auth/resend-otp';
 
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function extractErrorMessage(err: unknown, defaultError: string): string {
   if (!err || typeof err !== 'object') {
     return defaultError;
@@ -39,8 +43,8 @@ function extractErrorMessage(err: unknown, defaultError: string): string {
             const fieldName = field ? formatFieldName(field) : '';
             let msg = typeof dObj.msg === 'string' ? dObj.msg : JSON.stringify(d);
             if (field) {
-              msg = msg.replace(new RegExp(field, 'gi'), fieldName);
-              msg = msg.replace(new RegExp(field.replace('_', ' '), 'gi'), fieldName);
+              msg = msg.replace(new RegExp(escapeRegExp(field), 'gi'), fieldName);
+              msg = msg.replace(new RegExp(escapeRegExp(field.replace('_', ' ')), 'gi'), fieldName);
             }
             if (fieldName && msg.toLowerCase().startsWith(fieldName.toLowerCase())) {
               return msg.charAt(0).toUpperCase() + msg.slice(1);
@@ -58,8 +62,11 @@ function extractErrorMessage(err: unknown, defaultError: string): string {
           const msgList = Array.isArray(msgs) ? msgs.join(', ') : String(msgs);
           const fieldName = formatFieldName(field);
           let cleanMsg = msgList;
-          cleanMsg = cleanMsg.replace(new RegExp(field, 'gi'), fieldName);
-          cleanMsg = cleanMsg.replace(new RegExp(field.replace('_', ' '), 'gi'), fieldName);
+          cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(field), 'gi'), fieldName);
+          cleanMsg = cleanMsg.replace(
+            new RegExp(escapeRegExp(field.replace('_', ' ')), 'gi'),
+            fieldName,
+          );
 
           if (cleanMsg.toLowerCase().startsWith(fieldName.toLowerCase())) {
             return cleanMsg.charAt(0).toUpperCase() + cleanMsg.slice(1);
@@ -130,8 +137,8 @@ function extractErrorMessage(err: unknown, defaultError: string): string {
     if (Array.isArray(val)) {
       const msgList = val.join(', ');
       let cleanMsg = msgList;
-      cleanMsg = cleanMsg.replace(new RegExp(key, 'gi'), fieldName);
-      cleanMsg = cleanMsg.replace(new RegExp(key.replace('_', ' '), 'gi'), fieldName);
+      cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(key), 'gi'), fieldName);
+      cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(key.replace('_', ' ')), 'gi'), fieldName);
 
       if (cleanMsg.toLowerCase().startsWith(fieldName.toLowerCase())) {
         rootFieldErrors.push(cleanMsg.charAt(0).toUpperCase() + cleanMsg.slice(1));
@@ -140,8 +147,8 @@ function extractErrorMessage(err: unknown, defaultError: string): string {
       }
     } else if (typeof val === 'string') {
       let cleanMsg = val;
-      cleanMsg = cleanMsg.replace(new RegExp(key, 'gi'), fieldName);
-      cleanMsg = cleanMsg.replace(new RegExp(key.replace('_', ' '), 'gi'), fieldName);
+      cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(key), 'gi'), fieldName);
+      cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(key.replace('_', ' ')), 'gi'), fieldName);
 
       if (cleanMsg.toLowerCase().startsWith(fieldName.toLowerCase())) {
         rootFieldErrors.push(cleanMsg.charAt(0).toUpperCase() + cleanMsg.slice(1));
