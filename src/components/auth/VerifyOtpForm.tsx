@@ -21,6 +21,10 @@ const maskEmail = (emailStr: string) => {
   return `${username.substring(0, 2)}***@${domain}`;
 };
 
+const getFutureTimestamp = (durationMs: number): number => {
+  return Date.now() + durationMs;
+};
+
 export function VerifyOtpForm() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -169,7 +173,7 @@ export function VerifyOtpForm() {
               duration = amount * 1000;
             }
           }
-          const lockoutTime = Date.now() + duration;
+          const lockoutTime = getFutureTimestamp(duration);
           localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
           setIsLockedOut(true);
           setApiError(errorMsg);
@@ -193,7 +197,7 @@ export function VerifyOtpForm() {
           setFailedAttempts(nextAttempts);
           if (nextAttempts >= 5) {
             const duration = 60 * 1000; // 60 seconds local lockout
-            const lockoutTime = Date.now() + duration;
+            const lockoutTime = getFutureTimestamp(duration);
             localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
             setIsLockedOut(true);
             const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
@@ -257,7 +261,7 @@ export function VerifyOtpForm() {
               duration = amount * 1000;
             }
           }
-          const lockoutTime = Date.now() + duration;
+          const lockoutTime = getFutureTimestamp(duration);
           localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
           setIsLockedOut(true);
         }
