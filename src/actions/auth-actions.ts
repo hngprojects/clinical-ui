@@ -159,3 +159,22 @@ export async function getGoogleAuthUrlAction() {
     'https://api.staging.useclinsight.com/api/v1/auth/google'
   );
 }
+
+export async function submitVerificationAction(formData: FormData) {
+  const passportPhoto = formData.get('passportPhoto') as File | null;
+  const medicalDegree = formData.get('medicalDegree') as File | null;
+  const mdcnLicense = formData.get('mdcnLicense') as File | null;
+
+  console.log('--- Verification Submission Received (Telemetry) ---');
+  console.log('Specialization:', formData.get('specialization'));
+  console.log('Years of Experience:', formData.get('yearsOfExperience'));
+  console.log('State:', formData.get('state'));
+  console.log('Passport Photo Submitted:', !!passportPhoto);
+  console.log('Medical Degree Submitted:', !!medicalDegree);
+  console.log('MDCN License Submitted:', !!mdcnLicense);
+
+  // Simulate server processing delay
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  return { success: true };
+}
