@@ -18,8 +18,14 @@ import { toast } from 'sonner';
 
 const signupSchema = z
   .object({
-    firstName: z.string().min(1, { message: 'First name is required' }),
-    lastName: z.string().min(1, { message: 'Last name is required' }),
+    firstName: z
+      .string()
+      .min(1, { message: 'First name is required' })
+      .max(50, { message: 'First Name exceeds maximum length.' }),
+    lastName: z
+      .string()
+      .min(1, { message: 'Last name is required' })
+      .max(50, { message: 'Last Name exceeds maximum length.' }),
     email: z.string().email({ message: 'Enter a valid email address' }),
     password: z
       .string()
@@ -72,9 +78,12 @@ export function SignupForm() {
 
   const isEmailValid = values.email ? EMAIL_REGEX.test(values.email.trim()) : false;
 
+  const isFirstNameValid = !!(values.firstName && values.firstName.length <= 50);
+  const isLastNameValid = !!(values.lastName && values.lastName.length <= 50);
+
   const isFormValid =
-    values.firstName &&
-    values.lastName &&
+    isFirstNameValid &&
+    isLastNameValid &&
     isEmailValid &&
     values.password &&
     isPasswordValid &&
@@ -83,20 +92,27 @@ export function SignupForm() {
 
   const onSubmit = async (data: SignupValues) => {
     setApiError(null);
-    const result = await signupAction({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      password: data.password,
-      confirmPassword: data.confirmPassword,
-    });
+    try {
+      const result = await signupAction({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+      });
 
-    if (result.error) {
-      setApiError(result.error);
-      toast.error(result.error);
-    } else {
-      toast.success('Account created successfully! Please verify your email.');
-      router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+      if (result.error) {
+        setApiError(result.error);
+        toast.error(result.error);
+      } else {
+        toast.success('Account created successfully! Please verify your email.');
+        router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+      }
+    } catch (e) {
+      const msg = 'Something went wrong. Please check your connection, and try again';
+      setApiError(msg);
+      toast.error(msg);
+      console.error('Signup network failure:', e);
     }
   };
 
@@ -403,12 +419,105 @@ export function SignupForm() {
             disabled={isSubmitting || !isFormValid}
             className={cn(
               'self-stretch h-12 px-6 py-3 rounded-xl inline-flex justify-center items-center gap-2 text-base font-medium leading-6 transition-colors font-sans w-full select-none cursor-pointer border-transparent',
-              isFormValid
+              isFormValid && !isSubmitting
                 ? 'bg-primary-blue text-white hover:bg-primary-blue/90'
                 : 'bg-[#F5F5F5] text-text-disabled cursor-not-allowed',
             )}
           >
-            {isSubmitting ? 'Registering...' : 'Continue'}
+            {isSubmitting ? (
+              <div className="flex items-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-primary-blue"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <line
+                    x1="12"
+                    y1="6"
+                    x2="12"
+                    y2="2"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="1.0"
+                  />
+                  <line
+                    x1="16.24"
+                    y1="7.76"
+                    x2="19.07"
+                    y2="4.93"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.875"
+                  />
+                  <line
+                    x1="18"
+                    y1="12"
+                    x2="22"
+                    y2="12"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.75"
+                  />
+                  <line
+                    x1="16.24"
+                    y1="16.24"
+                    x2="19.07"
+                    y2="19.07"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.625"
+                  />
+                  <line
+                    x1="12"
+                    y1="18"
+                    x2="12"
+                    y2="22"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.5"
+                  />
+                  <line
+                    x1="7.76"
+                    y1="16.24"
+                    x2="4.93"
+                    y2="19.07"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.375"
+                  />
+                  <line
+                    x1="6"
+                    y1="12"
+                    x2="2"
+                    y2="12"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.25"
+                  />
+                  <line
+                    x1="7.76"
+                    y1="7.76"
+                    x2="4.93"
+                    y2="4.93"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    opacity="0.125"
+                  />
+                </svg>
+                <span>Creating account</span>
+              </div>
+            ) : (
+              'Continue'
+            )}
           </Button>
 
           {/* Divider */}

@@ -38,7 +38,7 @@ export default function RootLayout({
       className={cn('h-full', 'antialiased', inter.variable, 'font-sans')}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-neutral-50">
+      <body className="min-h-full flex flex-col bg-neutral-50" suppressHydrationWarning>
         <ComingSoonProvider>
           <Header />
           <main className="flex-1">{children}</main>

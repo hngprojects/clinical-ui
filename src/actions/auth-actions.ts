@@ -13,6 +13,161 @@ const RESEND_OTP_URL =
   process.env.NEXT_PUBLIC_RESEND_OTP_API_URL ||
   'https://api.staging.useclinsight.com/api/v1/auth/resend-otp';
 
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+const RECOGNIZED_AUTH_FIELDS = new Set([
+  'first_name',
+  'firstName',
+  'last_name',
+  'lastName',
+  'email',
+  'password',
+  'confirm_password',
+  'confirmPassword',
+  'otp',
+  'code',
+  'username',
+  'specialization',
+  'yoe',
+  'years_of_experience',
+  'current_hospital',
+  'currentHospital',
+  'passport_photograph',
+  'passportPhotograph',
+  'license_number',
+  'licenseNumber',
+  'mdcn_license',
+  'nin',
+  'medical_license',
+  'medicalLicense',
+]);
+
+function extractErrorMessage(err: unknown, defaultError: string): string {
+  if (!err || typeof err !== 'object') {
+    return defaultError;
+  }
+
+  const errObj = err as Record<string, unknown>;
+
+  // Helper to format field name: first_name -> First Name
+  const formatFieldName = (name: string) => {
+    return name.replace('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+
+  // 1. Check direct field error structures (errors or details)
+  const nestedErrors = errObj.errors || errObj.details || errObj.detail;
+  if (nestedErrors) {
+    if (Array.isArray(nestedErrors)) {
+      // FastAPI style validation array: [{ loc: [...], msg: "..." }]
+      const parsed = nestedErrors
+        .map((d: unknown) => {
+          if (d && typeof d === 'object') {
+            const dObj = d as Record<string, unknown>;
+            const loc = dObj.loc;
+            const field = Array.isArray(loc) && loc.length > 0 ? String(loc[loc.length - 1]) : '';
+            const fieldName = field ? formatFieldName(field) : '';
+            let msg = typeof dObj.msg === 'string' ? dObj.msg : JSON.stringify(d);
+            if (field) {
+              msg = msg.replace(new RegExp(escapeRegExp(field), 'gi'), fieldName);
+              msg = msg.replace(new RegExp(escapeRegExp(field.replace('_', ' ')), 'gi'), fieldName);
+            }
+            if (fieldName && msg.toLowerCase().startsWith(fieldName.toLowerCase())) {
+              return msg.charAt(0).toUpperCase() + msg.slice(1);
+            }
+            return fieldName ? `${fieldName}: ${msg}` : msg;
+          }
+          return String(d);
+        })
+        .filter(Boolean)
+        .join('; ');
+      if (parsed) return parsed;
+    } else if (typeof nestedErrors === 'object' && nestedErrors !== null) {
+      const parsed = Object.entries(nestedErrors)
+        .map(([field, msgs]) => {
+          const msgList = Array.isArray(msgs) ? msgs.join(', ') : String(msgs);
+          const fieldName = formatFieldName(field);
+          let cleanMsg = msgList;
+          cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(field), 'gi'), fieldName);
+          cleanMsg = cleanMsg.replace(
+            new RegExp(escapeRegExp(field.replace('_', ' ')), 'gi'),
+            fieldName,
+          );
+
+          if (cleanMsg.toLowerCase().startsWith(fieldName.toLowerCase())) {
+            return cleanMsg.charAt(0).toUpperCase() + cleanMsg.slice(1);
+          }
+          return `${fieldName} ${cleanMsg}`;
+        })
+        .filter(Boolean)
+        .join('; ');
+      if (parsed) return parsed;
+    } else if (typeof nestedErrors === 'string') {
+      return nestedErrors;
+    }
+  }
+
+  // 2. Check root-level field errors (e.g. { first_name: ["exceeds maximum length."] })
+  const rootFieldErrors: string[] = [];
+  for (const [key, val] of Object.entries(errObj)) {
+    if (
+      [
+        'error',
+        'message',
+        'status',
+        'code',
+        'success',
+        'ok',
+        'detail',
+        'details',
+        'errors',
+      ].includes(key)
+    ) {
+      continue;
+    }
+
+    // Restrict this branch to recognized auth/onboarding fields or validation-shaped values
+    const isValidationShaped = Array.isArray(val) && val.every((item) => typeof item === 'string');
+    if (!RECOGNIZED_AUTH_FIELDS.has(key) && !isValidationShaped) {
+      continue;
+    }
+
+    const fieldName = formatFieldName(key);
+    if (Array.isArray(val)) {
+      const msgList = val.join(', ');
+      let cleanMsg = msgList;
+      cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(key), 'gi'), fieldName);
+      cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(key.replace('_', ' ')), 'gi'), fieldName);
+
+      if (cleanMsg.toLowerCase().startsWith(fieldName.toLowerCase())) {
+        rootFieldErrors.push(cleanMsg.charAt(0).toUpperCase() + cleanMsg.slice(1));
+      } else {
+        rootFieldErrors.push(`${fieldName} ${cleanMsg}`);
+      }
+    } else if (typeof val === 'string') {
+      let cleanMsg = val;
+      cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(key), 'gi'), fieldName);
+      cleanMsg = cleanMsg.replace(new RegExp(escapeRegExp(key.replace('_', ' ')), 'gi'), fieldName);
+
+      if (cleanMsg.toLowerCase().startsWith(fieldName.toLowerCase())) {
+        rootFieldErrors.push(cleanMsg.charAt(0).toUpperCase() + cleanMsg.slice(1));
+      } else {
+        rootFieldErrors.push(`${fieldName} ${cleanMsg}`);
+      }
+    }
+  }
+  if (rootFieldErrors.length > 0) {
+    return rootFieldErrors.join('; ');
+  }
+
+  // 3. Fallback to standard top-level error strings
+  if (typeof errObj.error === 'string') return errObj.error;
+  if (typeof errObj.message === 'string') return errObj.message;
+
+  return JSON.stringify(err) || defaultError;
+}
+
 async function handleApiResponse(response: Response, defaultError: string) {
   if (!response.ok) {
     let errorMessage = defaultError;
@@ -21,8 +176,7 @@ async function handleApiResponse(response: Response, defaultError: string) {
     if (contentType && contentType.includes('application/json')) {
       try {
         const err = await response.json();
-        errorMessage =
-          err.message || err.detail || err.error || JSON.stringify(err) || defaultError;
+        errorMessage = extractErrorMessage(err, defaultError);
       } catch {
         errorMessage = (await response.text()) || defaultError;
       }
@@ -62,7 +216,7 @@ export async function verifyOtpAction(email: string, code: string) {
     return result;
   } catch (error) {
     console.error('OTP Verification Network Error:', error);
-    return { error: 'Unable to reach the server. Please check your connection.' };
+    return { error: 'Something went wrong. Please check your connection, and try again.' };
   }
 }
 
@@ -114,7 +268,7 @@ export async function signupAction(data: {
     return await handleApiResponse(response, 'Signup failed');
   } catch (error) {
     console.error('Signup Error:', error);
-    return { error: 'Unable to reach the server. Please check your connection.' };
+    return { error: 'Something went wrong. Please check your connection, and try again' };
   }
 }
 

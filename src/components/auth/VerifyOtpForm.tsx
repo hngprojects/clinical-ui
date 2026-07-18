@@ -10,6 +10,21 @@ import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
+const maskEmail = (emailStr: string) => {
+  if (!emailStr) return '';
+  const parts = emailStr.split('@');
+  if (parts.length !== 2) return emailStr;
+  const [username, domain] = parts;
+  if (username.length <= 2) {
+    return `${username}***@${domain}`;
+  }
+  return `${username.substring(0, 2)}***@${domain}`;
+};
+
+const getFutureTimestamp = (durationMs: number): number => {
+  return Date.now() + durationMs;
+};
+
 export function VerifyOtpForm() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -17,6 +32,8 @@ export function VerifyOtpForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const [resendSuccess, setResendSuccess] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30); // 30 seconds resend cooldown
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLockedOut, setIsLockedOut] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
@@ -32,7 +49,59 @@ export function VerifyOtpForm() {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
+  // Lockout persist & expiration check
+  useEffect(() => {
+    if (!email) return;
+
+    const checkLockout = () => {
+      const stored = localStorage.getItem(`lockoutUntil_${email}`);
+      if (stored) {
+        const lockoutTime = parseInt(stored, 10);
+        const now = Date.now();
+        if (now < lockoutTime) {
+          setIsLockedOut(true);
+          const remainingSeconds = Math.ceil((lockoutTime - now) / 1000);
+          setApiError(
+            `Too many failed attempts. You are temporarily locked out for ${remainingSeconds}s.`,
+          );
+          return true;
+        } else {
+          // Expired
+          localStorage.removeItem(`lockoutUntil_${email}`);
+          setIsLockedOut(false);
+          setFailedAttempts(0);
+          setApiError(null);
+        }
+      } else {
+        // No stored lockout for this email - clear stale lockout state
+        setIsLockedOut(false);
+        setFailedAttempts(0);
+        setApiError(null);
+      }
+      return false;
+    };
+
+    // Initial check on mount/email change
+    const wasLocked = checkLockout();
+
+    // If locked, set up a timer to decrement the remaining seconds and unlock when ready
+    let interval: NodeJS.Timeout | null = null;
+    if (wasLocked || isLockedOut) {
+      interval = setInterval(() => {
+        const isStillLocked = checkLockout();
+        if (!isStillLocked && interval) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [email, isLockedOut]);
+
   const handleChange = (index: number, value: string) => {
+    if (isLockedOut) return;
     if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
@@ -46,6 +115,7 @@ export function VerifyOtpForm() {
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isLockedOut) return;
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -53,6 +123,7 @@ export function VerifyOtpForm() {
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
+    if (isLockedOut) return;
     const pastedData = e.clipboardData.getData('text').slice(0, 6);
     if (!/^\d+$/.test(pastedData)) return;
 
@@ -65,6 +136,16 @@ export function VerifyOtpForm() {
   };
 
   const handleVerify = async () => {
+    if (isLockedOut) return;
+
+    // Block verification if code has expired
+    if (timeLeft <= 0) {
+      const errorMsg = 'This code has expired. Please request a new one.';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+
     const otpString = otp.join('');
     if (otpString.length !== 6) return;
 
@@ -75,22 +156,83 @@ export function VerifyOtpForm() {
     try {
       const result = await verifyOtpAction(email, otpString);
       if (result.error) {
-        setApiError(result.error);
-        toast.error(result.error);
+        let errorMsg = result.error;
+        const lowerError = errorMsg.toLowerCase();
+
+        // Check if server returned a lockout message
+        if (
+          lowerError.includes('lockout') ||
+          lowerError.includes('locked') ||
+          lowerError.includes('too many')
+        ) {
+          let duration = 60 * 1000; // default 60 seconds
+          const match = lowerError.match(/(\d+)\s*(second|sec|minute|min|hour)/i);
+          if (match) {
+            const amount = parseInt(match[1], 10);
+            const unit = match[2].toLowerCase();
+            if (unit.startsWith('min')) {
+              duration = amount * 60 * 1000;
+            } else if (unit.startsWith('hour')) {
+              duration = amount * 60 * 60 * 1000;
+            } else {
+              duration = amount * 1000;
+            }
+          }
+          const lockoutTime = getFutureTimestamp(duration);
+          localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
+          setIsLockedOut(true);
+          setApiError(errorMsg);
+          toast.error(errorMsg);
+          return;
+        }
+
+        // Only count incorrect OTP responses as failed attempts
+        const isIncorrectCode =
+          lowerError.includes('invalid') ||
+          lowerError.includes('incorrect') ||
+          lowerError.includes('wrong');
+
+        if (isIncorrectCode) {
+          errorMsg = 'The code you entered is incorrect. Please try again.';
+          setApiError(errorMsg);
+          toast.error(errorMsg);
+
+          // Enforce lockouts locally after 5 failed attempts
+          const nextAttempts = failedAttempts + 1;
+          setFailedAttempts(nextAttempts);
+          if (nextAttempts >= 5) {
+            const duration = 60 * 1000; // 60 seconds local lockout
+            const lockoutTime = getFutureTimestamp(duration);
+            localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
+            setIsLockedOut(true);
+            const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
+            setApiError(lockoutMsg);
+            toast.error(lockoutMsg);
+          }
+        } else {
+          // Map other general errors
+          if (lowerError.includes('expired')) {
+            errorMsg = 'This code has expired. Please request a new one.';
+          }
+          setApiError(errorMsg);
+          toast.error(errorMsg);
+        }
       } else {
         toast.success('Email verified successfully!');
         router.push('/verification');
       }
-    } catch {
-      const errorMsg = 'An unexpected error occurred';
+    } catch (e) {
+      const errorMsg = 'Unable to reach the server. Please check your connection.';
       setApiError(errorMsg);
       toast.error(errorMsg);
+      console.error('OTP verification network failure:', e);
     } finally {
       setIsVerifying(false);
     }
   };
 
   const handleResend = async () => {
+    if (isLockedOut) return;
     if (!email) {
       const errorMsg = 'Email not found. Please try signing up again.';
       setApiError(errorMsg);
@@ -105,6 +247,29 @@ export function VerifyOtpForm() {
     try {
       const result = await resendOtpAction(email);
       if (result.error) {
+        const lowerError = result.error.toLowerCase();
+        if (
+          lowerError.includes('lockout') ||
+          lowerError.includes('locked') ||
+          lowerError.includes('too many')
+        ) {
+          let duration = 60 * 1000; // default 60s
+          const match = lowerError.match(/(\d+)\s*(second|sec|minute|min|hour)/i);
+          if (match) {
+            const amount = parseInt(match[1], 10);
+            const unit = match[2].toLowerCase();
+            if (unit.startsWith('min')) {
+              duration = amount * 60 * 1000;
+            } else if (unit.startsWith('hour')) {
+              duration = amount * 60 * 60 * 1000;
+            } else {
+              duration = amount * 1000;
+            }
+          }
+          const lockoutTime = getFutureTimestamp(duration);
+          localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
+          setIsLockedOut(true);
+        }
         setApiError(result.error);
         toast.error(result.error);
       } else {
@@ -115,7 +280,7 @@ export function VerifyOtpForm() {
         inputRefs.current[0]?.focus(); // Refocus first input
       }
     } catch {
-      const errorMsg = 'An unexpected error occurred while resending';
+      const errorMsg = 'Unable to reach the server. Please check your connection.';
       setApiError(errorMsg);
       toast.error(errorMsg);
     } finally {
@@ -154,7 +319,7 @@ export function VerifyOtpForm() {
         </h1>
         <p className="text-sm md:text-base text-[#5E5E5E] font-normal max-w-[400px] mx-auto">
           Enter the 6 digit code we sent to{' '}
-          <span className="font-semibold text-[#1B1B1B]">{email || 'your email'}</span>
+          <span className="font-semibold text-[#1B1B1B]">{maskEmail(email) || 'your email'}</span>
         </p>
       </div>
 
@@ -171,6 +336,7 @@ export function VerifyOtpForm() {
               inputMode="numeric"
               maxLength={1}
               value={digit}
+              disabled={isVerifying || isResending || isLockedOut}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               aria-label={`Digit ${index + 1} of 6`}
@@ -179,6 +345,7 @@ export function VerifyOtpForm() {
                 'focus:border-primary-blue focus:ring-1 focus:ring-primary-blue',
                 digit && 'border-primary-blue',
                 isCodeError && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+                isLockedOut && 'opacity-60 cursor-not-allowed bg-slate-50',
               )}
             />
           ))}
@@ -203,10 +370,10 @@ export function VerifyOtpForm() {
         <Button
           type="button"
           onClick={handleVerify}
-          disabled={!isOtpComplete || isVerifying || isResending}
+          disabled={!isOtpComplete || isVerifying || isResending || isLockedOut}
           className={cn(
             'h-14 w-full rounded-2xl text-base font-bold transition-colors select-none flex items-center justify-center gap-2 border-transparent',
-            isOtpComplete && !isVerifying && !isResending
+            isOtpComplete && !isVerifying && !isResending && !isLockedOut
               ? 'bg-primary-blue text-white hover:bg-primary-blue/90 cursor-pointer'
               : 'bg-[#F5F5F5] text-[#767676] cursor-not-allowed',
           )}
@@ -214,24 +381,91 @@ export function VerifyOtpForm() {
           {isVerifying ? (
             <>
               <svg
-                className="animate-spin h-5 w-5 text-[#767676]"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
+                className="animate-spin h-5 w-5 text-primary-blue"
                 viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
+                <line
+                  x1="12"
+                  y1="6"
+                  x2="12"
+                  y2="2"
                   stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="1.0"
+                />
+                <line
+                  x1="16.24"
+                  y1="7.76"
+                  x2="19.07"
+                  y2="4.93"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.875"
+                />
+                <line
+                  x1="18"
+                  y1="12"
+                  x2="22"
+                  y2="12"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.75"
+                />
+                <line
+                  x1="16.24"
+                  y1="16.24"
+                  x2="19.07"
+                  y2="19.07"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.625"
+                />
+                <line
+                  x1="12"
+                  y1="18"
+                  x2="12"
+                  y2="22"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.5"
+                />
+                <line
+                  x1="7.76"
+                  y1="16.24"
+                  x2="4.93"
+                  y2="19.07"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.375"
+                />
+                <line
+                  x1="6"
+                  y1="12"
+                  x2="2"
+                  y2="12"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.25"
+                />
+                <line
+                  x1="7.76"
+                  y1="7.76"
+                  x2="4.93"
+                  y2="4.93"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.125"
+                />
               </svg>
               <span>verifying email...</span>
             </>
@@ -255,7 +489,7 @@ export function VerifyOtpForm() {
                 type="button"
                 variant="link"
                 onClick={handleResend}
-                disabled={isVerifying || isResending}
+                disabled={isVerifying || isResending || isLockedOut}
                 className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1 p-0 h-auto inline"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
