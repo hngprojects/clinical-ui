@@ -175,7 +175,7 @@ export async function verifyOtpAction(email: string, code: string) {
     return result;
   } catch (error) {
     console.error('OTP Verification Network Error:', error);
-    return { error: 'Unable to reach the server. Please check your connection.' };
+    return { error: 'Something went wrong. Please check your connection, and try again.' };
   }
 }
 
@@ -227,7 +227,7 @@ export async function signupAction(data: {
     return await handleApiResponse(response, 'Signup failed');
   } catch (error) {
     console.error('Signup Error:', error);
-    return { error: 'Unable to reach the server. Please check your connection.' };
+    return { error: 'Something went wrong. Please check your connection, and try again' };
   }
 }
 
