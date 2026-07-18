@@ -45,6 +45,52 @@ export function VerifyOtpForm() {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
+  // Lockout persist & expiration check
+  useEffect(() => {
+    if (!email) return;
+
+    const checkLockout = () => {
+      const stored = localStorage.getItem(`lockoutUntil_${email}`);
+      if (stored) {
+        const lockoutTime = parseInt(stored, 10);
+        const now = Date.now();
+        if (now < lockoutTime) {
+          setIsLockedOut(true);
+          const remainingSeconds = Math.ceil((lockoutTime - now) / 1000);
+          setApiError(
+            `Too many failed attempts. You are temporarily locked out for ${remainingSeconds}s.`,
+          );
+          return true;
+        } else {
+          // Expired
+          localStorage.removeItem(`lockoutUntil_${email}`);
+          setIsLockedOut(false);
+          setFailedAttempts(0);
+          setApiError(null);
+        }
+      }
+      return false;
+    };
+
+    // Initial check on mount/email change
+    const wasLocked = checkLockout();
+
+    // If locked, set up a timer to decrement the remaining seconds and unlock when ready
+    let interval: NodeJS.Timeout | null = null;
+    if (wasLocked || isLockedOut) {
+      interval = setInterval(() => {
+        const isStillLocked = checkLockout();
+        if (!isStillLocked && interval) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [email, isLockedOut]);
+
   const handleChange = (index: number, value: string) => {
     if (isLockedOut) return;
     if (!/^\d*$/.test(value)) return;
@@ -110,34 +156,57 @@ export function VerifyOtpForm() {
           lowerError.includes('locked') ||
           lowerError.includes('too many')
         ) {
+          let duration = 60 * 1000; // default 60 seconds
+          const match = lowerError.match(/(\d+)\s*(second|sec|minute|min|hour)/i);
+          if (match) {
+            const amount = parseInt(match[1], 10);
+            const unit = match[2].toLowerCase();
+            if (unit.startsWith('min')) {
+              duration = amount * 60 * 1000;
+            } else if (unit.startsWith('hour')) {
+              duration = amount * 60 * 60 * 1000;
+            } else {
+              duration = amount * 1000;
+            }
+          }
+          const lockoutTime = Date.now() + duration;
+          localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
           setIsLockedOut(true);
           setApiError(errorMsg);
           toast.error(errorMsg);
           return;
         }
 
-        // Map general errors to specific user-friendly messages
-        if (lowerError.includes('expired')) {
-          errorMsg = 'This code has expired. Please request a new one.';
-        } else if (
+        // Only count incorrect OTP responses as failed attempts
+        const isIncorrectCode =
           lowerError.includes('invalid') ||
           lowerError.includes('incorrect') ||
-          lowerError.includes('wrong')
-        ) {
+          lowerError.includes('wrong');
+
+        if (isIncorrectCode) {
           errorMsg = 'The code you entered is incorrect. Please try again.';
-        }
+          setApiError(errorMsg);
+          toast.error(errorMsg);
 
-        setApiError(errorMsg);
-        toast.error(errorMsg);
-
-        // Enforce lockouts locally after 5 failed attempts
-        const nextAttempts = failedAttempts + 1;
-        setFailedAttempts(nextAttempts);
-        if (nextAttempts >= 5) {
-          setIsLockedOut(true);
-          const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
-          setApiError(lockoutMsg);
-          toast.error(lockoutMsg);
+          // Enforce lockouts locally after 5 failed attempts
+          const nextAttempts = failedAttempts + 1;
+          setFailedAttempts(nextAttempts);
+          if (nextAttempts >= 5) {
+            const duration = 60 * 1000; // 60 seconds local lockout
+            const lockoutTime = Date.now() + duration;
+            localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
+            setIsLockedOut(true);
+            const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
+            setApiError(lockoutMsg);
+            toast.error(lockoutMsg);
+          }
+        } else {
+          // Map other general errors
+          if (lowerError.includes('expired')) {
+            errorMsg = 'This code has expired. Please request a new one.';
+          }
+          setApiError(errorMsg);
+          toast.error(errorMsg);
         }
       } else {
         toast.success('Email verified successfully!');
@@ -169,6 +238,29 @@ export function VerifyOtpForm() {
     try {
       const result = await resendOtpAction(email);
       if (result.error) {
+        const lowerError = result.error.toLowerCase();
+        if (
+          lowerError.includes('lockout') ||
+          lowerError.includes('locked') ||
+          lowerError.includes('too many')
+        ) {
+          let duration = 60 * 1000; // default 60s
+          const match = lowerError.match(/(\d+)\s*(second|sec|minute|min|hour)/i);
+          if (match) {
+            const amount = parseInt(match[1], 10);
+            const unit = match[2].toLowerCase();
+            if (unit.startsWith('min')) {
+              duration = amount * 60 * 1000;
+            } else if (unit.startsWith('hour')) {
+              duration = amount * 60 * 60 * 1000;
+            } else {
+              duration = amount * 1000;
+            }
+          }
+          const lockoutTime = Date.now() + duration;
+          localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
+          setIsLockedOut(true);
+        }
         setApiError(result.error);
         toast.error(result.error);
       } else {
