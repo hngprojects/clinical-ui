@@ -106,7 +106,7 @@ export function SignupForm() {
         router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
       }
     } catch (e) {
-      const msg = 'Unable to reach the server. Please check your connection.';
+      const msg = 'Something went wrong. Please check your connection, and try again';
       setApiError(msg);
       toast.error(msg);
       console.error('Signup network failure:', e);
@@ -416,7 +416,7 @@ export function SignupForm() {
             disabled={isSubmitting || !isFormValid}
             className={cn(
               'self-stretch h-12 px-6 py-3 rounded-xl inline-flex justify-center items-center gap-2 text-base font-medium leading-6 transition-colors font-sans w-full select-none cursor-pointer border-transparent',
-              isFormValid
+              isFormValid && !isSubmitting
                 ? 'bg-primary-blue text-white hover:bg-primary-blue/90'
                 : 'bg-[#F5F5F5] text-text-disabled cursor-not-allowed',
             )}
