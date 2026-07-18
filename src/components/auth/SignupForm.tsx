@@ -78,9 +78,12 @@ export function SignupForm() {
 
   const isEmailValid = values.email ? EMAIL_REGEX.test(values.email.trim()) : false;
 
+  const isFirstNameValid = !!(values.firstName && values.firstName.length <= 50);
+  const isLastNameValid = !!(values.lastName && values.lastName.length <= 50);
+
   const isFormValid =
-    values.firstName &&
-    values.lastName &&
+    isFirstNameValid &&
+    isLastNameValid &&
     isEmailValid &&
     values.password &&
     isPasswordValid &&
