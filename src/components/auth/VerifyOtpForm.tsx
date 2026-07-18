@@ -82,6 +82,15 @@ export function VerifyOtpForm() {
 
   const handleVerify = async () => {
     if (isLockedOut) return;
+
+    // Block verification if code has expired
+    if (timeLeft <= 0) {
+      const errorMsg = 'This code has expired. Please request a new one.';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+
     const otpString = otp.join('');
     if (otpString.length !== 6) return;
 
