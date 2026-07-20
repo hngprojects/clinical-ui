@@ -9,22 +9,27 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { AnimatePresence, motion } from 'motion/react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
+import { ViewIcon, ViewOffSlashIcon as EyeOffIcon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import InputFieldContainer from '@/components/ui/InputFieldContainer';
-import ForgotPasswordModal from '@/components/auth/ForgotPasswordModal';
 import SuccessModal from '@/components/auth/SuccessModal';
 
 // ─── Schema ────────────────────────────────────────────────────────────────────
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const getFutureTimestamp = (durationMs: number): number => {
+  return Date.now() + durationMs;
+};
 
 const loginSchema = z.object({
   email: z
     .string()
     .min(1, { message: 'Email address is required' })
-    .email({ message: 'Please enter a valid email address.' }),
+    .regex(EMAIL_REGEX, { message: 'Please enter a valid email address.' }),
   password: z.string().min(1, { message: 'Password is required' }),
 });
 
@@ -61,20 +66,76 @@ export default function LoginContent() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLockedOut, setIsLockedOut] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
-    setError,
+    watch,
+    formState: { errors, isSubmitting },
     clearErrors,
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
     mode: 'onChange',
   });
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const values = watch();
+  const emailValue = values.email || '';
+  const isEmailValid = emailValue ? EMAIL_REGEX.test(emailValue.trim()) : false;
+  const isPasswordValid = !!(values.password && values.password.trim().length > 0);
+
+  const isFormValid = isEmailValid && isPasswordValid && !isLockedOut;
+
+  // Lockout effect
+  useEffect(() => {
+    if (!emailValue) return;
+
+    const checkLockout = () => {
+      const stored = localStorage.getItem(`loginLockoutUntil_${emailValue}`);
+      if (stored) {
+        const lockoutTime = parseInt(stored, 10);
+        const now = Date.now();
+        if (now < lockoutTime) {
+          setIsLockedOut(true);
+          const remainingMinutes = Math.ceil((lockoutTime - now) / (60 * 1000));
+          const msg = `Too many unsuccessful sign-in attempts. Please try again in ${remainingMinutes} minute${remainingMinutes > 1 ? 's' : ''} or reset your password.`;
+          setApiError(msg);
+          return true;
+        } else {
+          localStorage.removeItem(`loginLockoutUntil_${emailValue}`);
+          setIsLockedOut(false);
+          setFailedAttempts(0);
+          setApiError(null);
+        }
+      } else {
+        setIsLockedOut(false);
+        setFailedAttempts(0);
+        setApiError((prev) =>
+          prev && prev.includes('unsuccessful sign-in attempts') ? null : prev,
+        );
+      }
+      return false;
+    };
+
+    const wasLocked = checkLockout();
+    let interval: NodeJS.Timeout | null = null;
+    if (wasLocked || isLockedOut) {
+      interval = setInterval(() => {
+        const isStillLocked = checkLockout();
+        if (!isStillLocked && interval) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [emailValue, isLockedOut]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -110,7 +171,7 @@ export default function LoginContent() {
           body: JSON.stringify({ code, access_token: accessToken, id_token: idToken, state }),
         });
 
-        const json = await res.json();
+        const json = await res.json().catch(() => null);
 
         if (!res.ok) {
           const msg = mapApiError(res.status, json?.message ?? '');
@@ -127,7 +188,7 @@ export default function LoginContent() {
 
         setShowSuccessModal(true);
       } catch {
-        const msg = 'Unable to complete Google authentication. Please try again.';
+        const msg = 'Something went wrong, please check your connection and try again';
         setApiError(msg);
         toast.error(msg);
       }
@@ -139,6 +200,7 @@ export default function LoginContent() {
   // ── Submit ──────────────────────────────────────────────────────────────────
 
   const onSubmit = async (data: LoginValues) => {
+    if (isLockedOut) return;
     setApiError(null);
 
     try {
@@ -149,16 +211,41 @@ export default function LoginContent() {
         body: JSON.stringify({ email: data.email, password: data.password }),
       });
 
-      const json = await res.json();
+      const json = await res.json().catch(() => null);
 
       if (!res.ok) {
-        // Map known backend error codes / messages to user-facing copy
-        const msg = mapApiError(res.status, json?.message ?? '');
-
         if (isInvalidCredentialResponse(res.status)) {
-          setError('password', { type: 'server', message: msg });
+          const nextAttempts = failedAttempts + 1;
+          setFailedAttempts(nextAttempts);
+
+          if (nextAttempts >= 5) {
+            const lockoutDuration = 15 * 60 * 1000; // 15 minutes lockout
+            const lockoutTime = getFutureTimestamp(lockoutDuration);
+            localStorage.setItem(`loginLockoutUntil_${data.email}`, lockoutTime.toString());
+            setIsLockedOut(true);
+            const lockoutMsg =
+              'Too many unsuccessful sign-in attempts. Please try again in 15 minutes or reset your password.';
+            setApiError(lockoutMsg);
+            toast.error(lockoutMsg);
+          } else {
+            const credentialMsg = "We couldn't verify your email or password. Please try again.";
+            setApiError(credentialMsg);
+            toast.error(credentialMsg);
+          }
+          return;
         }
 
+        const msg = mapApiError(res.status, json?.message ?? '');
+        if (
+          res.status === 429 ||
+          msg.toLowerCase().includes('too many') ||
+          msg.toLowerCase().includes('unsuccessful')
+        ) {
+          const lockoutDuration = 15 * 60 * 1000;
+          const lockoutTime = getFutureTimestamp(lockoutDuration);
+          localStorage.setItem(`loginLockoutUntil_${data.email}`, lockoutTime.toString());
+          setIsLockedOut(true);
+        }
         setApiError(msg);
         toast.error(msg);
         return;
@@ -168,16 +255,18 @@ export default function LoginContent() {
 
       if (accessToken) localStorage.setItem('accessToken', accessToken);
 
+      setFailedAttempts(0);
+      localStorage.removeItem(`loginLockoutUntil_${data.email}`);
       setShowSuccessModal(true);
     } catch {
-      const msg = "We couldn't sign you in right now. Please check your connection and try again.";
+      const msg = 'Something went wrong, please check your connection and try again';
       setApiError(msg);
       toast.error(msg);
     }
   };
 
   const handleCredentialChange = () => {
-    setApiError(null);
+    if (apiError) setApiError(null);
     clearErrors(['email', 'password']);
   };
 
@@ -244,24 +333,18 @@ export default function LoginContent() {
                 handleSubmit={handleSubmit}
                 errors={errors}
                 isSubmitting={isSubmitting}
-                isValid={isValid}
+                isValid={isFormValid}
                 apiError={apiError}
                 showPassword={showPassword}
                 setShowPassword={setShowPassword}
                 onSubmit={onSubmit}
                 onCredentialChange={handleCredentialChange}
                 onGoogleLogin={handleGoogleLogin}
-                onForgotPassword={() => setShowForgotPassword(true)}
               />
             </div>
           </div>
         </div>
       </div>
-
-      {/* ── Modals ───────────────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {showForgotPassword && <ForgotPasswordModal onClose={() => setShowForgotPassword(false)} />}
-      </AnimatePresence>
 
       <AnimatePresence>
         {showSuccessModal && (
@@ -282,10 +365,12 @@ export default function LoginContent() {
 // ─── Error mapper ───────────────────────────────────────────────────────────────
 
 function mapApiError(status: number, message: string): string {
-  if (isInvalidCredentialResponse(status)) return 'Invalid email or password.';
+  if (isInvalidCredentialResponse(status))
+    return "We couldn't verify your email or password. Please try again.";
   if (status === 403) return 'Please verify your email before logging in.';
-  if (status === 0 || message.toLowerCase().includes('network'))
-    return "We couldn't sign you in right now. Please check your connection and try again.";
+  if (status === 429 || message.toLowerCase().includes('too many'))
+    return 'Too many unsuccessful sign-in attempts. Please try again in 15 minutes or reset your password.';
+  return 'Something went wrong, please check your connection and try again';
   return message || 'Something went wrong. Please try again.';
 }
 
@@ -310,7 +395,6 @@ interface LoginFormProps {
   onSubmit: (data: LoginValues) => Promise<void>;
   onCredentialChange: () => void;
   onGoogleLogin: () => void;
-  onForgotPassword: () => void;
 }
 
 function LoginForm({
@@ -325,7 +409,6 @@ function LoginForm({
   onSubmit,
   onCredentialChange,
   onGoogleLogin,
-  onForgotPassword,
 }: LoginFormProps) {
   return (
     <div className="flex w-full flex-col gap-5">
@@ -376,38 +459,21 @@ function LoginForm({
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-text-disabled transition-colors hover:text-text-primary"
               >
-                <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={18} />
+                <HugeiconsIcon icon={showPassword ? EyeOffIcon : ViewIcon} size={18} />
               </button>
             </div>
           </InputFieldContainer>
 
           {/* Forgot password */}
           <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={onForgotPassword}
+            <Link
+              href="/forgot-password"
               className="font-sans text-sm font-normal text-primary-blue underline leading-5 hover:opacity-80 transition-opacity"
             >
               Forgot password?
-            </button>
+            </Link>
           </div>
         </div>
-
-        {/* API-level error (non-field) */}
-        <AnimatePresence>
-          {apiError && !errors.email && !errors.password && (
-            <motion.p
-              key="api-error"
-              initial={{ opacity: 0, x: -6 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -6 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="text-xs italic font-medium text-red-500"
-            >
-              {apiError}
-            </motion.p>
-          )}
-        </AnimatePresence>
 
         {/* Actions */}
         <div className="flex flex-col items-center gap-4 lg:gap-3">
@@ -430,6 +496,22 @@ function LoginForm({
               'Sign in'
             )}
           </Button>
+
+          {/* API-level error (non-field) */}
+          <AnimatePresence>
+            {apiError && !errors.email && !errors.password && (
+              <motion.p
+                key="api-error"
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -6 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="text-xs italic font-medium text-red-500 w-full text-center"
+              >
+                {apiError}
+              </motion.p>
+            )}
+          </AnimatePresence>
 
           {/* Divider */}
           <div className="my-1 flex w-full items-center gap-1.5">
@@ -485,13 +567,91 @@ function LoginForm({
 function Spinner() {
   return (
     <svg
-      className="h-4 w-4 animate-spin"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
+      className="animate-spin h-5 w-5 text-white"
       viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+      <line
+        x1="12"
+        y1="6"
+        x2="12"
+        y2="2"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="1.0"
+      />
+      <line
+        x1="16.24"
+        y1="7.76"
+        x2="19.07"
+        y2="4.93"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.875"
+      />
+      <line
+        x1="18"
+        y1="12"
+        x2="22"
+        y2="12"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.75"
+      />
+      <line
+        x1="16.24"
+        y1="16.24"
+        x2="19.07"
+        y2="19.07"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.625"
+      />
+      <line
+        x1="12"
+        y1="18"
+        x2="12"
+        y2="22"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
+      <line
+        x1="7.76"
+        y1="16.24"
+        x2="4.93"
+        y2="19.07"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.375"
+      />
+      <line
+        x1="6"
+        y1="12"
+        x2="2"
+        y2="12"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.25"
+      />
+      <line
+        x1="7.76"
+        y1="7.76"
+        x2="4.93"
+        y2="4.93"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.125"
+      />
     </svg>
   );
 }
