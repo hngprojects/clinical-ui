@@ -274,9 +274,21 @@ export default function LoginContent() {
 
   const handleGoogleLogin = () => {
     try {
-      const url =
-        process.env.NEXT_PUBLIC_GOOGLE_AUTH_API_URL ??
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/google`;
+      const googleAuthUrl = process.env.NEXT_PUBLIC_GOOGLE_AUTH_API_URL;
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+      let url: string | undefined = googleAuthUrl;
+      if (!url && apiBaseUrl) {
+        url = `${apiBaseUrl.replace(/\/$/, '')}/api/v1/auth/google`;
+      }
+      if (!url) {
+        url = 'https://api.staging.useclinsight.com/api/v1/auth/google';
+      }
+
+      if (!url || url.includes('undefined')) {
+        throw new Error('Google authentication URL is not configured.');
+      }
+
       window.location.href = url;
     } catch {
       const msg = 'Unable to initiate Google authentication. Please try again.';
