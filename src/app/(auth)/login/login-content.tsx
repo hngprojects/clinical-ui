@@ -23,9 +23,9 @@ import SuccessModal from '@/components/auth/SuccessModal';
 const loginSchema = z.object({
   email: z
     .string()
-    .min(1, { message: 'Please complete all required fields.' })
+    .min(1, { message: 'Email address is required' })
     .email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(1, { message: 'Please complete all required fields.' }),
+  password: z.string().min(1, { message: 'Password is required' }),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
@@ -199,7 +199,7 @@ export default function LoginContent() {
         {/* Left — hero image (desktop only) */}
         <div className="relative hidden lg:block lg:w-1/2 xl:w-[55%]">
           <Image
-            src="/assets/auth/login-hero.jpg"
+            src="/assets/login-page-assets/young_black_female_doctor.png"
             alt="Doctor smiling in a white coat"
             fill
             className="object-cover object-center"
@@ -309,7 +309,7 @@ function LoginForm({
           Welcome back
         </h1>
         <p className="font-sans text-base font-normal leading-6 text-text-secondary-3">
-          Sign in to access your Clinsight doctor dashboard.
+          Review patient cases, interpret lab results, and manage your consultations securely.
         </p>
       </div>
 
@@ -401,7 +401,7 @@ function LoginForm({
                 Signing in…
               </span>
             ) : (
-              'Log in'
+              'Sign in'
             )}
           </Button>
 
@@ -420,7 +420,7 @@ function LoginForm({
             className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#E0E0E0] bg-white font-sans text-base font-medium text-[#313131] transition-colors hover:bg-slate-50"
           >
             <GoogleIcon />
-            Sign in with Google
+            Google
           </Button>
 
           {/* Sign up link */}
