@@ -13,7 +13,7 @@ import { EMAIL_REGEX } from '@/lib/validation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
+import { ViewIcon, ViewOffSlashIcon as EyeOffIcon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
 
 const signupSchema = z
@@ -262,7 +262,7 @@ export function SignupForm() {
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-primary transition-colors cursor-pointer"
                 >
-                  <HugeiconsIcon icon={showPassword ? ViewOffIcon : ViewIcon} size={18} />
+                  <HugeiconsIcon icon={showPassword ? EyeOffIcon : ViewIcon} size={18} />
                 </button>
               </div>
 
@@ -387,7 +387,7 @@ export function SignupForm() {
                   }
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-text-disabled hover:text-text-primary transition-colors cursor-pointer"
                 >
-                  <HugeiconsIcon icon={showConfirmPassword ? ViewOffIcon : ViewIcon} size={18} />
+                  <HugeiconsIcon icon={showConfirmPassword ? EyeOffIcon : ViewIcon} size={18} />
                 </button>
               </div>
               {errors.confirmPassword ? (
@@ -570,7 +570,7 @@ export function SignupForm() {
               Already have an account?{' '}
             </span>
             <Link
-              href="/signin"
+              href="/login"
               className="text-primary-blue text-sm font-normal underline leading-5"
             >
               Log in
