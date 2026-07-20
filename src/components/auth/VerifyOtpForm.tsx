@@ -209,6 +209,7 @@ export function VerifyOtpForm() {
             const lockoutTime = getFutureTimestamp(duration);
             localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
             setIsLockedOut(true);
+            setTimeLeft(0); // Allow immediate option to request a new code
             const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
             setApiError(lockoutMsg);
             toast.error(lockoutMsg);
@@ -236,7 +237,6 @@ export function VerifyOtpForm() {
   };
 
   const handleResend = async () => {
-    if (isLockedOut) return;
     if (!email) {
       const errorMsg = 'Email not found. Please try signing up again.';
       setApiError(errorMsg);
@@ -497,7 +497,7 @@ export function VerifyOtpForm() {
                 type="button"
                 variant="link"
                 onClick={handleResend}
-                disabled={isVerifying || isResending || isLockedOut}
+                disabled={isVerifying || isResending}
                 className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1 p-0 h-auto inline"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
