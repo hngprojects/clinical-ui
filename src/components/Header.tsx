@@ -24,7 +24,7 @@ export function Header() {
     '/squeeze',
     '/delete-account',
     '/signup',
-    '/signin',
+    '/login',
     '/forgot-password',
     '/verify-otp',
     '/reset-password',
