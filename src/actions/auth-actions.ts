@@ -286,7 +286,7 @@ export async function signinAction(data: { email: string; password: string }) {
     return await handleApiResponse(response, 'Signin failed');
   } catch (error) {
     console.error('Signin Error:', error);
-    return { error: 'Unable to reach the server. Please check your connection.' };
+    return { error: 'Something went wrong, please check your connection and try again' };
   }
 }
 
@@ -303,7 +303,7 @@ export async function resendOtpAction(email: string) {
     return await handleApiResponse(response, 'Failed to resend OTP');
   } catch (error) {
     console.error('Resend OTP Error:', error);
-    return { error: 'Unable to reach the server. Please check your connection.' };
+    return { error: 'Something went wrong, please check your connection and try again' };
   }
 }
 

@@ -10,7 +10,7 @@ export function createAuthBackHandlers(router: AuthRouter) {
       return;
     }
 
-    router.push('/signin');
+    router.push('/login');
   };
 
   return {

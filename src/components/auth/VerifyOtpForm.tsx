@@ -209,7 +209,6 @@ export function VerifyOtpForm() {
             const lockoutTime = getFutureTimestamp(duration);
             localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
             setIsLockedOut(true);
-            setTimeLeft(0); // Allow immediate option to request a new code
             const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
             setApiError(lockoutMsg);
             toast.error(lockoutMsg);
@@ -227,7 +226,7 @@ export function VerifyOtpForm() {
         router.push('/verification');
       }
     } catch (e) {
-      const errorMsg = 'Unable to reach the server. Please check your connection.';
+      const errorMsg = 'Something went wrong, please check your connection and try again';
       setApiError(errorMsg);
       toast.error(errorMsg);
       console.error('OTP verification network failure:', e);
@@ -237,6 +236,7 @@ export function VerifyOtpForm() {
   };
 
   const handleResend = async () => {
+    if (isLockedOut) return;
     if (!email) {
       const errorMsg = 'Email not found. Please try signing up again.';
       setApiError(errorMsg);
@@ -288,7 +288,7 @@ export function VerifyOtpForm() {
         inputRefs.current[0]?.focus(); // Refocus first input
       }
     } catch {
-      const errorMsg = 'Unable to reach the server. Please check your connection.';
+      const errorMsg = 'Something went wrong, please check your connection and try again';
       setApiError(errorMsg);
       toast.error(errorMsg);
     } finally {
@@ -483,7 +483,19 @@ export function VerifyOtpForm() {
         </Button>
 
         <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center">
-          {timeLeft > 0 ? (
+          {isLockedOut ? (
+            <p>
+              <span>{"Didn't receive the code? "}</span>
+              <Button
+                type="button"
+                variant="link"
+                disabled
+                className="p-0 text-sm md:text-base h-auto font-medium text-gray-400 opacity-50 cursor-not-allowed no-underline"
+              >
+                Resend Code
+              </Button>
+            </p>
+          ) : timeLeft > 0 ? (
             <p>
               Code expires in{' '}
               <span className="font-semibold text-[#1B1B1B]">
@@ -498,7 +510,7 @@ export function VerifyOtpForm() {
                 variant="link"
                 onClick={handleResend}
                 disabled={isVerifying || isResending}
-                className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1 p-0 h-auto inline"
+                className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
               </Button>

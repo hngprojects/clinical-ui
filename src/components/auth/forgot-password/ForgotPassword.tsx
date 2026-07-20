@@ -124,7 +124,7 @@ export default function ForgotPassword() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => router.push('/signin')}
+                  onClick={() => router.push('/login')}
                   className="w-full flex items-center justify-center gap-2 py-2 text-[#006B5F] hover:text-[#004D44] text-sm sm:text-base font-medium font-['Inter'] transition-colors duration-150 group"
                 >
                   <div className="transition-transform duration-200 group-hover:-translate-x-1 flex items-center justify-center">
