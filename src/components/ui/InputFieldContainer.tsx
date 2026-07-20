@@ -49,7 +49,7 @@ export default function InputFieldContainer({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -6 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="text-xs italic text-red-500 font-medium text-right"
+            className="text-xs italic text-red-500 font-medium text-left"
           >
             {error}
           </motion.p>
@@ -96,7 +96,7 @@ export function VerificationInputField({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -6 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="text-xs italic text-red-500 font-medium text-right"
+            className="text-xs italic text-red-500 font-medium text-left"
           >
             {error}
           </motion.p>

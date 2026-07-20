@@ -156,7 +156,6 @@ export default function LoginContent() {
         const msg = mapApiError(res.status, json?.message ?? '');
 
         if (isInvalidCredentialResponse(res.status)) {
-          setError('email', { type: 'server', message: msg });
           setError('password', { type: 'server', message: msg });
         }
 
@@ -354,7 +353,7 @@ function LoginForm({
               {...register('email', { onChange: onCredentialChange })}
               type="email"
               placeholder="Enter your email"
-              error={!!errors.email || (!!apiError && apiError.toLowerCase().includes('email'))}
+              error={!!errors.email}
               autoComplete="email"
             />
           </InputFieldContainer>
@@ -368,7 +367,7 @@ function LoginForm({
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
                 className="pr-12"
-                error={!!errors.password || apiError === 'Invalid email or password.'}
+                error={!!errors.password}
                 autoComplete="current-password"
               />
               <button
