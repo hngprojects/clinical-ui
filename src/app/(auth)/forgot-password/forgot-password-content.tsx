@@ -1,106 +1,268 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useCountdown } from '@/hooks/useCountdown';
-import { EmailForm } from '@/components/auth/forgot-password/EmailForm';
-import { OtpForm } from '@/components/auth/forgot-password/OtpForm';
-import { FailedView } from '@/components/auth/forgot-password/FailedView';
-import { triggerComingSoonModal } from '@/components/coming-soon';
-import { createAuthBackHandlers } from '@/lib/auth-navigation';
+import { useRouter } from 'next/navigation';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  ViewIcon,
+  ViewOffSlashIcon as EyeOffIcon,
+  ArrowLeft02Icon,
+  MailAdd01Icon,
+} from '@hugeicons/core-free-icons';
+import { toast } from 'sonner';
 
-type FlowStep = 'email' | 'otp' | 'failed';
+type FlowStep = 'email' | 'otp' | 'reset';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function Spinner() {
+  return (
+    <svg
+      className="animate-spin h-5 w-5 text-white"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <line
+        x1="12"
+        y1="6"
+        x2="12"
+        y2="2"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="1.0"
+      />
+      <line
+        x1="16.24"
+        y1="7.76"
+        x2="19.07"
+        y2="4.93"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.875"
+      />
+      <line
+        x1="18"
+        y1="12"
+        x2="22"
+        y2="12"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.75"
+      />
+      <line
+        x1="16.24"
+        y1="16.24"
+        x2="19.07"
+        y2="19.07"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.625"
+      />
+      <line
+        x1="12"
+        y1="18"
+        x2="12"
+        y2="22"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
+      <line
+        x1="7.76"
+        y1="16.24"
+        x2="4.93"
+        y2="19.07"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.375"
+      />
+      <line
+        x1="6"
+        y1="12"
+        x2="2"
+        y2="12"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.25"
+      />
+      <line
+        x1="7.76"
+        y1="7.76"
+        x2="4.93"
+        y2="4.93"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        opacity="0.125"
+      />
+    </svg>
+  );
+}
+
+function parseNetworkError(status: number, fallback: string, dataError?: string): string {
+  if (
+    status === 0 ||
+    status === 502 ||
+    status === 503 ||
+    status === 504 ||
+    (dataError &&
+      (dataError.toLowerCase().includes('network') ||
+        dataError.toLowerCase().includes('gateway') ||
+        dataError.toLowerCase().includes('timeout') ||
+        dataError.toLowerCase().includes('connection') ||
+        dataError.toLowerCase().includes('fetch')))
+  ) {
+    return 'Something went wrong, please check your connection and try again';
+  }
+  return dataError || fallback;
+}
 
 export default function ForgotPasswordContent() {
   const router = useRouter();
   const [step, setStep] = useState<FlowStep>('email');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(''));
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { timeLeft, startTimer, resetTimer, formatTime } = useCountdown(45);
-  const { handleBack } = createAuthBackHandlers(router);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [resetToken, setResetToken] = useState<string | null>(null);
+
+  // OTP Countdown timer
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timeLeft]);
+
+  const startOtpTimer = () => {
+    setTimeLeft(59);
+  };
+
+  const formatTimer = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  // ─── Step 1: Request Reset Code ─────────────────────────────────────────────
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email.trim() || !EMAIL_REGEX.test(email.trim())) return;
 
-    // if (!email.trim()) return;
-    // setIsLoading(true);
-    // setErrorMessage('');
+    setIsLoading(true);
+    setApiError(null);
 
-    // try {
-    //   const res = await fetch('/api/auth/forgot-password', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ email: email.trim() }),
-    //   });
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
 
-    //   const data = await res.json();
-    //   if (!res.ok) throw new Error(data.error || 'Failed to dispatch reset token');
+      const data = await res.json().catch(() => null);
 
-    //   startTimer();
-    //   setStep('otp');
-    // } catch (err) {
-    //   const error = err as Error;
-    //   setErrorMessage(error.message || 'Network transport failure');
-    // } finally {
-    //   setIsLoading(false);
-    // }
+      if (!res.ok) {
+        const errorMsg =
+          data?.error || data?.message || 'Failed to send reset code. Please try again.';
+        setApiError(errorMsg);
+        toast.error(errorMsg);
+        return;
+      }
 
-    triggerComingSoonModal({
-      title: 'Password reset is coming soon',
-      description: 'We are still building the password reset request flow.',
-    });
+      setStep('otp');
+      startOtpTimer();
+      toast.success('Verification code sent to your email.');
+    } catch {
+      const errorMsg = 'Something went wrong, please check your connection and try again';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // ─── Step 2: Verify OTP Code ───────────────────────────────────────────────
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const otpCodeString = otp.join('');
+    if (otpCodeString.length < 6) return;
 
-    // const otpCodeString = otp.join('');
-    // if (otpCodeString.length < 6) return;
-    // setIsLoading(true);
-    // setErrorMessage('');
+    setIsLoading(true);
+    setApiError(null);
 
-    // try {
-    //   const res = await fetch('/api/auth/verify-otp', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ email: email.trim(), otp: otpCodeString }),
-    //   });
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), otp: otpCodeString }),
+      });
 
-    //   const data = await res.json();
-    //   if (!res.ok) {
-    //     const message = data.error || 'Token authorization rejected';
-    //     if ([400, 401, 422].includes(res.status)) {
-    //       setErrorMessage(message);
-    //       setStep('failed');
-    //       return;
-    //     }
-    //     throw new Error(message);
-    //   }
+      const data = await res.json().catch(() => null);
 
-    //   router.push('/reset-password');
-    // } catch (err) {
-    //   const error = err as Error;
-    //   setErrorMessage(error.message || 'Unable to verify code right now. Please try again.');
-    //   setStep('otp');
-    // } finally {
-    //   setIsLoading(false);
-    // }
+      if (!res.ok) {
+        const errorMsg = parseNetworkError(
+          res.status,
+          'The code you entered was incorrect, check again.',
+          data?.error || data?.message,
+        );
+        setApiError(errorMsg);
+        if (
+          res.status === 0 ||
+          res.status >= 500 ||
+          errorMsg.includes('please check your connection')
+        ) {
+          toast.error(errorMsg);
+        }
+        return;
+      }
 
-    triggerComingSoonModal({
-      title: 'OTP verification is coming soon',
-      description: 'We are still completing the reset-code verification flow.',
-    });
+      const tokenFromBackend =
+        data?.reset_token ||
+        data?.token ||
+        data?.access_token ||
+        data?.data?.reset_token ||
+        data?.data?.token ||
+        otpCodeString;
+      setResetToken(tokenFromBackend);
+
+      setStep('reset');
+      setApiError(null);
+      toast.success('Code verified successfully.');
+    } catch {
+      const errorMsg = 'Something went wrong, please check your connection and try again';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResendOtpCode = async () => {
-    setOtp(new Array(6).fill(''));
-    setErrorMessage('');
+  const handleResendOtp = async () => {
+    if (!email.trim()) return;
+
     setIsLoading(true);
+    setApiError(null);
+
     try {
       const res = await fetch('/api/auth/resend-otp', {
         method: 'POST',
@@ -108,125 +270,666 @@ export default function ForgotPasswordContent() {
         body: JSON.stringify({ email: email.trim() }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Resend process failed');
+      const data = await res.json().catch(() => null);
 
-      resetTimer();
-      startTimer();
-    } catch (err) {
-      const error = err as Error;
-      setErrorMessage(error.message || 'Failed to trigger token verification fallback');
+      if (!res.ok) {
+        const errorMsg = data?.error || data?.message || 'Failed to resend verification code.';
+        setApiError(errorMsg);
+        toast.error(errorMsg);
+        return;
+      }
+
+      setOtp(new Array(6).fill(''));
+      startOtpTimer();
+      toast.success('New verification code sent to your email.');
+    } catch {
+      const errorMsg = 'Something went wrong, please check your connection and try again';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ─── Step 3: Reset Password ─────────────────────────────────────────────────
+
+  const hasMinLength = newPassword.length >= 8;
+  const hasLetter = /[a-zA-Z]/.test(newPassword);
+  const hasNumber = /[0-9]/.test(newPassword);
+  const hasSpecial = /[^a-zA-Z0-9]/.test(newPassword);
+  const isPasswordValid = hasMinLength && hasLetter && hasNumber && hasSpecial;
+  const isMatch = newPassword === confirmPassword && confirmPassword.length > 0;
+
+  const handleResetSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isPasswordValid || !isMatch) return;
+
+    setIsLoading(true);
+    setApiError(null);
+
+    try {
+      const tokenToSend = resetToken || otp.join('');
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          token: tokenToSend,
+          reset_token: tokenToSend,
+          new_password: newPassword,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        const errorMsg = parseNetworkError(
+          res.status,
+          'Failed to update password. Please try again.',
+          data?.error || data?.message,
+        );
+        setApiError(errorMsg);
+        toast.error(errorMsg);
+        return;
+      }
+
+      toast.success('Password updated successfully! Please sign in.');
+      router.push('/login');
+    } catch {
+      const errorMsg = 'Something went wrong, please check your connection and try again';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ─── Render Step Views ─────────────────────────────────────────────────────
+
   return (
-    <main className="relative h-screen w-full flex flex-col overflow-hidden bg-[#FFFFFE]">
-      <div className="fixed inset-0 z-0 h-full w-full">
-        <Image
-          src="/assets/forgot-password/BG.png"
-          alt="Lab Background Frame"
-          fill
-          priority
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
-      </div>
-      <header
-        onClick={handleBack}
-        role="button"
-        tabIndex={0}
-        aria-label="Go back"
-        className="fixed top-10 left-8 md:left-20 z-20 flex items-center gap-2.5 select-none"
-      >
-        <div className="relative size-8 md:size-10">
+    <main className="min-h-screen w-full bg-white flex flex-col justify-between items-center select-none font-sans">
+      {/* ── Header ──────────────────────────────────────────────────────── */}
+      <header className="w-full max-w-7xl px-8 pt-8 md:px-12 md:pt-10 flex items-center justify-start">
+        <Link href="/login" className="relative h-9 w-36 block">
           <Image
-            src="/assets/forgot-password/Subtract.svg"
-            alt="Clinsights Icon"
-            fill
-            className="object-contain cursor-pointer"
+            src="/assets/header-assets/clinsight-logo.svg"
+            alt="Clinsight Logo"
+            width={144}
+            height={36}
+            priority
+            className="object-contain"
           />
-        </div>
-        <span className="text-white text-2xl md:text-3xl font-medium font-['Playfair_Display'] tracking-tight leading-8">
-          Clinsights
-        </span>
+        </Link>
       </header>
-      <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
-        <div className="w-full max-w-[500px] bg-white rounded-[24px] shadow-[0px_24px_64px_rgba(0,0,0,0.15)] px-6 py-6 md:px-10 md:py-7 flex flex-col items-center gap-4 transition-all duration-300">
-          <div className="w-full flex flex-col items-center justify-start">
-            {' '}
-            {step === 'email' && (
-              <EmailForm
-                email={email}
-                setEmail={setEmail}
-                onSubmit={handleEmailSubmit}
-                isLoading={isLoading}
-                onBackToSignin={() => router.push('/signin')}
-                errorMsg={errorMessage}
-              />
-            )}
-            {step === 'otp' && (
-              <OtpForm
-                email={email}
-                otp={otp}
-                setOtp={setOtp}
-                onSubmit={handleOtpSubmit}
-                isLoading={isLoading}
-                timeLeft={timeLeft}
-                formatTime={formatTime}
-                onResend={handleResendOtpCode}
-                errorMsg={errorMessage}
-              />
-            )}
-            {step === 'failed' && (
-              <FailedView
-                isLoading={isLoading}
-                onRetry={() => {
-                  setOtp(new Array(6).fill(''));
-                  setErrorMessage('');
-                  setStep('otp');
-                  startTimer();
-                }}
-                onContactSupport={() => router.push('/contact')}
-              />
-            )}
-          </div>
-          <div className="w-full flex flex-col items-center mt-6">
-            {step === 'email' && (
-              <footer className="w-full pt-6 border-t border-zinc-200 flex items-center justify-center mx-auto animate-fadeIn">
-                <div className="text-center text-gray-700 text-base font-medium font-['Inter'] leading-6 flex flex-col items-center">
-                  <span>Need immediate assistance?</span>
-                  <span className="mt-1">
-                    Contact{' '}
-                    <Link
-                      href="/contact"
-                      className="text-[#1565C0] hover:text-[#0D47A1] font-semibold transition-colors duration-150 inline-block"
-                    >
-                      Lab Support
-                    </Link>
-                  </span>
-                </div>
-              </footer>
-            )}
-            {step === 'otp' && (
-              <div className="w-full flex flex-row items-center justify-center gap-2 text-xs font-['Inter'] tracking-wider select-none animate-fadeIn">
-                <div className="relative size-4 shrink-0">
-                  <Image
-                    src="/assets/forgot-password/shield-icon.svg"
-                    alt="Security Shield"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <span className="text-[#727783] font-medium">
-                  Secure Critical Environment Context
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
+
+      {/* ── Main Form Container ───────────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col justify-center items-center w-full max-w-[440px] px-6 py-8">
+        {step === 'email' && (
+          <RequestEmailStep
+            email={email}
+            setEmail={setEmail}
+            onSubmit={handleEmailSubmit}
+            isLoading={isLoading}
+            apiError={apiError}
+          />
+        )}
+
+        {step === 'otp' && (
+          <VerifyOtpStep
+            email={email}
+            otp={otp}
+            setOtp={setOtp}
+            onSubmit={handleOtpSubmit}
+            onResend={handleResendOtp}
+            isLoading={isLoading}
+            apiError={apiError}
+            setApiError={setApiError}
+            timeLeft={timeLeft}
+            formatTimer={formatTimer}
+          />
+        )}
+
+        {step === 'reset' && (
+          <CreateNewPasswordStep
+            newPassword={newPassword}
+            setNewPassword={setNewPassword}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
+            showNewPassword={showNewPassword}
+            setShowNewPassword={setShowNewPassword}
+            showConfirmPassword={showConfirmPassword}
+            setShowConfirmPassword={setShowConfirmPassword}
+            onSubmit={handleResetSubmit}
+            isLoading={isLoading}
+            apiError={apiError}
+            hasMinLength={hasMinLength}
+            hasLetter={hasLetter}
+            hasNumber={hasNumber}
+            hasSpecial={hasSpecial}
+            isPasswordValid={isPasswordValid}
+            isMatch={isMatch}
+          />
+        )}
       </div>
     </main>
+  );
+}
+
+// ─── Step 1 Component: Request Email (Desktop 5 & 6) ───────────────────────────
+
+interface RequestEmailStepProps {
+  email: string;
+  setEmail: (val: string) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  isLoading: boolean;
+  apiError: string | null;
+}
+
+function RequestEmailStep({
+  email,
+  setEmail,
+  onSubmit,
+  isLoading,
+  apiError,
+}: RequestEmailStepProps) {
+  const isValidEmail = EMAIL_REGEX.test(email.trim());
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      {/* Icon Badge */}
+      <div className="w-14 h-14 flex items-center justify-center mb-6 p-1">
+        <Image
+          src="/assets/forgot-password/lock-slash.svg"
+          alt="Lock Slash Icon"
+          width={48}
+          height={48}
+          className="object-contain"
+        />
+      </div>
+
+      {/* Heading & Subtitle */}
+      <h1 className="text-3xl font-bold text-[#101828] text-center mb-2 tracking-tight">
+        Forgot Password?
+      </h1>
+      <p className="text-base text-[#475467] text-center mb-8 font-normal leading-6">
+        Enter your registered email address and we&apos;ll send you a secure code to reset your
+        password.
+      </p>
+
+      {/* Form */}
+      <form onSubmit={onSubmit} className="w-full flex flex-col gap-6" noValidate>
+        <div className="flex flex-col gap-1.5 w-full">
+          <label htmlFor="reset-email" className="text-sm font-medium text-[#344054]">
+            Email address
+          </label>
+          <div className="relative w-full">
+            <HugeiconsIcon
+              icon={MailAdd01Icon}
+              size={18}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#667085]"
+            />
+            <input
+              id="reset-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@gmail.com"
+              required
+              className="w-full h-12 pl-10 pr-4 rounded-xl border border-[#D0D5DD] bg-white text-base text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0] transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* API Error */}
+        {apiError && (
+          <p className="text-xs italic font-medium text-[#F04438] text-center -mt-2">{apiError}</p>
+        )}
+
+        {/* Action Button */}
+        <button
+          type="submit"
+          disabled={isLoading || !isValidEmail}
+          className={`w-full h-12 rounded-xl text-base font-semibold transition-colors flex items-center justify-center gap-2 select-none ${
+            isValidEmail && !isLoading
+              ? 'bg-[#1565C0] text-white hover:bg-[#1565C0]/90 cursor-pointer'
+              : 'bg-[#F2F4F7] text-[#98A2B3] cursor-not-allowed'
+          }`}
+        >
+          {isLoading ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Sending code…
+            </span>
+          ) : (
+            'Send Reset Code'
+          )}
+        </button>
+
+        {/* Back Link */}
+        <Link
+          href="/login"
+          className="flex items-center justify-center gap-2 text-sm font-semibold text-[#344054] hover:text-[#101828] transition-colors mt-2"
+        >
+          <HugeiconsIcon icon={ArrowLeft02Icon} size={16} />
+          Back to Login
+        </Link>
+      </form>
+    </div>
+  );
+}
+
+// ─── Step 2 Component: Verify Identity OTP (Desktop 1, 2, 3) ───────────────────
+
+interface VerifyOtpStepProps {
+  email: string;
+  otp: string[];
+  setOtp: React.Dispatch<React.SetStateAction<string[]>>;
+  onSubmit: (e: React.FormEvent) => void;
+  onResend: () => void;
+  isLoading: boolean;
+  apiError: string | null;
+  setApiError: (err: string | null) => void;
+  timeLeft: number;
+  formatTimer: (secs: number) => string;
+}
+
+function VerifyOtpStep({
+  email,
+  otp,
+  setOtp,
+  onSubmit,
+  onResend,
+  isLoading,
+  apiError,
+  setApiError,
+  timeLeft,
+  formatTimer,
+}: VerifyOtpStepProps) {
+  const inputRefs = useRef<HTMLInputElement[]>([]);
+
+  const handleOtpChange = (element: HTMLInputElement, index: number) => {
+    if (apiError) setApiError(null);
+    const value = element.value.replace(/[^0-9]/g, '');
+    const newOtp = [...otp];
+    newOtp[index] = value.substring(value.length - 1);
+    setOtp(newOtp);
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (apiError) setApiError(null);
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (apiError) setApiError(null);
+    const pastedData = e.clipboardData
+      .getData('text')
+      .trim()
+      .replace(/[^0-9]/g, '');
+    if (!pastedData) return;
+
+    const newOtp = [...otp];
+    for (let i = 0; i < 6; i++) {
+      if (i < pastedData.length) {
+        newOtp[i] = pastedData[i];
+      }
+    }
+    setOtp(newOtp);
+
+    const nextFocusIndex = Math.min(pastedData.length, 5);
+    inputRefs.current[nextFocusIndex]?.focus();
+  };
+
+  const isOtpComplete = otp.join('').length === 6;
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      {/* Icon Badge */}
+      <div className="w-14 h-14 flex items-center justify-center mb-6">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+            stroke="#1565C0"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M22 6l-10 7L2 6"
+            stroke="#1565C0"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+
+      {/* Heading & Subtitle */}
+      <h1 className="text-3xl font-bold text-[#101828] text-center mb-2 tracking-tight">
+        Verify Your Identity
+      </h1>
+      <p className="text-base text-[#475467] text-center mb-6 font-normal leading-6">
+        We just sent a 6-digit code to the email attached below
+        <span className="block font-semibold text-[#101828] mt-1">
+          {email || 'example@gmail.com'}
+        </span>
+      </p>
+
+      {/* Form */}
+      <form onSubmit={onSubmit} className="w-full flex flex-col items-center gap-6">
+        {/* 6 Digit Inputs */}
+        <div className="flex items-center justify-between gap-2.5 w-full my-2">
+          {otp.map((digit, index) => (
+            <input
+              key={index}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              ref={(el) => {
+                if (el) inputRefs.current[index] = el;
+              }}
+              value={digit}
+              onChange={(e) => handleOtpChange(e.target, index)}
+              onKeyDown={(e) => handleOtpKeyDown(e, index)}
+              onPaste={handleOtpPaste}
+              className={`w-12 h-12 rounded-xl border text-center text-xl font-semibold outline-none transition-all ${
+                apiError
+                  ? 'border-[#F04438] text-[#F04438] bg-white'
+                  : 'border-[#D0D5DD] bg-white text-[#101828] focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0]'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Error message under boxes */}
+        {apiError && (
+          <p className="text-xs text-[#F04438] text-center font-normal -mt-3">{apiError}</p>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading || !isOtpComplete}
+          className={`w-full h-12 rounded-xl text-base font-semibold transition-colors flex items-center justify-center gap-2 select-none ${
+            isOtpComplete && !isLoading
+              ? 'bg-[#1565C0] text-white hover:bg-[#1565C0]/90 cursor-pointer'
+              : 'bg-[#F2F4F7] text-[#98A2B3] cursor-not-allowed'
+          }`}
+        >
+          {isLoading ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Verifying…
+            </span>
+          ) : (
+            'Verify Code'
+          )}
+        </button>
+
+        {/* Resend Link & Timer */}
+        <div className="flex items-center gap-1.5 text-sm font-medium">
+          {timeLeft > 0 ? (
+            <>
+              <span className="text-[#1565C0] underline cursor-default">Resend code</span>
+              <span className="text-[#667085]">{formatTimer(timeLeft)}</span>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={onResend}
+              disabled={isLoading}
+              className="text-[#1565C0] underline font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              Resend code
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+}
+
+// ─── Step 3 Component: Create New Password (Desktop 7, 8, 9) ───────────────────
+
+interface CreateNewPasswordStepProps {
+  newPassword: string;
+  setNewPassword: (val: string) => void;
+  confirmPassword: string;
+  setConfirmPassword: (val: string) => void;
+  showNewPassword: boolean;
+  setShowNewPassword: (val: boolean) => void;
+  showConfirmPassword: boolean;
+  setShowConfirmPassword: (val: boolean) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  isLoading: boolean;
+  apiError: string | null;
+  hasMinLength: boolean;
+  hasLetter: boolean;
+  hasNumber: boolean;
+  hasSpecial: boolean;
+  isPasswordValid: boolean;
+  isMatch: boolean;
+}
+
+function CreateNewPasswordStep({
+  newPassword,
+  setNewPassword,
+  confirmPassword,
+  setConfirmPassword,
+  showNewPassword,
+  setShowNewPassword,
+  showConfirmPassword,
+  setShowConfirmPassword,
+  onSubmit,
+  isLoading,
+  apiError,
+  hasMinLength,
+  hasLetter,
+  hasNumber,
+  hasSpecial,
+  isPasswordValid,
+  isMatch,
+}: CreateNewPasswordStepProps) {
+  const isFormValid = isPasswordValid && isMatch;
+  const isTyping = newPassword.length > 0;
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      {/* Icon Badge */}
+      <div className="w-14 h-14 flex items-center justify-center mb-6 p-1">
+        <Image
+          src="/assets/forgot-password/shield-badge.svg"
+          alt="Shield Badge Icon"
+          width={48}
+          height={48}
+          className="object-contain"
+        />
+      </div>
+
+      {/* Heading & Subtitle */}
+      <h1 className="text-3xl font-bold text-[#101828] text-center mb-2 tracking-tight">
+        Create new Password
+      </h1>
+      <p className="text-base text-[#475467] text-center mb-8 font-normal leading-6">
+        Please create a secure password for your account.
+      </p>
+
+      {/* Form */}
+      <form onSubmit={onSubmit} className="w-full flex flex-col gap-6" noValidate>
+        {/* New Password */}
+        <div className="flex flex-col gap-1.5 w-full">
+          <label htmlFor="new-password" className="text-sm font-medium text-[#344054]">
+            New Password
+          </label>
+          <div className="relative w-full">
+            <input
+              id="new-password"
+              type={showNewPassword ? 'text' : 'password'}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              className="w-full h-12 pl-4 pr-12 rounded-xl border border-[#D0D5DD] bg-white text-base text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0] transition-colors"
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#667085] hover:text-[#101828] transition-colors cursor-pointer"
+            >
+              <HugeiconsIcon icon={showNewPassword ? EyeOffIcon : ViewIcon} size={18} />
+            </button>
+          </div>
+
+          {/* Dynamic Requirements Checklist */}
+          <div className="flex flex-col gap-1.5 mt-2">
+            <RuleItem label="One letter (a-z)" isMet={hasLetter} isTyping={isTyping} />
+            <RuleItem label="One number (0–9)" isMet={hasNumber} isTyping={isTyping} />
+            <RuleItem label="One special character" isMet={hasSpecial} isTyping={isTyping} />
+            <RuleItem label="8 characters minimum" isMet={hasMinLength} isTyping={isTyping} />
+          </div>
+        </div>
+
+        {/* Confirm New Password */}
+        <div className="flex flex-col gap-1.5 w-full">
+          <label htmlFor="confirm-password" className="text-sm font-medium text-[#344054]">
+            Confirm New Password
+          </label>
+          <div className="relative w-full">
+            <input
+              id="confirm-password"
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              className="w-full h-12 pl-4 pr-12 rounded-xl border border-[#D0D5DD] bg-white text-base text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0] transition-colors"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#667085] hover:text-[#101828] transition-colors cursor-pointer"
+            >
+              <HugeiconsIcon icon={showConfirmPassword ? EyeOffIcon : ViewIcon} size={18} />
+            </button>
+          </div>
+          {confirmPassword.length > 0 && !isMatch && (
+            <p className="text-xs text-[#F04438] mt-1 font-medium">Passwords do not match</p>
+          )}
+        </div>
+
+        {/* API Error */}
+        {apiError && (
+          <p className="text-xs italic font-medium text-[#F04438] text-center -mt-2">{apiError}</p>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading || !isFormValid}
+          className={`w-full h-12 rounded-xl text-base font-semibold transition-colors flex items-center justify-center gap-2 select-none ${
+            isFormValid && !isLoading
+              ? 'bg-[#1565C0] text-white hover:bg-[#1565C0]/90 cursor-pointer'
+              : 'bg-[#F2F4F7] text-[#98A2B3] cursor-not-allowed'
+          }`}
+        >
+          {isLoading ? (
+            <span className="flex items-center gap-2">
+              <Spinner />
+              Updating Password…
+            </span>
+          ) : (
+            'Update Password'
+          )}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// ─── Rule Item Helper Component ───────────────────────────────────────────────
+
+function RuleItem({
+  label,
+  isMet,
+  isTyping,
+}: {
+  label: string;
+  isMet: boolean;
+  isTyping: boolean;
+}) {
+  if (isMet) {
+    return (
+      <div className="flex items-center gap-2 text-xs font-medium text-[#12B76A]">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="8" cy="8" r="8" fill="#12B76A" />
+          <path
+            d="M5 8l2 2 4-4"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span>{label}</span>
+      </div>
+    );
+  }
+
+  if (isTyping) {
+    return (
+      <div className="flex items-center gap-2 text-xs font-medium text-[#F04438]">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="8" cy="8" r="8" fill="#F04438" />
+          <path
+            d="M5.5 5.5l5 5M10.5 5.5l-5 5"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+        <span>{label}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2 text-xs font-medium text-[#667085]">
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle cx="8" cy="8" r="7.5" stroke="#667085" />
+        <circle cx="8" cy="8" r="3" fill="#667085" />
+      </svg>
+      <span>{label}</span>
+    </div>
   );
 }
