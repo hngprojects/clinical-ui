@@ -209,7 +209,6 @@ export function VerifyOtpForm() {
             const lockoutTime = getFutureTimestamp(duration);
             localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
             setIsLockedOut(true);
-            setTimeLeft(0); // Allow immediate option to request a new code
             const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
             setApiError(lockoutMsg);
             toast.error(lockoutMsg);
@@ -484,7 +483,19 @@ export function VerifyOtpForm() {
         </Button>
 
         <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center">
-          {timeLeft > 0 ? (
+          {isLockedOut ? (
+            <p>
+              <span>{"Didn't receive the code? "}</span>
+              <Button
+                type="button"
+                variant="link"
+                disabled
+                className="p-0 text-sm md:text-base h-auto font-medium text-gray-400 opacity-50 cursor-not-allowed no-underline"
+              >
+                Resend Code
+              </Button>
+            </p>
+          ) : timeLeft > 0 ? (
             <p>
               Code expires in{' '}
               <span className="font-semibold text-[#1B1B1B]">
@@ -498,13 +509,8 @@ export function VerifyOtpForm() {
                 type="button"
                 variant="link"
                 onClick={handleResend}
-                disabled={isVerifying || isResending || isLockedOut}
-                className={cn(
-                  'p-0 text-sm md:text-base h-auto font-medium',
-                  isLockedOut
-                    ? 'text-gray-400 opacity-50 cursor-not-allowed no-underline'
-                    : 'text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer',
-                )}
+                disabled={isVerifying || isResending}
+                className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
               </Button>
