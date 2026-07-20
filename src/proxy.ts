@@ -8,8 +8,15 @@ const SECURITY_HEADERS: Record<string, string> = {
 };
 
 export const proxy: NextProxy = (request) => {
-  const requestId = request.headers.get('x-request-id') ?? crypto.randomUUID();
+  const token = request.cookies.get('token')?.value;
 
+  if (request.nextUrl.pathname.startsWith('/user') && !token) {
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('from', request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  const requestId = request.headers.get('x-request-id') ?? crypto.randomUUID();
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-request-id', requestId);
 
