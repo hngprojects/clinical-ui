@@ -227,7 +227,7 @@ export function VerifyOtpForm() {
         router.push('/verification');
       }
     } catch (e) {
-      const errorMsg = 'Unable to reach the server. Please check your connection.';
+      const errorMsg = 'Something went wrong, please check your connection and try again';
       setApiError(errorMsg);
       toast.error(errorMsg);
       console.error('OTP verification network failure:', e);
@@ -237,6 +237,7 @@ export function VerifyOtpForm() {
   };
 
   const handleResend = async () => {
+    if (isLockedOut) return;
     if (!email) {
       const errorMsg = 'Email not found. Please try signing up again.';
       setApiError(errorMsg);
@@ -288,7 +289,7 @@ export function VerifyOtpForm() {
         inputRefs.current[0]?.focus(); // Refocus first input
       }
     } catch {
-      const errorMsg = 'Unable to reach the server. Please check your connection.';
+      const errorMsg = 'Something went wrong, please check your connection and try again';
       setApiError(errorMsg);
       toast.error(errorMsg);
     } finally {
@@ -497,8 +498,13 @@ export function VerifyOtpForm() {
                 type="button"
                 variant="link"
                 onClick={handleResend}
-                disabled={isVerifying || isResending}
-                className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1 p-0 h-auto inline"
+                disabled={isVerifying || isResending || isLockedOut}
+                className={cn(
+                  'p-0 text-sm md:text-base h-auto font-medium',
+                  isLockedOut
+                    ? 'text-gray-400 opacity-50 cursor-not-allowed no-underline'
+                    : 'text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer',
+                )}
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
               </Button>
