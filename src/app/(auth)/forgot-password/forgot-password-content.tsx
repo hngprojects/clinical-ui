@@ -4,6 +4,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   ViewIcon,
@@ -12,10 +15,42 @@ import {
   MailAdd01Icon,
 } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
+import { EMAIL_REGEX } from '@/lib/validation';
 
 type FlowStep = 'email' | 'otp' | 'reset';
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const requestEmailSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, { message: 'Email address is required' })
+    .regex(EMAIL_REGEX, { message: 'Enter a valid email address' }),
+});
+type RequestEmailFormData = z.infer<typeof requestEmailSchema>;
+
+const verifyOtpSchema = z.object({
+  otp: z
+    .string()
+    .length(6, { message: 'Verification code must be 6 digits' })
+    .regex(/^\d{6}$/, { message: 'Verification code must be numeric' }),
+});
+type VerifyOtpFormData = z.infer<typeof verifyOtpSchema>;
+
+const createNewPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(8, { message: '8 characters minimum' })
+      .regex(/[a-zA-Z]/, { message: 'One letter (a-z)' })
+      .regex(/[0-9]/, { message: 'One number (0–9)' })
+      .regex(/[^a-zA-Z0-9]/, { message: 'One special character' }),
+    confirmPassword: z.string().min(1, { message: 'Please confirm your password' }),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+type CreateNewPasswordFormData = z.infer<typeof createNewPasswordSchema>;
 
 function Spinner() {
   return (
@@ -210,10 +245,8 @@ export default function ForgotPasswordContent() {
 
   // ─── Step 1: Request Reset Code ─────────────────────────────────────────────
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !EMAIL_REGEX.test(email.trim())) return;
-
+  const handleEmailSubmit = async (submittedEmail: string) => {
+    setEmail(submittedEmail);
     setIsLoading(true);
     setApiError(null);
 
@@ -221,7 +254,7 @@ export default function ForgotPasswordContent() {
       const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: submittedEmail.trim() }),
       });
 
       const data = await res.json().catch(() => null);
@@ -248,11 +281,9 @@ export default function ForgotPasswordContent() {
 
   // ─── Step 2: Verify OTP Code ───────────────────────────────────────────────
 
-  const handleOtpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleOtpSubmit = async (submittedOtp: string) => {
     if (isLockedOut) return;
-    const otpCodeString = otp.join('');
-    if (otpCodeString.length < 6) return;
+    if (submittedOtp.length < 6) return;
 
     setIsLoading(true);
     setApiError(null);
@@ -261,7 +292,7 @@ export default function ForgotPasswordContent() {
       const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), otp: otpCodeString }),
+        body: JSON.stringify({ email: email.trim(), otp: submittedOtp }),
       });
 
       const data = await res.json().catch(() => null);
@@ -317,7 +348,7 @@ export default function ForgotPasswordContent() {
         data?.access_token ||
         data?.data?.reset_token ||
         data?.data?.token ||
-        otpCodeString;
+        submittedOtp;
       setResetToken(tokenFromBackend);
 
       setStep('reset');
@@ -369,17 +400,8 @@ export default function ForgotPasswordContent() {
 
   // ─── Step 3: Reset Password ─────────────────────────────────────────────────
 
-  const hasMinLength = newPassword.length >= 8;
-  const hasLetter = /[a-zA-Z]/.test(newPassword);
-  const hasNumber = /[0-9]/.test(newPassword);
-  const hasSpecial = /[^a-zA-Z0-9]/.test(newPassword);
-  const isPasswordValid = hasMinLength && hasLetter && hasNumber && hasSpecial;
-  const isMatch = newPassword === confirmPassword && confirmPassword.length > 0;
-
-  const handleResetSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isPasswordValid || !isMatch) return;
-
+  const handleResetSubmit = async (submittedNewPassword: string) => {
+    setNewPassword(submittedNewPassword);
     setIsLoading(true);
     setApiError(null);
 
@@ -392,7 +414,7 @@ export default function ForgotPasswordContent() {
           email: email.trim(),
           token: tokenToSend,
           reset_token: tokenToSend,
-          new_password: newPassword,
+          new_password: submittedNewPassword,
         }),
       });
 
@@ -443,7 +465,6 @@ export default function ForgotPasswordContent() {
         {step === 'email' && (
           <RequestEmailStep
             email={email}
-            setEmail={setEmail}
             onSubmit={handleEmailSubmit}
             isLoading={isLoading}
             apiError={apiError}
@@ -479,12 +500,6 @@ export default function ForgotPasswordContent() {
             onSubmit={handleResetSubmit}
             isLoading={isLoading}
             apiError={apiError}
-            hasMinLength={hasMinLength}
-            hasLetter={hasLetter}
-            hasNumber={hasNumber}
-            hasSpecial={hasSpecial}
-            isPasswordValid={isPasswordValid}
-            isMatch={isMatch}
           />
         )}
       </div>
@@ -496,24 +511,24 @@ export default function ForgotPasswordContent() {
 
 interface RequestEmailStepProps {
   email: string;
-  setEmail: (val: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (email: string) => void;
   isLoading: boolean;
   apiError: string | null;
 }
 
-function RequestEmailStep({
-  email,
-  setEmail,
-  onSubmit,
-  isLoading,
-  apiError,
-}: RequestEmailStepProps) {
-  const isValidEmail = EMAIL_REGEX.test(email.trim());
+function RequestEmailStep({ email, onSubmit, isLoading, apiError }: RequestEmailStepProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<RequestEmailFormData>({
+    resolver: zodResolver(requestEmailSchema),
+    mode: 'onChange',
+    defaultValues: { email },
+  });
 
   return (
     <div className="w-full flex flex-col items-center">
-      {/* Icon Badge */}
       <div className="w-14 h-14 flex items-center justify-center mb-6 p-1">
         <Image
           src="/assets/forgot-password/lock-slash.svg"
@@ -524,7 +539,6 @@ function RequestEmailStep({
         />
       </div>
 
-      {/* Heading & Subtitle */}
       <h1 className="text-3xl font-bold text-[#101828] text-center mb-2 tracking-tight">
         Forgot Password?
       </h1>
@@ -533,8 +547,11 @@ function RequestEmailStep({
         password.
       </p>
 
-      {/* Form */}
-      <form onSubmit={onSubmit} className="w-full flex flex-col gap-6" noValidate>
+      <form
+        onSubmit={handleSubmit((data) => onSubmit(data.email))}
+        className="w-full flex flex-col gap-6"
+        noValidate
+      >
         <div className="flex flex-col gap-1.5 w-full">
           <label htmlFor="reset-email" className="text-sm font-medium text-[#344054]">
             Email address
@@ -548,26 +565,26 @@ function RequestEmailStep({
             <input
               id="reset-email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email')}
               placeholder="example@gmail.com"
-              required
+              aria-invalid={!!errors.email}
               className="w-full h-12 pl-10 pr-4 rounded-xl border border-[#D0D5DD] bg-white text-base text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0] transition-colors"
             />
           </div>
+          {errors.email && (
+            <p className="text-xs text-[#F04438] mt-1 font-medium">{errors.email.message}</p>
+          )}
         </div>
 
-        {/* API Error */}
         {apiError && (
           <p className="text-xs italic font-medium text-[#F04438] text-center -mt-2">{apiError}</p>
         )}
 
-        {/* Action Button */}
         <button
           type="submit"
-          disabled={isLoading || !isValidEmail}
+          disabled={isLoading || !isValid}
           className={`w-full h-12 rounded-xl text-base font-semibold transition-colors flex items-center justify-center gap-2 select-none ${
-            isValidEmail && !isLoading
+            isValid && !isLoading
               ? 'bg-[#1565C0] text-white hover:bg-[#1565C0]/90 cursor-pointer'
               : 'bg-[#F2F4F7] text-[#98A2B3] cursor-not-allowed'
           }`}
@@ -582,7 +599,6 @@ function RequestEmailStep({
           )}
         </button>
 
-        {/* Back Link */}
         <Link
           href="/login"
           className="flex items-center justify-center gap-2 text-sm font-semibold text-[#344054] hover:text-[#101828] transition-colors mt-2"
@@ -601,7 +617,7 @@ interface VerifyOtpStepProps {
   email: string;
   otp: string[];
   setOtp: React.Dispatch<React.SetStateAction<string[]>>;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (otp: string) => void;
   onResend: () => void;
   isLoading: boolean;
   isLockedOut: boolean;
@@ -626,13 +642,28 @@ function VerifyOtpStep({
 }: VerifyOtpStepProps) {
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
+  const {
+    setValue,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<VerifyOtpFormData>({
+    resolver: zodResolver(verifyOtpSchema),
+    mode: 'onChange',
+    defaultValues: { otp: otp.join('') },
+  });
+
+  const updateOtpState = (newOtp: string[]) => {
+    setOtp(newOtp);
+    setValue('otp', newOtp.join(''), { shouldValidate: true });
+  };
+
   const handleOtpChange = (element: HTMLInputElement, index: number) => {
     if (isLockedOut) return;
     if (apiError) setApiError(null);
     const value = element.value.replace(/[^0-9]/g, '');
     const newOtp = [...otp];
     newOtp[index] = value.substring(value.length - 1);
-    setOtp(newOtp);
+    updateOtpState(newOtp);
 
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
@@ -663,17 +694,14 @@ function VerifyOtpStep({
         newOtp[i] = pastedData[i];
       }
     }
-    setOtp(newOtp);
+    updateOtpState(newOtp);
 
     const nextFocusIndex = Math.min(pastedData.length, 5);
     inputRefs.current[nextFocusIndex]?.focus();
   };
 
-  const isOtpComplete = otp.join('').length === 6;
-
   return (
     <div className="w-full flex flex-col items-center">
-      {/* Icon Badge */}
       <div className="w-14 h-14 flex items-center justify-center mb-6">
         <svg
           width="24"
@@ -699,7 +727,6 @@ function VerifyOtpStep({
         </svg>
       </div>
 
-      {/* Heading & Subtitle */}
       <h1 className="text-3xl font-bold text-[#101828] text-center mb-2 tracking-tight">
         Verify Your Identity
       </h1>
@@ -710,9 +737,10 @@ function VerifyOtpStep({
         </span>
       </p>
 
-      {/* Form */}
-      <form onSubmit={onSubmit} className="w-full flex flex-col items-center gap-6">
-        {/* 6 Digit Inputs */}
+      <form
+        onSubmit={handleSubmit((data) => onSubmit(data.otp))}
+        className="w-full flex flex-col items-center gap-6"
+      >
         <div className="flex items-center justify-between gap-2.5 w-full my-2">
           {otp.map((digit, index) => (
             <input
@@ -720,6 +748,7 @@ function VerifyOtpStep({
               type="text"
               inputMode="numeric"
               maxLength={1}
+              aria-label={`Digit ${index + 1} of 6`}
               ref={(el) => {
                 if (el) inputRefs.current[index] = el;
               }}
@@ -739,17 +768,15 @@ function VerifyOtpStep({
           ))}
         </div>
 
-        {/* Error message under boxes */}
         {apiError && (
           <p className="text-xs text-[#F04438] text-center font-normal -mt-3">{apiError}</p>
         )}
 
-        {/* Submit Button */}
         <button
           type="submit"
-          disabled={isLoading || !isOtpComplete || isLockedOut}
+          disabled={isLoading || !isValid || isLockedOut}
           className={`w-full h-12 rounded-xl text-base font-semibold transition-colors flex items-center justify-center gap-2 select-none ${
-            isOtpComplete && !isLoading && !isLockedOut
+            isValid && !isLoading && !isLockedOut
               ? 'bg-[#1565C0] text-white hover:bg-[#1565C0]/90 cursor-pointer'
               : 'bg-[#F2F4F7] text-[#98A2B3] cursor-not-allowed'
           }`}
@@ -764,7 +791,6 @@ function VerifyOtpStep({
           )}
         </button>
 
-        {/* Resend Link & Timer */}
         <div className="flex items-center gap-1.5 text-sm font-medium">
           {isLockedOut ? (
             <button
@@ -806,15 +832,9 @@ interface CreateNewPasswordStepProps {
   setShowNewPassword: (val: boolean) => void;
   showConfirmPassword: boolean;
   setShowConfirmPassword: (val: boolean) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (newPassword: string) => void;
   isLoading: boolean;
   apiError: string | null;
-  hasMinLength: boolean;
-  hasLetter: boolean;
-  hasNumber: boolean;
-  hasSpecial: boolean;
-  isPasswordValid: boolean;
-  isMatch: boolean;
 }
 
 function CreateNewPasswordStep({
@@ -829,19 +849,41 @@ function CreateNewPasswordStep({
   onSubmit,
   isLoading,
   apiError,
-  hasMinLength,
-  hasLetter,
-  hasNumber,
-  hasSpecial,
-  isPasswordValid,
-  isMatch,
 }: CreateNewPasswordStepProps) {
-  const isFormValid = isPasswordValid && isMatch;
-  const isTyping = newPassword.length > 0;
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isValid },
+  } = useForm<CreateNewPasswordFormData>({
+    resolver: zodResolver(createNewPasswordSchema),
+    mode: 'onChange',
+    defaultValues: { newPassword, confirmPassword },
+  });
+
+  const watchNewPassword = useWatch({ control, name: 'newPassword', defaultValue: newPassword });
+  const watchConfirmPassword = useWatch({
+    control,
+    name: 'confirmPassword',
+    defaultValue: confirmPassword,
+  });
+
+  useEffect(() => {
+    setNewPassword(watchNewPassword || '');
+  }, [watchNewPassword, setNewPassword]);
+
+  useEffect(() => {
+    setConfirmPassword(watchConfirmPassword || '');
+  }, [watchConfirmPassword, setConfirmPassword]);
+
+  const hasMinLength = (watchNewPassword || '').length >= 8;
+  const hasLetter = /[a-zA-Z]/.test(watchNewPassword || '');
+  const hasNumber = /[0-9]/.test(watchNewPassword || '');
+  const hasSpecial = /[^a-zA-Z0-9]/.test(watchNewPassword || '');
+  const isTyping = (watchNewPassword || '').length > 0;
 
   return (
     <div className="w-full flex flex-col items-center">
-      {/* Icon Badge */}
       <div className="w-14 h-14 flex items-center justify-center mb-6 p-1">
         <Image
           src="/assets/forgot-password/shield-badge.svg"
@@ -852,7 +894,6 @@ function CreateNewPasswordStep({
         />
       </div>
 
-      {/* Heading & Subtitle */}
       <h1 className="text-3xl font-bold text-[#101828] text-center mb-2 tracking-tight">
         Create new Password
       </h1>
@@ -860,9 +901,11 @@ function CreateNewPasswordStep({
         Please create a secure password for your account.
       </p>
 
-      {/* Form */}
-      <form onSubmit={onSubmit} className="w-full flex flex-col gap-6" noValidate>
-        {/* New Password */}
+      <form
+        onSubmit={handleSubmit((data) => onSubmit(data.newPassword))}
+        className="w-full flex flex-col gap-6"
+        noValidate
+      >
         <div className="flex flex-col gap-1.5 w-full">
           <label htmlFor="new-password" className="text-sm font-medium text-[#344054]">
             New Password
@@ -871,8 +914,7 @@ function CreateNewPasswordStep({
             <input
               id="new-password"
               type={showNewPassword ? 'text' : 'password'}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              {...register('newPassword')}
               placeholder="••••••••"
               required
               className="w-full h-12 pl-4 pr-12 rounded-xl border border-[#D0D5DD] bg-white text-base text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0] transition-colors"
@@ -880,13 +922,13 @@ function CreateNewPasswordStep({
             <button
               type="button"
               onClick={() => setShowNewPassword(!showNewPassword)}
+              aria-label={showNewPassword ? 'Hide password' : 'Show password'}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-[#667085] hover:text-[#101828] transition-colors cursor-pointer"
             >
               <HugeiconsIcon icon={showNewPassword ? EyeOffIcon : ViewIcon} size={18} />
             </button>
           </div>
 
-          {/* Dynamic Requirements Checklist */}
           <div className="flex flex-col gap-1.5 mt-2">
             <RuleItem label="One letter (a-z)" isMet={hasLetter} isTyping={isTyping} />
             <RuleItem label="One number (0–9)" isMet={hasNumber} isTyping={isTyping} />
@@ -895,7 +937,6 @@ function CreateNewPasswordStep({
           </div>
         </div>
 
-        {/* Confirm New Password */}
         <div className="flex flex-col gap-1.5 w-full">
           <label htmlFor="confirm-password" className="text-sm font-medium text-[#344054]">
             Confirm New Password
@@ -904,8 +945,7 @@ function CreateNewPasswordStep({
             <input
               id="confirm-password"
               type={showConfirmPassword ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              {...register('confirmPassword')}
               placeholder="••••••••"
               required
               className="w-full h-12 pl-4 pr-12 rounded-xl border border-[#D0D5DD] bg-white text-base text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0] transition-colors"
@@ -913,27 +953,28 @@ function CreateNewPasswordStep({
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-[#667085] hover:text-[#101828] transition-colors cursor-pointer"
             >
               <HugeiconsIcon icon={showConfirmPassword ? EyeOffIcon : ViewIcon} size={18} />
             </button>
           </div>
-          {confirmPassword.length > 0 && !isMatch && (
-            <p className="text-xs text-[#F04438] mt-1 font-medium">Passwords do not match</p>
+          {errors.confirmPassword && (
+            <p className="text-xs text-[#F04438] mt-1 font-medium">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
 
-        {/* API Error */}
         {apiError && (
           <p className="text-xs italic font-medium text-[#F04438] text-center -mt-2">{apiError}</p>
         )}
 
-        {/* Submit Button */}
         <button
           type="submit"
-          disabled={isLoading || !isFormValid}
+          disabled={isLoading || !isValid}
           className={`w-full h-12 rounded-xl text-base font-semibold transition-colors flex items-center justify-center gap-2 select-none ${
-            isFormValid && !isLoading
+            isValid && !isLoading
               ? 'bg-[#1565C0] text-white hover:bg-[#1565C0]/90 cursor-pointer'
               : 'bg-[#F2F4F7] text-[#98A2B3] cursor-not-allowed'
           }`}
@@ -951,8 +992,6 @@ function CreateNewPasswordStep({
     </div>
   );
 }
-
-// ─── Rule Item Helper Component ───────────────────────────────────────────────
 
 function RuleItem({
   label,
