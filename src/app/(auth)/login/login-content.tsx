@@ -69,6 +69,7 @@ export default function LoginContent() {
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
     setError,
+    clearErrors,
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
@@ -154,7 +155,7 @@ export default function LoginContent() {
         // Map known backend error codes / messages to user-facing copy
         const msg = mapApiError(res.status, json?.message ?? '');
 
-        if (res.status === 401) {
+        if (isInvalidCredentialResponse(res.status)) {
           setError('email', { type: 'server', message: msg });
           setError('password', { type: 'server', message: msg });
         }
@@ -174,6 +175,11 @@ export default function LoginContent() {
       setApiError(msg);
       toast.error(msg);
     }
+  };
+
+  const handleCredentialChange = () => {
+    setApiError(null);
+    clearErrors(['email', 'password']);
   };
 
   // ── Google OAuth ────────────────────────────────────────────────────────────
@@ -244,6 +250,7 @@ export default function LoginContent() {
                 showPassword={showPassword}
                 setShowPassword={setShowPassword}
                 onSubmit={onSubmit}
+                onCredentialChange={handleCredentialChange}
                 onGoogleLogin={handleGoogleLogin}
                 onForgotPassword={() => setShowForgotPassword(true)}
               />
@@ -276,11 +283,15 @@ export default function LoginContent() {
 // ─── Error mapper ───────────────────────────────────────────────────────────────
 
 function mapApiError(status: number, message: string): string {
-  if (status === 401) return 'Invalid email or password.';
+  if (isInvalidCredentialResponse(status)) return 'Invalid email or password.';
   if (status === 403) return 'Please verify your email before logging in.';
   if (status === 0 || message.toLowerCase().includes('network'))
     return "We couldn't sign you in right now. Please check your connection and try again.";
   return message || 'Something went wrong. Please try again.';
+}
+
+function isInvalidCredentialResponse(status: number): boolean {
+  return status === 400 || status === 401 || status === 404 || status === 422;
 }
 
 // ─── Inner Form ─────────────────────────────────────────────────────────────────
@@ -298,6 +309,7 @@ interface LoginFormProps {
   showPassword: boolean;
   setShowPassword: (v: boolean) => void;
   onSubmit: (data: LoginValues) => Promise<void>;
+  onCredentialChange: () => void;
   onGoogleLogin: () => void;
   onForgotPassword: () => void;
 }
@@ -312,6 +324,7 @@ function LoginForm({
   showPassword,
   setShowPassword,
   onSubmit,
+  onCredentialChange,
   onGoogleLogin,
   onForgotPassword,
 }: LoginFormProps) {
@@ -338,7 +351,7 @@ function LoginForm({
           <InputFieldContainer label="Email Address" htmlFor="email" error={errors.email?.message}>
             <Input
               id="email"
-              {...register('email')}
+              {...register('email', { onChange: onCredentialChange })}
               type="email"
               placeholder="Enter your email"
               error={!!errors.email || (!!apiError && apiError.toLowerCase().includes('email'))}
@@ -351,7 +364,7 @@ function LoginForm({
             <div className="relative w-full">
               <Input
                 id="password"
-                {...register('password')}
+                {...register('password', { onChange: onCredentialChange })}
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
                 className="pr-12"
