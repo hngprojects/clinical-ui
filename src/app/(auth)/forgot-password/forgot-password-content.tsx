@@ -140,6 +140,8 @@ export default function ForgotPasswordContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [resetToken, setResetToken] = useState<string | null>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLockedOut, setIsLockedOut] = useState(false);
 
   // OTP Countdown timer
   const [timeLeft, setTimeLeft] = useState(0);
@@ -151,6 +153,50 @@ export default function ForgotPasswordContent() {
     }, 1000);
     return () => clearInterval(interval);
   }, [timeLeft]);
+
+  useEffect(() => {
+    if (!email || step !== 'otp') return;
+
+    const checkLockout = () => {
+      const stored = localStorage.getItem(`lockoutUntil_${email.trim()}`);
+      if (stored) {
+        const lockoutTime = parseInt(stored, 10);
+        const now = Date.now();
+        if (now < lockoutTime) {
+          setIsLockedOut(true);
+          const remainingSeconds = Math.ceil((lockoutTime - now) / 1000);
+          setApiError(
+            `Too many failed attempts. You are temporarily locked out for ${remainingSeconds}s.`,
+          );
+          return true;
+        } else {
+          localStorage.removeItem(`lockoutUntil_${email.trim()}`);
+          setIsLockedOut(false);
+          setFailedAttempts(0);
+          setApiError(null);
+        }
+      } else {
+        setIsLockedOut(false);
+        setFailedAttempts(0);
+      }
+      return false;
+    };
+
+    const wasLocked = checkLockout();
+    let interval: NodeJS.Timeout | null = null;
+    if (wasLocked || isLockedOut) {
+      interval = setInterval(() => {
+        const isStillLocked = checkLockout();
+        if (!isStillLocked && interval) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [email, step, isLockedOut]);
 
   const startOtpTimer = () => {
     setTimeLeft(59);
@@ -204,6 +250,7 @@ export default function ForgotPasswordContent() {
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLockedOut) return;
     const otpCodeString = otp.join('');
     if (otpCodeString.length < 6) return;
 
@@ -225,6 +272,34 @@ export default function ForgotPasswordContent() {
           'The code you entered was incorrect, check again.',
           data?.error || data?.message,
         );
+
+        const lowerError = errorMsg.toLowerCase();
+        if (
+          res.status === 429 ||
+          lowerError.includes('lockout') ||
+          lowerError.includes('locked') ||
+          lowerError.includes('too many')
+        ) {
+          const lockoutTime = Date.now() + 60 * 1000;
+          localStorage.setItem(`lockoutUntil_${email.trim()}`, lockoutTime.toString());
+          setIsLockedOut(true);
+          setApiError('Too many failed attempts. You are temporarily locked out.');
+          toast.error('Too many failed attempts. You are temporarily locked out.');
+          return;
+        }
+
+        const nextAttempts = failedAttempts + 1;
+        setFailedAttempts(nextAttempts);
+
+        if (nextAttempts >= 5) {
+          const lockoutTime = Date.now() + 60 * 1000;
+          localStorage.setItem(`lockoutUntil_${email.trim()}`, lockoutTime.toString());
+          setIsLockedOut(true);
+          setApiError('Too many failed attempts. You are temporarily locked out.');
+          toast.error('Too many failed attempts. You are temporarily locked out.');
+          return;
+        }
+
         setApiError(errorMsg);
         if (
           res.status === 0 ||
@@ -258,6 +333,7 @@ export default function ForgotPasswordContent() {
   };
 
   const handleResendOtp = async () => {
+    if (isLockedOut) return;
     if (!email.trim()) return;
 
     setIsLoading(true);
@@ -382,6 +458,7 @@ export default function ForgotPasswordContent() {
             onSubmit={handleOtpSubmit}
             onResend={handleResendOtp}
             isLoading={isLoading}
+            isLockedOut={isLockedOut}
             apiError={apiError}
             setApiError={setApiError}
             timeLeft={timeLeft}
@@ -527,6 +604,7 @@ interface VerifyOtpStepProps {
   onSubmit: (e: React.FormEvent) => void;
   onResend: () => void;
   isLoading: boolean;
+  isLockedOut: boolean;
   apiError: string | null;
   setApiError: (err: string | null) => void;
   timeLeft: number;
@@ -540,6 +618,7 @@ function VerifyOtpStep({
   onSubmit,
   onResend,
   isLoading,
+  isLockedOut,
   apiError,
   setApiError,
   timeLeft,
@@ -548,6 +627,7 @@ function VerifyOtpStep({
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
   const handleOtpChange = (element: HTMLInputElement, index: number) => {
+    if (isLockedOut) return;
     if (apiError) setApiError(null);
     const value = element.value.replace(/[^0-9]/g, '');
     const newOtp = [...otp];
@@ -560,6 +640,7 @@ function VerifyOtpStep({
   };
 
   const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (isLockedOut) return;
     if (apiError) setApiError(null);
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
@@ -568,6 +649,7 @@ function VerifyOtpStep({
 
   const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
+    if (isLockedOut) return;
     if (apiError) setApiError(null);
     const pastedData = e.clipboardData
       .getData('text')
@@ -642,13 +724,16 @@ function VerifyOtpStep({
                 if (el) inputRefs.current[index] = el;
               }}
               value={digit}
+              disabled={isLoading || isLockedOut}
               onChange={(e) => handleOtpChange(e.target, index)}
               onKeyDown={(e) => handleOtpKeyDown(e, index)}
               onPaste={handleOtpPaste}
               className={`w-12 h-12 rounded-xl border text-center text-xl font-semibold outline-none transition-all ${
-                apiError
-                  ? 'border-[#F04438] text-[#F04438] bg-white'
-                  : 'border-[#D0D5DD] bg-white text-[#101828] focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0]'
+                isLockedOut
+                  ? 'border-[#D0D5DD] bg-slate-100 text-[#98A2B3] cursor-not-allowed'
+                  : apiError
+                    ? 'border-[#F04438] text-[#F04438] bg-white'
+                    : 'border-[#D0D5DD] bg-white text-[#101828] focus:border-[#1565C0] focus:ring-1 focus:ring-[#1565C0]'
               }`}
             />
           ))}
@@ -662,9 +747,9 @@ function VerifyOtpStep({
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={isLoading || !isOtpComplete}
+          disabled={isLoading || !isOtpComplete || isLockedOut}
           className={`w-full h-12 rounded-xl text-base font-semibold transition-colors flex items-center justify-center gap-2 select-none ${
-            isOtpComplete && !isLoading
+            isOtpComplete && !isLoading && !isLockedOut
               ? 'bg-[#1565C0] text-white hover:bg-[#1565C0]/90 cursor-pointer'
               : 'bg-[#F2F4F7] text-[#98A2B3] cursor-not-allowed'
           }`}
@@ -681,7 +766,15 @@ function VerifyOtpStep({
 
         {/* Resend Link & Timer */}
         <div className="flex items-center gap-1.5 text-sm font-medium">
-          {timeLeft > 0 ? (
+          {isLockedOut ? (
+            <button
+              type="button"
+              disabled
+              className="text-[#98A2B3] opacity-50 cursor-not-allowed no-underline font-semibold"
+            >
+              Resend code
+            </button>
+          ) : timeLeft > 0 ? (
             <>
               <span className="text-[#1565C0] underline cursor-default">Resend code</span>
               <span className="text-[#667085]">{formatTimer(timeLeft)}</span>
