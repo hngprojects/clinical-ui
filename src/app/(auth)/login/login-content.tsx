@@ -67,11 +67,12 @@ export default function LoginContent() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
     setError,
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -195,9 +196,9 @@ export default function LoginContent() {
   return (
     <>
       {/* ── Split layout ─────────────────────────────────────────────────── */}
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full bg-white lg:h-screen lg:overflow-hidden">
         {/* Left — hero image (desktop only) */}
-        <div className="relative hidden lg:block lg:w-1/2 xl:w-[55%]">
+        <div className="relative hidden shrink-0 lg:block lg:w-[45%]">
           <Image
             src="/assets/login-page-assets/young_black_female_doctor.png"
             alt="Doctor smiling in a white coat"
@@ -205,12 +206,22 @@ export default function LoginContent() {
             className="object-cover object-center"
             priority
           />
+
+          <div className="absolute left-10 top-10 z-10 h-[39px] w-[154px]">
+            <Image
+              src="/assets/signup-page-assets/auth-logo.svg"
+              alt="Clinsight"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
         </div>
 
         {/* Right — form pane */}
-        <div className="flex w-full flex-col lg:w-1/2 xl:w-[45%]">
-          {/* Logo */}
-          <div className="px-8 pt-8 pb-0">
+        <div className="flex w-full flex-1 flex-col overflow-y-auto">
+          {/* The logo appears over the hero on desktop and above the form on mobile. */}
+          <div className="px-8 pb-0 pt-8 lg:hidden">
             <Image
               src="/assets/header-assets/clinsight-logo.svg"
               alt="Clinsight Logo"
@@ -228,6 +239,7 @@ export default function LoginContent() {
                 handleSubmit={handleSubmit}
                 errors={errors}
                 isSubmitting={isSubmitting}
+                isValid={isValid}
                 apiError={apiError}
                 showPassword={showPassword}
                 setShowPassword={setShowPassword}
@@ -281,6 +293,7 @@ interface LoginFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: any;
   isSubmitting: boolean;
+  isValid: boolean;
   apiError: string | null;
   showPassword: boolean;
   setShowPassword: (v: boolean) => void;
@@ -294,6 +307,7 @@ function LoginForm({
   handleSubmit,
   errors,
   isSubmitting,
+  isValid,
   apiError,
   showPassword,
   setShowPassword,
@@ -308,7 +322,7 @@ function LoginForm({
         <h1 className="font-sans text-4xl font-semibold leading-10 tracking-tight text-text-primary">
           Welcome back
         </h1>
-        <p className="font-sans text-base font-normal leading-6 text-text-secondary-3">
+        <p className="font-sans text-base font-normal leading-6 text-secondary-3">
           Review patient cases, interpret lab results, and manage your consultations securely.
         </p>
       </div>
@@ -387,10 +401,10 @@ function LoginForm({
         <div className="flex flex-col items-center gap-4 lg:gap-3">
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isValid}
             className={cn(
               'h-12 w-full rounded-xl px-6 py-3 font-sans text-base font-medium leading-6 transition-colors select-none',
-              !isSubmitting
+              !isSubmitting && isValid
                 ? 'bg-primary-blue text-white hover:bg-primary-blue/90 cursor-pointer'
                 : 'bg-[#F5F5F5] text-text-disabled cursor-not-allowed',
             )}
@@ -425,7 +439,7 @@ function LoginForm({
 
           {/* Sign up link */}
           <div className="mt-2 text-center font-sans">
-            <span className="text-sm font-normal leading-5 text-text-secondary-3">
+            <span className="text-sm font-normal leading-5 text-secondary-3">
               Don&apos;t have an account?{' '}
             </span>
             <Link
