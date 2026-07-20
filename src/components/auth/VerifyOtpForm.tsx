@@ -76,7 +76,7 @@ export function VerifyOtpForm() {
         // No stored lockout for this email - clear stale lockout state
         setIsLockedOut(false);
         setFailedAttempts(0);
-        setApiError(null);
+        setApiError((prev) => (prev && prev.includes('locked out') ? null : prev));
       }
       return false;
     };
@@ -104,6 +104,8 @@ export function VerifyOtpForm() {
     if (isLockedOut) return;
     if (!/^\d*$/.test(value)) return;
 
+    if (apiError) setApiError(null);
+
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
@@ -126,6 +128,8 @@ export function VerifyOtpForm() {
     if (isLockedOut) return;
     const pastedData = e.clipboardData.getData('text').slice(0, 6);
     if (!/^\d+$/.test(pastedData)) return;
+
+    if (apiError) setApiError(null);
 
     const newOtp = [...otp];
     pastedData.split('').forEach((char, index) => {
@@ -205,6 +209,7 @@ export function VerifyOtpForm() {
             const lockoutTime = getFutureTimestamp(duration);
             localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
             setIsLockedOut(true);
+            setTimeLeft(0); // Allow immediate option to request a new code
             const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
             setApiError(lockoutMsg);
             toast.error(lockoutMsg);
@@ -232,7 +237,6 @@ export function VerifyOtpForm() {
   };
 
   const handleResend = async () => {
-    if (isLockedOut) return;
     if (!email) {
       const errorMsg = 'Email not found. Please try signing up again.';
       setApiError(errorMsg);
@@ -277,6 +281,10 @@ export function VerifyOtpForm() {
         toast.success('OTP code resent successfully!');
         setTimeLeft(30); // Reset timer to 30 seconds
         setOtp(['', '', '', '', '', '']); // Clear digits
+        setFailedAttempts(0); // Reset failed attempts counter for new code
+        setIsLockedOut(false); // Reset lockout state
+        localStorage.removeItem(`lockoutUntil_${email}`); // Clear lockout storage
+        setApiError(null); // Clear error message
         inputRefs.current[0]?.focus(); // Refocus first input
       }
     } catch {
@@ -489,7 +497,7 @@ export function VerifyOtpForm() {
                 type="button"
                 variant="link"
                 onClick={handleResend}
-                disabled={isVerifying || isResending || isLockedOut}
+                disabled={isVerifying || isResending}
                 className="text-primary-blue font-bold hover:underline bg-transparent border-none cursor-pointer disabled:opacity-50 ml-1 p-0 h-auto inline"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
