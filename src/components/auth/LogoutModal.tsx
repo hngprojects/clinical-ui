@@ -37,14 +37,19 @@ export default function LogoutModal({ onClose }: LogoutModalProps) {
 
     // 3. Call logout endpoint
     try {
-      await fetch('/api/auth/logout', {
+      const res = await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });
+      if (!res.ok) {
+        throw new Error(`Logout request failed with status ${res.status}`);
+      }
     } catch {
       // Already cleared locally — server sync will happen when back online
       localStorage.setItem('pendingLogoutSync', 'true');
       toast.error('Something went wrong. Please check your connection and try again.');
+      setStep('confirm');
+      return;
     }
 
     // 4. Redirect — back navigation disabled via replace
