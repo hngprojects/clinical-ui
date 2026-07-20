@@ -27,7 +27,7 @@ export function Footer() {
   const hideOnRoutes = [
     '/waitlist',
     '/signup',
-    '/signin',
+    '/login',
     '/forgot-password',
     '/verify-otp',
     '/reset-password',
