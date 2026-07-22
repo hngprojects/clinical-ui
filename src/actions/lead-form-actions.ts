@@ -27,6 +27,7 @@ export async function submitLeadFormAction(input: { firstName: string; email: st
       body: JSON.stringify({
         email,
         first_name: firstName,
+        source: 'lead_magnet',
       }),
     });
 

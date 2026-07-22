@@ -1,14 +1,15 @@
 import type { MetadataRoute } from 'next';
+import { getPublicSiteUrl } from '@/lib/site-url';
 
 export default function robots(): MetadataRoute.Robots {
-  const isProd = process.env.NODE_ENV === 'production';
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const appUrl = getPublicSiteUrl();
+  const canIndex = process.env.NODE_ENV === 'production' && Boolean(appUrl);
 
   return {
-    rules: isProd
+    rules: canIndex
       ? { userAgent: '*', allow: '/', disallow: ['/api/'] }
       : { userAgent: '*', disallow: '/' },
-    sitemap: `${appUrl}/sitemap.xml`,
+    sitemap: canIndex && appUrl ? `${appUrl}/sitemap.xml` : undefined,
     host: appUrl,
   };
 }

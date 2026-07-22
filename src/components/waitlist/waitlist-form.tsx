@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   Cancel01Icon,
@@ -11,22 +12,33 @@ import {
 } from '@hugeicons/core-free-icons';
 import Image from 'next/image';
 import { isValidEmail } from '@/lib/validation';
+import { trackWaitlist } from '@/lib/analytics/ga';
+import { trackLead } from '@/lib/analytics/pixel';
+import { captureGuestEvent, captureLead, identifyLead } from '@/lib/analytics/posthog';
+import { runAnalyticsSafely } from '@/lib/analytics/safe';
 
 export function WaitlistForm() {
+  const router = useRouter();
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [website, setWebsite] = useState('');
 
   // Check if button should be enabled
   const isButtonEnabled = firstName.trim() !== '' && email.trim() !== '';
+
+  useEffect(() => {
+    runAnalyticsSafely(() => captureGuestEvent('waitlist_page_viewed'));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isLoading) return;
+    if (website) return;
 
     setError('');
 
@@ -41,10 +53,14 @@ export function WaitlistForm() {
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      const response = await fetch('/api/waitlist', {
+      const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, first_name: firstName }),
+        body: JSON.stringify({
+          email,
+          first_name: firstName,
+          source: 'waitlist',
+        }),
         signal: controller.signal,
       });
 
@@ -94,6 +110,8 @@ export function WaitlistForm() {
       }
 
       setShowSuccess(true);
+      runAnalyticsSafely(identifyLead, () => captureLead('waitlist'), trackLead, trackWaitlist);
+      router.push('/thank-you/waitlist');
     } catch (err) {
       clearTimeout(timeoutId);
       // console.error('WaitlistForm submission error:', err || 'Unknown error');
@@ -182,6 +200,16 @@ export function WaitlistForm() {
           onSubmit={handleSubmit}
           className="mx-auto flex w-full max-w-131.25 flex-col gap-4 rounded-[20px] border border-[#F0F0F0] bg-[#FAFAFA] p-2.5"
         >
+          <input
+            tabIndex={-1}
+            type="text"
+            name="website"
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+            autoComplete="off"
+            className="hidden"
+            aria-hidden="true"
+          />
           {/* First Name Input */}
           <div className="relative">
             <label htmlFor="firstName" className="sr-only">

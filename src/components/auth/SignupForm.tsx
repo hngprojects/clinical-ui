@@ -15,6 +15,10 @@ import { Button } from '@/components/ui/button';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ViewIcon, ViewOffSlashIcon as EyeOffIcon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
+import { trackSignup } from '@/lib/analytics/ga';
+import { trackRegistration } from '@/lib/analytics/pixel';
+import { captureRegistration } from '@/lib/analytics/posthog';
+import { runAnalyticsSafely } from '@/lib/analytics/safe';
 
 const signupSchema = z
   .object({
@@ -49,6 +53,7 @@ export function SignupForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [website, setWebsite] = useState('');
 
   const {
     register,
@@ -91,6 +96,7 @@ export function SignupForm() {
     values.password === values.confirmPassword;
 
   const onSubmit = async (data: SignupValues) => {
+    if (website) return;
     setApiError(null);
     try {
       const result = await signupAction({
@@ -105,6 +111,7 @@ export function SignupForm() {
         setApiError(result.error);
         toast.error(result.error);
       } else {
+        runAnalyticsSafely(captureRegistration, trackRegistration, trackSignup);
         toast.success('Account created successfully! Please verify your email.');
         router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
       }
@@ -171,6 +178,16 @@ export function SignupForm() {
         className="self-stretch flex flex-col justify-start items-end gap-8 lg:gap-4 w-full"
         noValidate
       >
+        <input
+          tabIndex={-1}
+          type="text"
+          name="website"
+          value={website}
+          onChange={(event) => setWebsite(event.target.value)}
+          autoComplete="off"
+          className="hidden"
+          aria-hidden="true"
+        />
         {/* Form Inputs Container */}
         <div className="self-stretch flex flex-col justify-start items-start gap-4 lg:gap-3 overflow-hidden w-full">
           {/* First Name & Last Name */}
