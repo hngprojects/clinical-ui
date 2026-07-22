@@ -15,6 +15,7 @@ import { isValidEmail } from '@/lib/validation';
 import { trackWaitlist } from '@/lib/analytics/ga';
 import { trackLead } from '@/lib/analytics/pixel';
 import { captureGuestEvent, captureLead, identifyLead } from '@/lib/analytics/posthog';
+import { runAnalyticsSafely } from '@/lib/analytics/safe';
 
 export function WaitlistForm() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export function WaitlistForm() {
   const isButtonEnabled = firstName.trim() !== '' && email.trim() !== '';
 
   useEffect(() => {
-    captureGuestEvent('waitlist_page_viewed');
+    runAnalyticsSafely(() => captureGuestEvent('waitlist_page_viewed'));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,10 +110,7 @@ export function WaitlistForm() {
       }
 
       setShowSuccess(true);
-      identifyLead();
-      captureLead('waitlist');
-      trackLead();
-      trackWaitlist();
+      runAnalyticsSafely(identifyLead, () => captureLead('waitlist'), trackLead, trackWaitlist);
       router.push('/thank-you/waitlist');
     } catch (err) {
       clearTimeout(timeoutId);

@@ -8,14 +8,32 @@ declare global {
 
 const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com';
+const inMemoryAnalyticsIds = new Map<string, string>();
 
 function getOpaqueAnalyticsId(kind: 'lead' | 'user') {
   const storageKey = `clinsight_${kind}_analytics_id`;
-  const existingId = window.localStorage.getItem(storageKey);
-  if (existingId) return existingId;
+  const inMemoryId = inMemoryAnalyticsIds.get(storageKey);
+  if (inMemoryId) return inMemoryId;
+
+  try {
+    const existingId = window.localStorage.getItem(storageKey);
+    if (existingId) {
+      inMemoryAnalyticsIds.set(storageKey, existingId);
+      return existingId;
+    }
+  } catch {
+    // Storage can be unavailable in private or restricted browser contexts.
+  }
 
   const id = `${kind}_${crypto.randomUUID()}`;
-  window.localStorage.setItem(storageKey, id);
+  inMemoryAnalyticsIds.set(storageKey, id);
+
+  try {
+    window.localStorage.setItem(storageKey, id);
+  } catch {
+    // Continue with the in-memory ID when persistent storage is unavailable.
+  }
+
   return id;
 }
 

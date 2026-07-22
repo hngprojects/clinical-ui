@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: canIndex
       ? { userAgent: '*', allow: '/', disallow: ['/api/'] }
       : { userAgent: '*', disallow: '/' },
-    sitemap: appUrl ? `${appUrl}/sitemap.xml` : undefined,
+    sitemap: canIndex && appUrl ? `${appUrl}/sitemap.xml` : undefined,
     host: appUrl,
   };
 }

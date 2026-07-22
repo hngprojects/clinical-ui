@@ -13,6 +13,7 @@ import { leadFormSchema, type LeadFormValues } from '@/schemas/lead-form-schema'
 import { trackGuideDownload } from '@/lib/analytics/ga';
 import { trackLead } from '@/lib/analytics/pixel';
 import { captureGuestEvent, captureLead, identifyLead } from '@/lib/analytics/posthog';
+import { runAnalyticsSafely } from '@/lib/analytics/safe';
 
 export function LeadForm() {
   const router = useRouter();
@@ -39,14 +40,14 @@ export function LeadForm() {
   const isButtonEnabled = firstName.trim() !== '' && email.trim() !== '';
 
   useEffect(() => {
-    captureGuestEvent('squeeze_page_viewed');
+    runAnalyticsSafely(() => captureGuestEvent('squeeze_page_viewed'));
   }, []);
 
   const onSubmit = async (data: LeadFormValues) => {
     if (isLoading) return;
     if (website) return;
 
-    captureGuestEvent('guide_download_started');
+    runAnalyticsSafely(() => captureGuestEvent('guide_download_started'));
 
     setError('');
     setIsLoading(true);
@@ -68,10 +69,7 @@ export function LeadForm() {
 
       reset();
       setIsDone(true);
-      identifyLead();
-      captureLead('guide');
-      trackLead();
-      trackGuideDownload();
+      runAnalyticsSafely(identifyLead, () => captureLead('guide'), trackLead, trackGuideDownload);
       toast.success("You're all set! Check your inbox for the free guide.");
 
       if (downloadWindow) {

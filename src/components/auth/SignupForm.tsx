@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { trackSignup } from '@/lib/analytics/ga';
 import { trackRegistration } from '@/lib/analytics/pixel';
 import { captureRegistration } from '@/lib/analytics/posthog';
+import { runAnalyticsSafely } from '@/lib/analytics/safe';
 
 const signupSchema = z
   .object({
@@ -110,9 +111,7 @@ export function SignupForm() {
         setApiError(result.error);
         toast.error(result.error);
       } else {
-        captureRegistration();
-        trackRegistration();
-        trackSignup();
+        runAnalyticsSafely(captureRegistration, trackRegistration, trackSignup);
         toast.success('Account created successfully! Please verify your email.');
         router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
       }
