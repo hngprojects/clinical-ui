@@ -15,7 +15,6 @@ import { isValidEmail } from '@/lib/validation';
 import { trackWaitlist } from '@/lib/analytics/ga';
 import { trackLead } from '@/lib/analytics/pixel';
 import { captureGuestEvent, captureLead, identifyLead } from '@/lib/analytics/posthog';
-import { waitlistGroupId, waitlistTags } from '@/lib/subscription';
 
 export function WaitlistForm() {
   const router = useRouter();
@@ -59,8 +58,7 @@ export function WaitlistForm() {
         body: JSON.stringify({
           email,
           first_name: firstName,
-          group_id: waitlistGroupId,
-          tags: waitlistTags,
+          source: 'waitlist',
         }),
         signal: controller.signal,
       });
@@ -111,8 +109,8 @@ export function WaitlistForm() {
       }
 
       setShowSuccess(true);
-      identifyLead(email, { first_name: firstName });
-      captureLead('waitlist', email);
+      identifyLead();
+      captureLead('waitlist');
       trackLead();
       trackWaitlist();
       router.push('/thank-you/waitlist');

@@ -9,6 +9,5 @@ export const subscribeSchema = z.object({
     .trim()
     .min(1, 'First name is required')
     .max(MAX_FIRST_NAME_LENGTH, 'First name is too long'),
-  group_id: z.string().regex(/^\d+$/, 'A numeric group ID is required').optional(),
-  tags: z.array(z.string().trim().min(1).max(100)).max(10).default([]),
+  source: z.enum(['lead_magnet', 'waitlist']),
 });

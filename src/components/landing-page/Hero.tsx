@@ -181,7 +181,7 @@ export function Hero() {
                       src={src}
                       alt="User"
                       fill
-                      sizes="(min-width: 1024px) 84px, 50px"
+                      sizes="(min-width: 1024px) 68px, 42px"
                       className="object-cover"
                     />
                   </div>

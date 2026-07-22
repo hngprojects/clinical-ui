@@ -68,8 +68,8 @@ export function LeadForm() {
 
       reset();
       setIsDone(true);
-      identifyLead(data.email, { first_name: data.firstName });
-      captureLead('guide', data.email);
+      identifyLead();
+      captureLead('guide');
       trackLead();
       trackGuideDownload();
       toast.success("You're all set! Check your inbox for the free guide.");

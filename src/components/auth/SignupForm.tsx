@@ -110,7 +110,7 @@ export function SignupForm() {
         setApiError(result.error);
         toast.error(result.error);
       } else {
-        captureRegistration(data.email);
+        captureRegistration();
         trackRegistration();
         trackSignup();
         toast.success('Account created successfully! Please verify your email.');

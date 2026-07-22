@@ -8,26 +8,26 @@ import { Footer } from '@/components/Footer';
 import { ComingSoonProvider } from '@/components/coming-soon';
 import { Toaster } from '@/components/ui/sonner';
 import { AnalyticsProvider } from '@/providers/AnalyticsProvider';
+import { getPublicSiteUrl } from '@/lib/site-url';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://clinsight.hng14.com';
+const appUrl = getPublicSiteUrl();
 const appName = process.env.NEXT_PUBLIC_APP_NAME ?? 'Clinsight';
 const facebookDomainVerification = process.env.NEXT_PUBLIC_FACEBOOK_DOMAIN_VERIFICATION;
 const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(appUrl),
+  metadataBase: appUrl ? new URL(appUrl) : undefined,
   title: {
     default: appName,
     template: `%s · ${appName}`,
   },
   description: 'Understand your lab results with clear insights and optional doctor review.',
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     siteName: appName,
@@ -57,19 +57,19 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-neutral-50" suppressHydrationWarning>
         {metaPixelId && (
-          <Script id="meta-pixel-base" strategy="beforeInteractive">
+          <Script id="meta-pixel-base" strategy="afterInteractive">
             {`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',${JSON.stringify(metaPixelId)});fbq('track','PageView');`}
           </Script>
         )}
         {gaMeasurementId && (
           <>
-            <Script id="ga4-base" strategy="beforeInteractive">
+            <Script id="ga4-base" strategy="afterInteractive">
               {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config',${JSON.stringify(gaMeasurementId)});`}
             </Script>
             <Script
               id="ga4-library"
               src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaMeasurementId)}`}
-              strategy="beforeInteractive"
+              strategy="afterInteractive"
             />
           </>
         )}

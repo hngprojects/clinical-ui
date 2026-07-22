@@ -1,6 +1,17 @@
 import { NextResponse } from 'next/server';
 import { subscribeSchema } from '@/schemas/subscribe-schema';
 
+const subscriptionDestinations = {
+  lead_magnet: {
+    groupId: process.env.MAILERLITE_LEAD_MAGNET_GROUP_ID?.trim(),
+    tags: ['lead_magnet_guide'],
+  },
+  waitlist: {
+    groupId: process.env.MAILERLITE_WAITLIST_GROUP_ID?.trim(),
+    tags: ['waitlist'],
+  },
+} as const;
+
 export async function POST(request: Request) {
   try {
     let body: unknown;
@@ -17,11 +28,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
     }
 
-    const { email, first_name, group_id, tags } = result.data;
-    const groupId = group_id ?? process.env.MAILERLITE_GROUP_ID?.trim();
+    const { email, first_name, source } = result.data;
+    const destination = subscriptionDestinations[source];
 
-    if (!groupId) {
-      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+    if (!destination.groupId) {
+      console.error(`Missing MailerLite group configuration for subscription source: ${source}`);
+      return NextResponse.json({ error: 'Subscription is unavailable' }, { status: 503 });
     }
 
     // Call backend with timeout
@@ -37,8 +49,8 @@ export async function POST(request: Request) {
         body: JSON.stringify({
           email,
           first_name,
-          group_id: groupId,
-          tags,
+          group_id: destination.groupId,
+          tags: destination.tags,
         }),
         signal: controller.signal,
       });

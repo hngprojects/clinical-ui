@@ -1,13 +1,16 @@
 allowBuilds:
-  core-js: set this to true or false
+  core-js: false
   msw: true
   sharp: true
   unrs-resolver: true
+
 minimumReleaseAgeExclude:
   - postcss@8.5.10
   - hono@4.12.21
   - '@posthog/core@1.44.0'
   - '@posthog/types@1.397.1'
   - posthog-js@1.405.3
+
 overrides:
-  postcss@<8.5.10: ^8.5.10
+  "postcss@<8.5.10": ">=8.5.10"
+  "qs": "^6.15.2"

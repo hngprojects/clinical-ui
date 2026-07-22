@@ -1,7 +1,6 @@
 'use server';
 
 import { leadFormSchema } from '@/schemas/lead-form-schema';
-import { leadMagnetGroupId, leadMagnetTags } from '@/lib/subscription';
 
 export async function submitLeadFormAction(input: { firstName: string; email: string }) {
   const validation = leadFormSchema.safeParse(input);
@@ -28,8 +27,7 @@ export async function submitLeadFormAction(input: { firstName: string; email: st
       body: JSON.stringify({
         email,
         first_name: firstName,
-        group_id: leadMagnetGroupId,
-        tags: leadMagnetTags,
+        source: 'lead_magnet',
       }),
     });
 
