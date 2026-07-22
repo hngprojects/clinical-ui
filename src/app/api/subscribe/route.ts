@@ -17,8 +17,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
     }
 
-    const { email, first_name } = result.data;
-    const groupId = process.env.MAILERLITE_GROUP_ID?.trim();
+    const { email, first_name, group_id, tags } = result.data;
+    const groupId = group_id ?? process.env.MAILERLITE_GROUP_ID?.trim();
 
     if (!groupId) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
           email,
           first_name,
           group_id: groupId,
-          tags: ['lead_magnet_guide'],
+          tags,
         }),
         signal: controller.signal,
       });

@@ -1,13 +1,21 @@
 import type { Metadata } from 'next';
 
 export function pageMetadata(title: string, description: string, endpoint: string): Metadata {
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://clinsight.hng14.com').replace(
+    /\/$/,
+    '',
+  );
+  const url = `${appUrl}${endpoint}`;
+
   return {
-    title: title,
-    description: description,
+    title,
+    description,
+    alternates: { canonical: endpoint },
     openGraph: {
-      title: title,
-      description: description,
-      url: `https://clinsight.hng14.com${endpoint}`,
+      type: 'website',
+      title,
+      description,
+      url,
       images: [
         {
           url: 'https://clinsight.hng14.com/og-image.png',
@@ -17,5 +25,6 @@ export function pageMetadata(title: string, description: string, endpoint: strin
         },
       ],
     },
+    twitter: { card: 'summary_large_image', title, description, images: ['/og-image.png'] },
   };
 }

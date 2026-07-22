@@ -5,6 +5,7 @@ import { HowItWorks } from '@/components/landing-page/HowItWorks';
 import { FAQ } from '@/components/landing-page/FAQ';
 import { MedicalProfessional } from '@/components/landing-page/MedicalProfessional';
 import { pageMetadata } from '@/lib/pageMetadata';
+import { StructuredData } from '@/components/seo/StructuredData';
 
 export const metadata = pageMetadata(
   'Clinsight — Home',
@@ -15,6 +16,7 @@ export const metadata = pageMetadata(
 export default function Home() {
   return (
     <div className="flex flex-col w-full">
+      <StructuredData />
       <Hero />
       <Features />
       <FeaturesGrid />

@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, type Variants } from 'motion/react';
 import Link from 'next/link';
 
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -28,6 +28,7 @@ const SUBJECT_OPTIONS = ['General', 'Support', 'Partnership', 'Press'];
 
 export default function ContactForm() {
   const [isSendingMessage, startSendMessageTransition] = useTransition();
+  const [website, setWebsite] = useState('');
 
   const { register, handleSubmit, formState, control, reset } = useForm<ContactFormDataType>({
     resolver: zodResolver(contactSchema),
@@ -49,6 +50,7 @@ export default function ContactForm() {
   });
 
   function handleSendMessage(formData: ContactFormDataType) {
+    if (website) return;
     startSendMessageTransition(async () => {
       const response = await sendMessageAction(formData);
 
@@ -81,6 +83,16 @@ export default function ContactForm() {
       </header>
 
       <form action="" autoComplete="on" onSubmit={handleSubmit(handleSendMessage)}>
+        <input
+          tabIndex={-1}
+          type="text"
+          name="website"
+          value={website}
+          onChange={(event) => setWebsite(event.target.value)}
+          autoComplete="off"
+          className="hidden"
+          aria-hidden="true"
+        />
         <motion.div
           className="space-y-5"
           variants={containerVariants}
