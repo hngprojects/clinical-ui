@@ -18,9 +18,8 @@ Users can sign up for early access to Clinsight through the waitlist form.
 
 ## API Endpoint
 
-- **POST** `/api/waitlist`
-- Body: `{ email: string }`
-- Backend: `https://api.staging.clinsight.hng14.com/api/v1/waitlist`
+- **POST** `/api/subscribe`
+- Body: `{ email: string, first_name: string, source: 'waitlist' }`
 - Returns: `{ status: string, message: string, data: { id: string, email: string, created_at: string } }`
 
 ## Testing

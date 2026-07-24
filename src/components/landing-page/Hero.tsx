@@ -52,6 +52,7 @@ export function Hero() {
                     src="/assets/landing-page-assets/handsome-man1.jpg"
                     alt="User"
                     fill
+                    sizes="24px"
                     className="object-cover"
                   />
                 </div>
@@ -60,6 +61,7 @@ export function Hero() {
                     src="/assets/landing-page-assets/successful-entrepreneur1.jpg"
                     alt="User"
                     fill
+                    sizes="24px"
                     className="object-cover"
                   />
                 </div>
@@ -68,6 +70,7 @@ export function Hero() {
                     src="/assets/landing-page-assets/curly-haired-woman1.jpg"
                     alt="User"
                     fill
+                    sizes="24px"
                     className="object-cover"
                   />
                 </div>
@@ -131,6 +134,7 @@ export function Hero() {
                     src="/assets/landing-page-assets/outer-inner-circle.svg"
                     alt=""
                     fill
+                    sizes="(min-width: 1024px) 600px, 320px"
                     className="object-contain"
                     priority
                   />
@@ -173,7 +177,13 @@ export function Hero() {
                     key={i}
                     className="relative flex-1 w-full overflow-hidden rounded-md lg:rounded-lg"
                   >
-                    <Image src={src} alt="User" fill className="object-cover" />
+                    <Image
+                      src={src}
+                      alt="User"
+                      fill
+                      sizes="(min-width: 1024px) 68px, 42px"
+                      className="object-cover"
+                    />
                   </div>
                 ))}
                 <div

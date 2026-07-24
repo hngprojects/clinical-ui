@@ -2,6 +2,13 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { pageMetadata } from '@/lib/pageMetadata';
+
+export const metadata = pageMetadata(
+  'Delete Account',
+  'Learn how to request deletion of your Clinsight account and associated personal data.',
+  '/delete-account',
+);
 
 export default function DeleteAccountPage() {
   return (
