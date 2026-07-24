@@ -17,6 +17,9 @@ const inter = Inter({
 
 const appUrl = getPublicSiteUrl();
 const appName = process.env.NEXT_PUBLIC_APP_NAME ?? 'Clinsight';
+const siteTitle = 'Clinsight | Understand Your Lab Results in Minutes';
+const siteDescription =
+  'Clinsight uses AI to explain complex lab results in plain language, helping you better understand your health before speaking with your doctor.';
 const facebookDomainVerification = process.env.NEXT_PUBLIC_FACEBOOK_DOMAIN_VERIFICATION;
 const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -24,18 +27,23 @@ const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 export const metadata: Metadata = {
   metadataBase: appUrl ? new URL(appUrl) : undefined,
   title: {
-    default: appName,
+    default: siteTitle,
     template: `%s · ${appName}`,
   },
-  description: 'Understand your lab results with clear insights and optional doctor review.',
+  description: siteDescription,
   openGraph: {
     type: 'website',
     siteName: appName,
-    title: appName,
-    description: 'Understand your lab results with clear insights and optional doctor review.',
+    title: siteTitle,
+    description: siteDescription,
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Clinsight' }],
   },
-  twitter: { card: 'summary_large_image', title: appName, images: ['/og-image.png'] },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteTitle,
+    description: siteDescription,
+    images: ['/og-image.png'],
+  },
   other: facebookDomainVerification
     ? { 'facebook-domain-verification': facebookDomainVerification }
     : undefined,

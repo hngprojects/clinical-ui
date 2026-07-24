@@ -8,8 +8,8 @@ import { pageMetadata } from '@/lib/pageMetadata';
 import { StructuredData } from '@/components/seo/StructuredData';
 
 export const metadata = pageMetadata(
-  'Clinsight — Home',
-  'Understand your lab results with clear insights and optional doctor review.',
+  'Clinsight | Understand Your Lab Results in Minutes',
+  'Clinsight uses AI to explain complex lab results in plain language, helping you better understand your health before speaking with your doctor.',
   '/',
 );
 
