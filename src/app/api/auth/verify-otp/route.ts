@@ -16,8 +16,9 @@ export async function POST(request: Request) {
     }
 
     const BACKEND_URL =
+      process.env.NEXT_PUBLIC_VERIFY_RESET_OTP_API_URL ||
       process.env.NEXT_PUBLIC_VERIFY_OTP_API_URL ||
-      'https://api.staging.clinsight.hng14.com/api/v1/auth/verify-otp';
+      `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.staging.useclinsight.com'}/api/v1/auth/verify-reset-otp`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);

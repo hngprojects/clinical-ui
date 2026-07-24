@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -9,11 +10,17 @@ import { toast } from 'sonner';
 import { submitLeadFormAction } from '@/actions/lead-form-actions';
 import { cn } from '@/lib/utils';
 import { leadFormSchema, type LeadFormValues } from '@/schemas/lead-form-schema';
+import { trackGuideDownload } from '@/lib/analytics/ga';
+import { trackLead } from '@/lib/analytics/pixel';
+import { captureGuestEvent, captureLead, identifyLead } from '@/lib/analytics/posthog';
+import { runAnalyticsSafely } from '@/lib/analytics/safe';
 
 export function LeadForm() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState('');
+  const [website, setWebsite] = useState('');
 
   const {
     register,
@@ -32,8 +39,15 @@ export function LeadForm() {
   const [email, setEmail] = useState('');
   const isButtonEnabled = firstName.trim() !== '' && email.trim() !== '';
 
+  useEffect(() => {
+    runAnalyticsSafely(() => captureGuestEvent('squeeze_page_viewed'));
+  }, []);
+
   const onSubmit = async (data: LeadFormValues) => {
     if (isLoading) return;
+    if (website) return;
+
+    runAnalyticsSafely(() => captureGuestEvent('guide_download_started'));
 
     setError('');
     setIsLoading(true);
@@ -55,6 +69,7 @@ export function LeadForm() {
 
       reset();
       setIsDone(true);
+      runAnalyticsSafely(identifyLead, () => captureLead('guide'), trackLead, trackGuideDownload);
       toast.success("You're all set! Check your inbox for the free guide.");
 
       if (downloadWindow) {
@@ -66,6 +81,8 @@ export function LeadForm() {
           'noopener,noreferrer',
         );
       }
+
+      router.push('/thank-you/guide');
     } finally {
       setIsLoading(false);
     }
@@ -99,6 +116,16 @@ export function LeadForm() {
       noValidate
       className="flex w-full max-w-md flex-col gap-3 text-left"
     >
+      <input
+        tabIndex={-1}
+        type="text"
+        name="website"
+        value={website}
+        onChange={(event) => setWebsite(event.target.value)}
+        autoComplete="off"
+        className="hidden"
+        aria-hidden="true"
+      />
       <div>
         <label htmlFor="lead-first-name" className="sr-only">
           First name

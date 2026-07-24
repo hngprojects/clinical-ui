@@ -27,7 +27,7 @@ export function Footer() {
   const hideOnRoutes = [
     '/waitlist',
     '/signup',
-    '/signin',
+    '/login',
     '/forgot-password',
     '/verify-otp',
     '/reset-password',
@@ -37,7 +37,11 @@ export function Footer() {
     '/verification/verification-complete',
     '/squeeze',
   ];
-  if (hideOnRoutes.includes(pathname) || pathname.startsWith('/user')) {
+  if (
+    hideOnRoutes.includes(pathname) ||
+    pathname.startsWith('/user') ||
+    pathname.startsWith('/verification')
+  ) {
     return null;
   }
   return (

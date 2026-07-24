@@ -9,4 +9,5 @@ export const subscribeSchema = z.object({
     .trim()
     .min(1, 'First name is required')
     .max(MAX_FIRST_NAME_LENGTH, 'First name is too long'),
+  source: z.enum(['lead_magnet', 'waitlist']),
 });

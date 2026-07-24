@@ -1,39 +1,123 @@
 'use client';
 
-import { useState, useRef } from 'react';
-// import { useRouter, useSearchParams } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'motion/react';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-// import { verifyOtpAction, resendOtpAction } from '@/actions/auth-actions';
-// import { toast } from 'sonner';
-import { triggerComingSoonModal } from '@/components/coming-soon';
+import { verifyOtpAction, resendOtpAction } from '@/actions/auth-actions';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft02Icon } from '@hugeicons/core-free-icons';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+
+const maskEmail = (emailStr: string) => {
+  if (!emailStr) return '';
+  const parts = emailStr.split('@');
+  if (parts.length !== 2) return emailStr;
+  const [username, domain] = parts;
+  if (username.length <= 2) {
+    return `${username}***@${domain}`;
+  }
+  return `${username.substring(0, 2)}***@${domain}`;
+};
+
+const getFutureTimestamp = (durationMs: number): number => {
+  return Date.now() + durationMs;
+};
 
 export function VerifyOtpForm() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  // const [isVerifying, setIsVerifying] = useState(false);
-  // const [isResending, setIsResending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [resendSuccess, setResendSuccess] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds resend cooldown
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLockedOut, setIsLockedOut] = useState(false);
+
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  // const router = useRouter();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
 
+  // Timer Effect
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  // Lockout persist & expiration check
+  useEffect(() => {
+    if (!email) return;
+
+    const checkLockout = () => {
+      const stored = localStorage.getItem(`lockoutUntil_${email}`);
+      if (stored) {
+        const lockoutTime = parseInt(stored, 10);
+        const now = Date.now();
+        if (now < lockoutTime) {
+          setIsLockedOut(true);
+          const remainingSeconds = Math.ceil((lockoutTime - now) / 1000);
+          setApiError(
+            `Too many failed attempts. You are temporarily locked out for ${remainingSeconds}s.`,
+          );
+          return true;
+        } else {
+          // Expired
+          localStorage.removeItem(`lockoutUntil_${email}`);
+          setIsLockedOut(false);
+          setFailedAttempts(0);
+          setApiError(null);
+        }
+      } else {
+        // No stored lockout for this email - clear stale lockout state
+        setIsLockedOut(false);
+        setFailedAttempts(0);
+        setApiError((prev) => (prev && prev.includes('locked out') ? null : prev));
+      }
+      return false;
+    };
+
+    // Initial check on mount/email change
+    const wasLocked = checkLockout();
+
+    // If locked, set up a timer to decrement the remaining seconds and unlock when ready
+    let interval: NodeJS.Timeout | null = null;
+    if (wasLocked || isLockedOut) {
+      interval = setInterval(() => {
+        const isStillLocked = checkLockout();
+        if (!isStillLocked && interval) {
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [email, isLockedOut]);
+
   const handleChange = (index: number, value: string) => {
+    if (isLockedOut) return;
     if (!/^\d*$/.test(value)) return;
+
+    if (apiError) setApiError(null);
 
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
 
+    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isLockedOut) return;
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -41,8 +125,11 @@ export function VerifyOtpForm() {
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
+    if (isLockedOut) return;
     const pastedData = e.clipboardData.getData('text').slice(0, 6);
     if (!/^\d+$/.test(pastedData)) return;
+
+    if (apiError) setApiError(null);
 
     const newOtp = [...otp];
     pastedData.split('').forEach((char, index) => {
@@ -53,114 +140,383 @@ export function VerifyOtpForm() {
   };
 
   const handleVerify = async () => {
-    // const otpString = otp.join('');
-    // if (otpString.length !== 6) {
-    //   toast.error('Please enter the full 6-digit OTP');
-    //   return;
-    // }
+    if (isLockedOut) return;
 
-    // setIsVerifying(true);
-    // try {
-    //   const result = await verifyOtpAction(email, otpString);
-    //   if (result.error) {
-    //     toast.error(result.error);
-    //   } else {
-    //     toast.success('Email verified successfully!');
-    //     router.push('/signin'); // Or dashboard if logged in
-    //   }
-    // } catch {
-    //   toast.error('An unexpected error occurred');
-    // } finally {
-    //   setIsVerifying(false);
-    // }
+    // Block verification if code has expired
+    if (timeLeft <= 0) {
+      const errorMsg = 'This code has expired. Please request a new one.';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
 
-    triggerComingSoonModal({
-      title: 'OTP verification is coming soon',
-      description: email
-        ? `We are still completing the OTP verification flow for ${email}.`
-        : 'We are still completing the OTP verification flow.',
-    });
+    const otpString = otp.join('');
+    if (otpString.length !== 6) return;
+
+    setIsVerifying(true);
+    setApiError(null);
+    setResendSuccess(false);
+
+    try {
+      const result = await verifyOtpAction(email, otpString);
+      if (result.error) {
+        let errorMsg = result.error;
+        const lowerError = errorMsg.toLowerCase();
+
+        // Check if server returned a lockout message
+        if (
+          lowerError.includes('lockout') ||
+          lowerError.includes('locked') ||
+          lowerError.includes('too many')
+        ) {
+          let duration = 60 * 1000; // default 60 seconds
+          const match = lowerError.match(/(\d+)\s*(second|sec|minute|min|hour)/i);
+          if (match) {
+            const amount = parseInt(match[1], 10);
+            const unit = match[2].toLowerCase();
+            if (unit.startsWith('min')) {
+              duration = amount * 60 * 1000;
+            } else if (unit.startsWith('hour')) {
+              duration = amount * 60 * 60 * 1000;
+            } else {
+              duration = amount * 1000;
+            }
+          }
+          const lockoutTime = getFutureTimestamp(duration);
+          localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
+          setIsLockedOut(true);
+          setApiError(errorMsg);
+          toast.error(errorMsg);
+          return;
+        }
+
+        // Only count incorrect OTP responses as failed attempts
+        const isIncorrectCode =
+          lowerError.includes('invalid') ||
+          lowerError.includes('incorrect') ||
+          lowerError.includes('wrong');
+
+        if (isIncorrectCode) {
+          errorMsg = 'The code you entered is incorrect. Please try again.';
+          setApiError(errorMsg);
+          toast.error(errorMsg);
+
+          // Enforce lockouts locally after 5 failed attempts
+          const nextAttempts = failedAttempts + 1;
+          setFailedAttempts(nextAttempts);
+          if (nextAttempts >= 5) {
+            const duration = 60 * 1000; // 60 seconds local lockout
+            const lockoutTime = getFutureTimestamp(duration);
+            localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
+            setIsLockedOut(true);
+            const lockoutMsg = 'Too many failed attempts. You are temporarily locked out.';
+            setApiError(lockoutMsg);
+            toast.error(lockoutMsg);
+          }
+        } else {
+          // Map other general errors
+          if (lowerError.includes('expired')) {
+            errorMsg = 'This code has expired. Please request a new one.';
+          }
+          setApiError(errorMsg);
+          toast.error(errorMsg);
+        }
+      } else {
+        toast.success('Email verified successfully!');
+        router.push('/verification');
+      }
+    } catch (e) {
+      const errorMsg = 'Something went wrong, please check your connection and try again';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+      console.error('OTP verification network failure:', e);
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const handleResend = async () => {
-    // if (!email) {
-    //   toast.error('Email not found. Please try signing up again.');
-    //   return;
-    // }
-    // setIsResending(true);
-    // try {
-    //   const result = await resendOtpAction(email);
-    //   if (result.error) {
-    //     toast.error(result.error);
-    //   } else {
-    //     toast.success('OTP resent successfully! Please check your email.');
-    //   }
-    // } catch {
-    //   toast.error('An unexpected error occurred');
-    // } finally {
-    //   setIsResending(false);
-    // }
+    if (isLockedOut) return;
+    if (!email) {
+      const errorMsg = 'Email not found. Please try signing up again.';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+
+    setIsResending(true);
+    setApiError(null);
+    setResendSuccess(false);
+
+    try {
+      const result = await resendOtpAction(email);
+      if (result.error) {
+        const lowerError = result.error.toLowerCase();
+        if (
+          lowerError.includes('lockout') ||
+          lowerError.includes('locked') ||
+          lowerError.includes('too many')
+        ) {
+          let duration = 60 * 1000; // default 60s
+          const match = lowerError.match(/(\d+)\s*(second|sec|minute|min|hour)/i);
+          if (match) {
+            const amount = parseInt(match[1], 10);
+            const unit = match[2].toLowerCase();
+            if (unit.startsWith('min')) {
+              duration = amount * 60 * 1000;
+            } else if (unit.startsWith('hour')) {
+              duration = amount * 60 * 60 * 1000;
+            } else {
+              duration = amount * 1000;
+            }
+          }
+          const lockoutTime = getFutureTimestamp(duration);
+          localStorage.setItem(`lockoutUntil_${email}`, lockoutTime.toString());
+          setIsLockedOut(true);
+        }
+        setApiError(result.error);
+        toast.error(result.error);
+      } else {
+        setResendSuccess(true);
+        toast.success('OTP code resent successfully!');
+        setTimeLeft(30); // Reset timer to 30 seconds
+        setOtp(['', '', '', '', '', '']); // Clear digits
+        setFailedAttempts(0); // Reset failed attempts counter for new code
+        setIsLockedOut(false); // Reset lockout state
+        localStorage.removeItem(`lockoutUntil_${email}`); // Clear lockout storage
+        setApiError(null); // Clear error message
+        inputRefs.current[0]?.focus(); // Refocus first input
+      }
+    } catch {
+      const errorMsg = 'Something went wrong, please check your connection and try again';
+      setApiError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsResending(false);
+    }
   };
+
+  const isOtpComplete = otp.every((digit) => digit !== '');
+
+  // Turn borders red only if it's an actual incorrect/invalid code error from the server (not network timeouts or missing fields)
+  const isCodeError =
+    apiError && !/reach|server|network|timeout|gateway|connect|email/i.test(apiError);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-[661px] rounded-[32px] bg-white shadow-2xl flex flex-col items-center border border-[#E0E0E0] p-6 md:px-20 md:py-10 gap-6 md:gap-10"
+      className="w-full max-w-[338px] flex flex-col items-center gap-5 md:gap-6 font-sans"
     >
-      <div className="text-center">
-        <h1 className="text-xl md:text-[32px] font-bold text-[#1B1B1B] mb-2 whitespace-nowrap">
-          Received an OTP?
+      {/* Go Back Button */}
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => router.back()}
+        className="self-start flex items-center gap-1 text-[#5E5E5E] text-sm font-semibold hover:text-primary-blue hover:bg-transparent transition-colors cursor-pointer select-none -mb-3 p-0 h-auto"
+      >
+        <HugeiconsIcon icon={ArrowLeft02Icon} size={16} />
+        <span>Go back</span>
+      </Button>
+
+      {/* Headings */}
+      <div className="text-center select-none">
+        <h1 className="text-2xl md:text-[32px] font-bold text-[#1B1B1B] mb-2 leading-tight">
+          Verify Your Email
         </h1>
-        <p className="text-sm md:text-base text-[#5E5E5E]">Input it below</p>
+        <p className="text-sm md:text-base text-[#5E5E5E] font-normal max-w-[400px] mx-auto">
+          Enter the 6 digit code we sent to{' '}
+          <span className="font-semibold text-[#1B1B1B]">{maskEmail(email) || 'your email'}</span>
+        </p>
       </div>
 
-      <div className="flex gap-2 md:gap-4 justify-center px-4 w-full" onPaste={handlePaste}>
-        {otp.map((digit, index) => (
-          <input
-            key={index}
-            ref={(el) => {
-              inputRefs.current[index] = el;
-            }}
-            type="text"
-            inputMode="numeric"
-            maxLength={1}
-            value={digit}
-            onChange={(e) => handleChange(index, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(index, e)}
-            className={cn(
-              'w-10 h-12 md:w-16 md:h-20 text-center text-xl md:text-2xl font-bold rounded-xl border border-[#E0E0E0] bg-white outline-none transition-all',
-              'focus:border-brand-blue',
-              digit && 'border-brand-blue',
-            )}
-          />
-        ))}
+      {/* Input Boxes and Alerts */}
+      <div className="flex flex-col items-center w-full">
+        <div className="flex gap-2.5 justify-center w-full" onPaste={handlePaste}>
+          {otp.map((digit, index) => (
+            <input
+              key={index}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={digit}
+              disabled={isVerifying || isResending || isLockedOut}
+              onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              aria-label={`Digit ${index + 1} of 6`}
+              className={cn(
+                'w-12 h-12 text-center text-xl font-bold rounded-lg border border-[#E0E0E0] bg-transparent text-[#1B1B1B] outline-none transition-all',
+                'focus:border-primary-blue focus:ring-1 focus:ring-primary-blue',
+                digit && 'border-primary-blue',
+                isCodeError && 'border-red-500 focus:border-red-500 focus:ring-red-500',
+                isLockedOut && 'opacity-60 cursor-not-allowed bg-slate-50',
+              )}
+            />
+          ))}
+        </div>
+
+        {/* Inline Feedback Alerts */}
+        {apiError && (
+          <div className="text-red-500 text-[11px] md:text-xs font-medium text-left w-full mt-2.5">
+            {apiError}
+          </div>
+        )}
+
+        {resendSuccess && (
+          <div className="text-green-600 text-[11px] md:text-xs font-medium text-left w-full mt-2.5">
+            OTP code resent successfully!
+          </div>
+        )}
       </div>
 
-      <div className="w-full space-y-4">
+      {/* Verify Button & Resend Link */}
+      <div className="w-full flex flex-col items-center gap-4">
         <Button
-          variant="brand"
+          type="button"
           onClick={handleVerify}
-          // disabled={isVerifying || isResending || otp.some((d) => !d)}
-          // disabled={isResending}
-          className="h-15 w-full rounded-2xl text-base font-bold shadow-lg text-white"
+          disabled={!isOtpComplete || isVerifying || isResending || isLockedOut}
+          className={cn(
+            'h-14 w-full rounded-2xl text-base font-bold transition-colors select-none flex items-center justify-center gap-2 border-transparent',
+            isOtpComplete && !isVerifying && !isResending && !isLockedOut
+              ? 'bg-primary-blue text-white hover:bg-primary-blue/90 cursor-pointer'
+              : 'bg-[#F5F5F5] text-[#767676] cursor-not-allowed',
+          )}
         >
-          {/* {isVerifying ? 'Verifying...' : 'Begin verification'}
-          {!isVerifying && <HugeiconsIcon icon={ArrowRight02Icon} size={20} className="ml-2" />} */}
-          Begin verification
-          <HugeiconsIcon icon={ArrowRight02Icon} size={20} className="ml-2" />
+          {isVerifying ? (
+            <>
+              <svg
+                className="animate-spin h-5 w-5 text-primary-blue"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line
+                  x1="12"
+                  y1="6"
+                  x2="12"
+                  y2="2"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="1.0"
+                />
+                <line
+                  x1="16.24"
+                  y1="7.76"
+                  x2="19.07"
+                  y2="4.93"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.875"
+                />
+                <line
+                  x1="18"
+                  y1="12"
+                  x2="22"
+                  y2="12"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.75"
+                />
+                <line
+                  x1="16.24"
+                  y1="16.24"
+                  x2="19.07"
+                  y2="19.07"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.625"
+                />
+                <line
+                  x1="12"
+                  y1="18"
+                  x2="12"
+                  y2="22"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.5"
+                />
+                <line
+                  x1="7.76"
+                  y1="16.24"
+                  x2="4.93"
+                  y2="19.07"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.375"
+                />
+                <line
+                  x1="6"
+                  y1="12"
+                  x2="2"
+                  y2="12"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.25"
+                />
+                <line
+                  x1="7.76"
+                  y1="7.76"
+                  x2="4.93"
+                  y2="4.93"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.125"
+                />
+              </svg>
+              <span>verifying email...</span>
+            </>
+          ) : (
+            'Verify Email'
+          )}
         </Button>
 
-        <button
-          type="button"
-          onClick={handleResend}
-          // disabled={isVerifying || isResending}
-          className="h-15 w-full rounded-2xl border border-[#1565C0] text-[#1565C0] text-base font-bold transition-colors hover:bg-blue-50 disabled:opacity-50"
-        >
-          {/* {isResending ? 'Sending...' : 'Resend OTP'} */}
-          Resend OTP
-        </button>
+        <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center">
+          {isLockedOut ? (
+            <p>
+              <span>{"Didn't receive the code? "}</span>
+              <Button
+                type="button"
+                variant="link"
+                disabled
+                className="p-0 text-sm md:text-base h-auto font-medium text-gray-400 opacity-50 cursor-not-allowed no-underline"
+              >
+                Resend Code
+              </Button>
+            </p>
+          ) : timeLeft > 0 ? (
+            <p>
+              Code expires in{' '}
+              <span className="font-semibold text-[#1B1B1B]">
+                00:{timeLeft.toString().padStart(2, '0')}
+              </span>
+            </p>
+          ) : (
+            <p>
+              <span>{"Didn't receive the code? "}</span>
+              <Button
+                type="button"
+                variant="link"
+                onClick={handleResend}
+                disabled={isVerifying || isResending}
+                className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer"
+              >
+                {isResending ? 'Resending...' : 'Resend Code'}
+              </Button>
+            </p>
+          )}
+        </div>
       </div>
     </motion.div>
   );

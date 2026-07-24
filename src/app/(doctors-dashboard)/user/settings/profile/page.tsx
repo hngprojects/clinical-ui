@@ -1,4 +1,5 @@
 import EditButton from '@/components/settings/EditButton';
+import LogoutSection from '@/components/settings/LogoutSection';
 import { Pencil, Plus, Trash } from 'lucide-react';
 import Image from 'next/image';
 
@@ -244,6 +245,8 @@ export default function Page() {
               </div>
             </div>
           </div>
+
+          <LogoutSection />
         </div>
       </div>
     </div>
