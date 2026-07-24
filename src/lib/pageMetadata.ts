@@ -6,7 +6,7 @@ export function pageMetadata(title: string, description: string, endpoint: strin
   const url = appUrl ? `${appUrl}${endpoint}` : undefined;
 
   return {
-    title,
+    title: endpoint === '/' ? { absolute: title } : title,
     description,
     alternates: { canonical: endpoint },
     openGraph: {
