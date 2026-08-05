@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Download01Icon, Loading03Icon, CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
+import { submitLeadFormAction } from '@/actions/subscription-actions';
 import { cn } from '@/lib/utils';
 import { leadFormSchema, type LeadFormValues } from '@/schemas/lead-form-schema';
 import { trackGuideDownload } from '@/lib/analytics/ga';
@@ -54,32 +55,15 @@ export function LeadForm() {
     const downloadWindow = window.open('', '_blank', 'noopener,noreferrer');
 
     try {
-      const response = await fetch('/api/v1/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: data.email,
-          first_name: data.firstName,
-          source: 'lead_magnet',
-        }),
-      });
+      const result = await submitLeadFormAction(data);
 
-      if (!response.ok && response.status !== 409) {
-        let errorMessage = 'Something went wrong. Please try again.';
-
-        try {
-          const result = (await response.json()) as { error?: unknown };
-          if (typeof result.error === 'string') errorMessage = result.error;
-        } catch {
-          // Keep the safe default error message when the response is not JSON.
-        }
-
+      if (!result.success && result.status !== 409) {
         if (downloadWindow) {
           downloadWindow.close();
         }
 
-        setError(errorMessage);
-        toast.error(errorMessage);
+        setError(result.error);
+        toast.error(result.error);
         return;
       }
 

@@ -11,6 +11,8 @@ import {
   MailBlock01Icon,
 } from '@hugeicons/core-free-icons';
 import Image from 'next/image';
+import { toast } from 'sonner';
+import { submitWaitlistFormAction } from '@/actions/subscription-actions';
 import { isValidEmail } from '@/lib/validation';
 import { trackWaitlist } from '@/lib/analytics/ga';
 import { trackLead } from '@/lib/analytics/pixel';
@@ -49,79 +51,28 @@ export function WaitlistForm() {
 
     setIsLoading(true);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-
     try {
-      const response = await fetch('/api/v1/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          first_name: firstName,
-          source: 'waitlist',
-        }),
-        signal: controller.signal,
-      });
+      const result = await submitWaitlistFormAction({ firstName, email });
 
-      clearTimeout(timeoutId);
-
-      const contentType = response.headers.get('content-type') || '';
-      let data: unknown = null;
-      let textBody: string | null = null;
-
-      if (contentType.includes('application/json')) {
-        try {
-          data = await response.json();
-        } catch (parseErr) {
-          console.error('WaitlistForm JSON parse error:', parseErr);
-          try {
-            textBody = await response.text();
-          } catch {
-            textBody = null;
-          }
-        }
-      } else {
-        try {
-          textBody = await response.text();
-        } catch {
-          textBody = null;
-        }
-      }
-
-      // Extract a safe error message from `data` (unknown) without using `any`
-      let errorMessage: string | null = null;
-      if (data && typeof data === 'object' && data !== null && 'error' in data) {
-        const maybeError = (data as Record<string, unknown>)['error'];
-        if (typeof maybeError === 'string') errorMessage = maybeError;
-      }
-
-      if (!response.ok) {
-        if (response.status === 409) {
-          setError(errorMessage || textBody || 'This email is already on the waitlist.');
-          return;
-        }
-
-        // console.error(
-        //   'WaitlistForm submission error:',
-        //   errorMessage ?? data ?? textBody ?? 'Unknown error',
-        // );
-        throw new Error(errorMessage || textBody || 'Failed to join waitlist');
+      if (!result.success) {
+        const errorMessage =
+          result.status === 409
+            ? result.error || 'This email is already on the waitlist.'
+            : result.error;
+        setError(errorMessage);
+        toast.error(errorMessage);
+        return;
       }
 
       setShowSuccess(true);
       runAnalyticsSafely(identifyLead, () => captureLead('waitlist'), trackLead, trackWaitlist);
+      toast.success('You are on the waitlist!');
       router.push('/thank-you/waitlist');
     } catch (err) {
-      clearTimeout(timeoutId);
-      // console.error('WaitlistForm submission error:', err || 'Unknown error');
-
-      if (err instanceof Error && err.name === 'AbortError') {
-        setError('Request took too long. Please try again.');
-      } else {
-        const error = err as Error;
-        setError(error.message || 'Something went wrong. Please try again.');
-      }
+      const errorMessage =
+        err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
