@@ -530,7 +530,7 @@ export function VerifyOtpForm() {
             <p>
               Code expires in{' '}
               <span className="font-semibold text-[#1B1B1B]">
-                00:{timeLeft.toString().padStart(2, '0')}
+                00:{codeValidity.toString().padStart(2, '0')}
               </span>
             </p>
           ) : (
@@ -540,7 +540,7 @@ export function VerifyOtpForm() {
                 type="button"
                 variant="link"
                 onClick={handleResend}
-                disabled={isVerifying || isResending}
+                disabled={isVerifying || isResending || timeLeft > 0}
                 className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
