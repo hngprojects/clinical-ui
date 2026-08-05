@@ -308,6 +308,8 @@ export function VerifyOtpForm() {
         const now = getCurrentTime();
         setResendExpiry(now + RESEND_COOLDOWN_SEC * 1000);
         setCodeExpiry(now + CODE_VALIDITY_SEC * 1000);
+        setTimeLeft(RESEND_COOLDOWN_SEC);
+        setCodeValidity(CODE_VALIDITY_SEC);
 
         setOtp(['', '', '', '', '', '']); // Clear digits
         setFailedAttempts(0); // Reset failed attempts counter for new code
