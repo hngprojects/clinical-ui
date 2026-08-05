@@ -11,35 +11,36 @@ import { AuthGuard } from '@/components/auth/AuthGuard';
 
 export default function Layout({ children }: PropsWithChildren) {
   const pathname = usePathname();
-  const isCompletePage = pathname === '/verification/verification-complete';
   const showStepProgress =
     pathname === '/verification/professional-info' ||
-    pathname === '/verification/credentials-verification';
-  const isStep2 = pathname === '/verification/credentials-verification';
-
-  if (isCompletePage) {
-    return (
-      <AuthGuard allowedRoles={['doctor']}>
-        <VerificationProvider>{children}</VerificationProvider>
-      </AuthGuard>
-    );
-  }
+    pathname === '/verification/credentials-verification' ||
+    pathname === '/verification/verification-complete';
 
   const renderStepProgress = () => {
     if (!showStepProgress) return null;
 
+    const isStep2 =
+      pathname === '/verification/credentials-verification' ||
+      pathname === '/verification/verification-complete';
+    const isStep3 = pathname === '/verification/verification-complete';
+
     return (
       <div className="w-full flex items-center justify-between mb-4 select-none">
+        {/* Step 1 */}
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-primary-blue"></span>
           <span className="text-xs font-semibold text-primary-blue">Step 1</span>
         </div>
+
+        {/* Connector 1 */}
         <div
           className={cn(
             'flex-1 mx-3 border-t',
             isStep2 ? 'border-solid border-primary-blue' : 'border-dashed border-slate-300',
           )}
         ></div>
+
+        {/* Step 2 */}
         <div className="flex items-center gap-1.5">
           <span
             className={cn('w-1.5 h-1.5 rounded-full', isStep2 ? 'bg-primary-blue' : 'bg-[#94A3B8]')}
@@ -51,6 +52,29 @@ export default function Layout({ children }: PropsWithChildren) {
             )}
           >
             Step 2
+          </span>
+        </div>
+
+        {/* Connector 2 */}
+        <div
+          className={cn(
+            'flex-1 mx-3 border-t',
+            isStep3 ? 'border-solid border-primary-blue' : 'border-dashed border-slate-300',
+          )}
+        ></div>
+
+        {/* Step 3 */}
+        <div className="flex items-center gap-1.5">
+          <span
+            className={cn('w-1.5 h-1.5 rounded-full', isStep3 ? 'bg-primary-blue' : 'bg-[#94A3B8]')}
+          ></span>
+          <span
+            className={cn(
+              'text-xs',
+              isStep3 ? 'font-semibold text-primary-blue' : 'font-medium text-[#94A3B8]',
+            )}
+          >
+            Step 3
           </span>
         </div>
       </div>
