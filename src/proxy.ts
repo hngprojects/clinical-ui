@@ -13,6 +13,23 @@ const DOCTOR_HOME = '/user';
 const LOGIN_PAGE = '/login';
 
 /**
+ * Matches a pathname against a prefix exactly or when followed immediately by
+ * a slash — preventing false positives like /user-settings matching /user.
+ */
+function matchesPrefix(pathname: string, prefix: string): boolean {
+  return pathname === prefix || pathname.startsWith(prefix + '/');
+}
+
+/** Stamps x-request-id and all SECURITY_HEADERS onto any response. */
+function applyCommonHeaders(response: NextResponse, requestId: string): NextResponse {
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(key, value);
+  }
+  response.headers.set('x-request-id', requestId);
+  return response;
+}
+
+/**
  * Validates the session by calling /api/auth/me with the current cookies.
  * Returns true only when the server responds with 2xx.
  *
@@ -39,11 +56,14 @@ export const proxy: NextProxy = async (request) => {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('token')?.value;
 
+  // Hoist requestId so every response branch — including redirects — carries it
+  const requestId = request.headers.get('x-request-id') ?? crypto.randomUUID();
+
   // Fast-path: no cookie at all → definitely unauthenticated
   const hasCookie = Boolean(token);
 
-  const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-  const isAuthOnly = AUTH_ONLY_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const isProtected = PROTECTED_PREFIXES.some((prefix) => matchesPrefix(pathname, prefix));
+  const isAuthOnly = AUTH_ONLY_PREFIXES.some((prefix) => matchesPrefix(pathname, prefix));
 
   if (isProtected || isAuthOnly) {
     // Validate session server-side when a cookie is present
@@ -59,15 +79,17 @@ export const proxy: NextProxy = async (request) => {
         redirect.cookies.delete('token');
       }
 
-      return redirect;
+      return applyCommonHeaders(redirect, requestId);
     }
 
     if (isAuthOnly && isAuthenticated) {
-      return NextResponse.redirect(new URL(DOCTOR_HOME, request.url));
+      return applyCommonHeaders(
+        NextResponse.redirect(new URL(DOCTOR_HOME, request.url)),
+        requestId,
+      );
     }
   }
 
-  const requestId = request.headers.get('x-request-id') ?? crypto.randomUUID();
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-request-id', requestId);
 
@@ -75,12 +97,7 @@ export const proxy: NextProxy = async (request) => {
     request: { headers: requestHeaders },
   });
 
-  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
-    response.headers.set(key, value);
-  }
-  response.headers.set('x-request-id', requestId);
-
-  return response;
+  return applyCommonHeaders(response, requestId);
 };
 
 export const config = {
