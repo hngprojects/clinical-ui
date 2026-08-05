@@ -53,7 +53,7 @@ export function WaitlistForm() {
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      const response = await fetch('/api/subscribe', {
+      const response = await fetch('/api/v1/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
