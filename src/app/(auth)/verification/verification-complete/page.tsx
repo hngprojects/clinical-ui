@@ -1,22 +1,67 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { HourglassIcon } from '@hugeicons/core-free-icons';
+import { HourglassIcon, Loading03Icon } from '@hugeicons/core-free-icons';
+import { getVerificationStatus } from '@/lib/auth';
+
+interface VerificationRecord {
+  id: string;
+  created_at: string;
+  [key: string]: unknown;
+}
 
 export default function VerificationCompletePage() {
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('en-US', {
+  const [loading, setLoading] = useState(true);
+  const [record, setRecord] = useState<VerificationRecord | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    async function loadData() {
+      const data = await getVerificationStatus();
+      if (active) {
+        setRecord(data);
+        setLoading(false);
+      }
+    }
+    loadData();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div
+        className="w-full flex flex-col items-center justify-center py-16 select-none"
+        role="status"
+        aria-label="Loading verification details…"
+      >
+        <HugeiconsIcon
+          icon={Loading03Icon}
+          className="h-10 w-10 animate-spin text-primary-blue"
+          size={40}
+        />
+        <p className="text-sm text-[#5E5E5E] font-medium mt-4">Loading application details…</p>
+      </div>
+    );
+  }
+
+  const submissionDate = record ? new Date(record.created_at) : new Date();
+  const dateStr = submissionDate.toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
   });
-  const timeStr = now.toLocaleTimeString('en-US', {
+  const timeStr = submissionDate.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   });
   const formattedDate = `${dateStr} at ${timeStr}`;
+  const referenceId = record ? record.id : 'CLN-DRV-2026-000245';
+  // const referenceId = record ? record.id : 'N/A';
 
   return (
     <div className="w-full flex flex-col items-center justify-center select-none">
@@ -44,8 +89,8 @@ export default function VerificationCompletePage() {
         <div className="w-full flex flex-col gap-3 border-t border-slate-100 pt-4 mt-4">
           <div className="flex justify-between items-center text-sm md:text-base">
             <span className="text-secondary-3 font-medium">Reference ID</span>
-            <span className="text-text-primary font-semibold font-mono text-[13px] md:text-sm text-right">
-              CLN-DRV-2026-000245
+            <span className="text-text-primary font-semibold font-mono text-[13px] md:text-sm text-right break-all">
+              {referenceId}
             </span>
           </div>
           <div className="flex justify-between items-center text-sm md:text-base">
