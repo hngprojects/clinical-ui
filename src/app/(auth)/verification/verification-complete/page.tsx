@@ -23,9 +23,9 @@ export default function VerificationCompletePage() {
   return (
     <div className="h-screen w-full flex flex-col bg-[#F9FAFB] relative font-sans overflow-hidden">
       {/* Top Header Logo */}
-      <header className="w-full px-6 md:px-12 pt-4 flex-shrink-0 flex items-center justify-between">
+      <header className="w-full px-6 md:px-12 pt-4 shrink-0 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 cursor-pointer">
-          <div className="relative w-[140px] h-[36px]">
+          <div className="relative w-35 h-9">
             <Image
               src="/assets/header-assets/clinsight-logo.svg"
               alt="Clinsight Logo"
@@ -39,7 +39,7 @@ export default function VerificationCompletePage() {
 
       {/* Main Content Card Container */}
       <main className="flex-1 flex flex-col items-center justify-center p-6 overflow-hidden select-none">
-        <div className="w-full max-w-[600px] bg-white border border-[#EBEBEB] rounded-2xl p-6 md:p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] flex flex-col items-center">
+        <div className="w-full max-w-150 bg-white border border-[#EBEBEB] rounded-2xl p-6 md:p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] flex flex-col items-center">
           {/* Blue Hourglass Icon with flip animation (no bg or border) */}
           <div className="mb-3 flex items-center justify-center">
             <div className="animate-hourglass flex items-center justify-center">
@@ -48,12 +48,12 @@ export default function VerificationCompletePage() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-2xl md:text-[28px] font-bold text-center text-[#1b1b1b] leading-[130%] tracking-tight">
+          <h1 className="text-2xl md:text-[28px] font-bold text-center text-text-primary leading-[130%] tracking-tight">
             Your application is under review
           </h1>
 
           {/* Subtitle */}
-          <p className="text-sm text-[#5e5e5e] text-center leading-[150%] mt-2 max-w-[480px]">
+          <p className="text-sm text-secondary-3 text-center leading-[150%] mt-2 max-w-120">
             We have received your application, and our team is reviewing your documents. You&apos;ll
             receive an email with an update once the review is complete or if we need any additional
             information.
@@ -62,23 +62,23 @@ export default function VerificationCompletePage() {
           {/* Details Table */}
           <div className="w-full flex flex-col gap-3 border-t border-slate-100 pt-4 mt-4">
             <div className="flex justify-between items-center text-sm md:text-base">
-              <span className="text-[#5e5e5e] font-medium">Reference ID</span>
-              <span className="text-[#1b1b1b] font-semibold font-mono text-[13px] md:text-sm text-right">
+              <span className="text-secondary-3 font-medium">Reference ID</span>
+              <span className="text-text-primary font-semibold font-mono text-[13px] md:text-sm text-right">
                 CLN-DRV-2026-000245
               </span>
             </div>
             <div className="flex justify-between items-center text-sm md:text-base">
-              <span className="text-[#5e5e5e] font-medium">Submitted On</span>
+              <span className="text-secondary-3 font-medium">Submitted On</span>
               <span
-                className="text-[#1b1b1b] font-semibold text-[13px] md:text-sm text-right"
+                className="text-text-primary font-semibold text-[13px] md:text-sm text-right"
                 suppressHydrationWarning
               >
                 {formattedDate}
               </span>
             </div>
             <div className="flex justify-between items-start text-sm md:text-base">
-              <span className="text-[#5e5e5e] font-medium shrink-0">What happens next?</span>
-              <div className="text-[#1b1b1b] font-semibold text-left text-[13px] md:text-sm leading-normal flex flex-col items-start">
+              <span className="text-secondary-3 font-medium shrink-0">What happens next?</span>
+              <div className="text-text-primary font-semibold text-left text-[13px] md:text-sm leading-normal flex flex-col items-start">
                 <span>We will review your application</span>
                 <span>within 2 weeks.</span>
               </div>
