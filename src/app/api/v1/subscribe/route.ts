@@ -36,8 +36,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Subscription is unavailable' }, { status: 503 });
     }
 
-    // Call backend with timeout
-    const SUBSCRIBE_API_URL = `${process.env.API_BASE_URL || 'https://api.staging.clinsight.hng14.com'}/api/v1/subscribe`;
+    const apiBaseUrl = (process.env.API_BASE_URL || 'https://api.staging.useclinsight.com').replace(
+      /\/+$/,
+      '',
+    );
+    const SUBSCRIBE_API_URL = `${apiBaseUrl}/api/v1/subscribe`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);

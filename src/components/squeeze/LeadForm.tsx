@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Download01Icon, Loading03Icon, CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
-import { submitLeadFormAction } from '@/actions/lead-form-actions';
+import { submitLeadFormAction } from '@/actions/subscription-actions';
 import { cn } from '@/lib/utils';
 import { leadFormSchema, type LeadFormValues } from '@/schemas/lead-form-schema';
 import { trackGuideDownload } from '@/lib/analytics/ga';
@@ -57,7 +57,7 @@ export function LeadForm() {
     try {
       const result = await submitLeadFormAction(data);
 
-      if (result.error) {
+      if (!result.success && result.status !== 409) {
         if (downloadWindow) {
           downloadWindow.close();
         }
@@ -83,6 +83,14 @@ export function LeadForm() {
       }
 
       router.push('/thank-you/guide');
+    } catch {
+      if (downloadWindow) {
+        downloadWindow.close();
+      }
+
+      const errorMessage = 'Something went wrong. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
