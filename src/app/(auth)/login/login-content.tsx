@@ -191,12 +191,7 @@ export default function LoginContent() {
           return;
         }
 
-        const returnedAccessToken =
-          json?.data?.access_token ?? json?.data?.accessToken ?? accessToken;
-
-        if (returnedAccessToken) {
-          localStorage.setItem('accessToken', returnedAccessToken);
-        }
+        // Session is set via HTTP-only cookie by callback API route.
 
         setShowSuccessModal(true);
       } catch {
@@ -263,9 +258,7 @@ export default function LoginContent() {
         return;
       }
 
-      const accessToken = json?.data?.access_token ?? json?.data?.accessToken;
-
-      if (accessToken) localStorage.setItem('accessToken', accessToken);
+      // Session is set via HTTP-only cookie by login API.
 
       setFailedAttempts(0);
       localStorage.removeItem(`loginLockoutUntil_${data.email}`);

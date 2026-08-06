@@ -17,7 +17,6 @@ function establishSessionFromTokens(accessToken: string, refreshToken: string | 
   const response = NextResponse.json({
     status: 'success',
     message: 'Session established.',
-    data: { access_token: accessToken },
   });
   applyAuthCookies(response, accessToken, refreshToken);
   return response;
@@ -29,7 +28,9 @@ export async function GET(request: NextRequest) {
   if (!accessToken) {
     const loginUrl = new URL('/login', request.url);
     request.nextUrl.searchParams.forEach((value, key) => {
-      loginUrl.searchParams.set(key, value);
+      if (key !== 'access_token' && key !== 'refresh_token') {
+        loginUrl.searchParams.set(key, value);
+      }
     });
     return NextResponse.redirect(loginUrl);
   }
@@ -41,8 +42,14 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  let body;
   try {
-    const body = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ message: 'Invalid JSON body.' }, { status: 400 });
+  }
+
+  try {
     const { accessToken, refreshToken } = readAuthTokens(body);
     const code = typeof body?.code === 'string' ? body.code : null;
     const state = typeof body?.state === 'string' ? body.state : null;
