@@ -318,7 +318,7 @@ export default function LoginContent() {
             priority
           />
 
-          <div className="absolute left-10 top-10 z-10 h-[39px] w-[154px]">
+          <div className="absolute left-10 top-10 z-10 h-9.75 w-38.5">
             <Image
               src="/assets/signup-page-assets/auth-logo.svg"
               alt="Clinsight"
@@ -344,7 +344,7 @@ export default function LoginContent() {
 
           {/* Centered form */}
           <div className="flex flex-1 items-center justify-center px-8 py-10">
-            <div className="w-full max-w-[420px]">
+            <div className="w-full max-w-105">
               <LoginForm
                 register={register}
                 handleSubmit={handleSubmit}
