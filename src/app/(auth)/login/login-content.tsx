@@ -142,10 +142,10 @@ export default function LoginContent() {
     const oauthError = params.get('error') || params.get('oauth_error');
     const code = params.get('code');
     const accessToken = params.get('access_token');
-    const idToken = params.get('id_token');
+    const refreshToken = params.get('refresh_token');
     const state = params.get('state');
 
-    if (!oauthError && !code && !accessToken && !idToken) return;
+    if (!oauthError && !code && !accessToken) return;
 
     window.history.replaceState(null, '', window.location.pathname);
 
@@ -168,10 +168,21 @@ export default function LoginContent() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ code, access_token: accessToken, id_token: idToken, state }),
+          body: JSON.stringify({
+            code,
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            state,
+          }),
         });
 
         const json = await res.json().catch(() => null);
+        const redirectUrl = json?.data?.redirect_url;
+
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+          return;
+        }
 
         if (!res.ok) {
           const msg = mapApiError(res.status, json?.message ?? '');
@@ -180,11 +191,12 @@ export default function LoginContent() {
           return;
         }
 
-        const googleToken = json?.data?.google_token ?? json?.data?.googleToken;
-        const returnedAccessToken = json?.data?.access_token ?? json?.data?.accessToken;
+        const returnedAccessToken =
+          json?.data?.access_token ?? json?.data?.accessToken ?? accessToken;
 
-        if (googleToken) localStorage.setItem('googleToken', googleToken);
-        if (returnedAccessToken) localStorage.setItem('accessToken', returnedAccessToken);
+        if (returnedAccessToken) {
+          localStorage.setItem('accessToken', returnedAccessToken);
+        }
 
         setShowSuccessModal(true);
       } catch {
