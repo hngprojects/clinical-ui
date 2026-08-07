@@ -9,6 +9,8 @@ import { toast } from 'sonner';
 import { submitLeadFormAction } from '@/actions/subscription-actions';
 import { cn } from '@/lib/utils';
 import { leadFormSchema, type LeadFormValues } from '@/schemas/lead-form-schema';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { trackGuideDownload } from '@/lib/analytics/ga';
 import { trackLead } from '@/lib/analytics/pixel';
 import { captureGuestEvent, captureLead, identifyLead } from '@/lib/analytics/posthog';
@@ -33,6 +35,8 @@ export function LeadForm() {
       email: '',
     },
   });
+  const firstNameField = register('firstName');
+  const emailField = register('email');
 
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -107,14 +111,14 @@ export function LeadForm() {
         <label htmlFor="lead-first-name" className="sr-only">
           First name
         </label>
-        <input
+        <Input
           id="lead-first-name"
           type="text"
           placeholder="Enter your first name"
-          {...register('firstName')}
+          {...firstNameField}
           onChange={(e) => {
             setFirstName(e.target.value);
-            register('firstName').onChange(e);
+            firstNameField.onChange(e);
           }}
           disabled={isLoading || isDone}
           maxLength={50}
@@ -130,14 +134,14 @@ export function LeadForm() {
         <label htmlFor="lead-email" className="sr-only">
           Email address
         </label>
-        <input
+        <Input
           id="lead-email"
           type="email"
           placeholder="Enter your email address"
-          {...register('email')}
+          {...emailField}
           onChange={(e) => {
             setEmail(e.target.value);
-            register('email').onChange(e);
+            emailField.onChange(e);
           }}
           disabled={isLoading || isDone}
           autoComplete="email"
@@ -167,12 +171,12 @@ export function LeadForm() {
         </p>
       )}
 
-      <button
+      <Button
         type="submit"
         disabled={!isButtonEnabled || isLoading || isDone}
         className={cn(
           'flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-semibold transition-all',
-          isButtonEnabled && !isLoading
+          isButtonEnabled && !isLoading && !isDone
             ? 'bg-primary-blue text-white hover:bg-primary-blue/90 active:bg-primary-blue'
             : 'cursor-not-allowed bg-[#DCE8F6] text-[#7FA3D1]',
         )}
@@ -188,7 +192,7 @@ export function LeadForm() {
             <HugeiconsIcon icon={Download01Icon} className="h-5 w-5" size={20} />
           </>
         )}
-      </button>
+      </Button>
     </form>
   );
 }
