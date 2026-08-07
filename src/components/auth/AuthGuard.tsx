@@ -40,6 +40,11 @@ export function AuthGuard({
       if (allowedRoles && allowedRoles.length > 0) {
         const hasRole = allowedRoles.includes(user.role as UserRole);
         if (!hasRole) {
+          try {
+            await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+          } catch (e) {
+            console.error('Failed to clear session cookies in AuthGuard (unauthorized):', e);
+          }
           router.replace(unauthorizedPath);
           return;
         }
