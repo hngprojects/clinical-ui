@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-export const ACCESS_TOKEN_MAX_AGE = 60 * 60;
-export const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 3;
+export const ACCESS_TOKEN_MAX_AGE = 60 * 60 * 8; // 8 hours
+export const REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 3; // 3 days
 
 export function applyAuthCookies(
   response: NextResponse,

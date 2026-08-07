@@ -255,6 +255,13 @@ export default function LoginContent() {
         }
         setApiError(msg);
         toast.error(msg);
+
+        if (res.status === 403) {
+          toast.info('Redirecting to verification page...');
+          setTimeout(() => {
+            router.push(`/verify-otp?email=${encodeURIComponent(data.email)}&resend=true`);
+          }, 3000);
+        }
         return;
       }
 

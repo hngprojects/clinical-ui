@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/doctor/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
