@@ -142,10 +142,10 @@ export default function LoginContent() {
     const oauthError = params.get('error') || params.get('oauth_error');
     const code = params.get('code');
     const accessToken = params.get('access_token');
-    const idToken = params.get('id_token');
+    const refreshToken = params.get('refresh_token');
     const state = params.get('state');
 
-    if (!oauthError && !code && !accessToken && !idToken) return;
+    if (!oauthError && !code && !accessToken) return;
 
     window.history.replaceState(null, '', window.location.pathname);
 
@@ -168,10 +168,21 @@ export default function LoginContent() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ code, access_token: accessToken, id_token: idToken, state }),
+          body: JSON.stringify({
+            code,
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            state,
+          }),
         });
 
         const json = await res.json().catch(() => null);
+        const redirectUrl = json?.data?.redirect_url;
+
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+          return;
+        }
 
         if (!res.ok) {
           const msg = mapApiError(res.status, json?.message ?? '');
@@ -180,11 +191,7 @@ export default function LoginContent() {
           return;
         }
 
-        const googleToken = json?.data?.google_token ?? json?.data?.googleToken;
-        const returnedAccessToken = json?.data?.access_token ?? json?.data?.accessToken;
-
-        if (googleToken) localStorage.setItem('googleToken', googleToken);
-        if (returnedAccessToken) localStorage.setItem('accessToken', returnedAccessToken);
+        // Session is set via HTTP-only cookie by callback API route.
 
         setShowSuccessModal(true);
       } catch {
@@ -251,9 +258,7 @@ export default function LoginContent() {
         return;
       }
 
-      const accessToken = json?.data?.access_token ?? json?.data?.accessToken;
-
-      if (accessToken) localStorage.setItem('accessToken', accessToken);
+      // Session is set via HTTP-only cookie by login API.
 
       setFailedAttempts(0);
       localStorage.removeItem(`loginLockoutUntil_${data.email}`);
@@ -313,7 +318,7 @@ export default function LoginContent() {
             priority
           />
 
-          <div className="absolute left-10 top-10 z-10 h-[39px] w-[154px]">
+          <div className="absolute left-10 top-10 z-10 h-9.75 w-38.5">
             <Image
               src="/assets/signup-page-assets/auth-logo.svg"
               alt="Clinsight"
@@ -339,7 +344,7 @@ export default function LoginContent() {
 
           {/* Centered form */}
           <div className="flex flex-1 items-center justify-center px-8 py-10">
-            <div className="w-full max-w-[420px]">
+            <div className="w-full max-w-105">
               <LoginForm
                 register={register}
                 handleSubmit={handleSubmit}

@@ -21,17 +21,29 @@ const maskEmail = (emailStr: string) => {
   return `${username.substring(0, 2)}***@${domain}`;
 };
 
+const getCurrentTime = (): number => Date.now();
+
 const getFutureTimestamp = (durationMs: number): number => {
-  return Date.now() + durationMs;
+  return getCurrentTime() + durationMs;
 };
 
 export function VerifyOtpForm() {
+  const RESEND_COOLDOWN_SEC = 30; // 30 seconds resend cooldown
+  const CODE_VALIDITY_SEC = 600; // 600 seconds otp code validity
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [resendSuccess, setResendSuccess] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds resend cooldown
+
+  // Target Expiration Timestamps
+  const [resendExpiry, setResendExpiry] = useState(
+    () => getCurrentTime() + RESEND_COOLDOWN_SEC * 1000,
+  );
+  const [codeExpiry, setCodeExpiry] = useState(() => getCurrentTime() + CODE_VALIDITY_SEC * 1000);
+
+  const [timeLeft, setTimeLeft] = useState(RESEND_COOLDOWN_SEC);
+  const [codeValidity, setCodeValidity] = useState(CODE_VALIDITY_SEC);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isLockedOut, setIsLockedOut] = useState(false);
 
@@ -40,14 +52,26 @@ export function VerifyOtpForm() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
 
-  // Timer Effect
+  // Timer and CodeValidity Effect
   useEffect(() => {
-    if (timeLeft <= 0) return;
     const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      const now = getCurrentTime();
+
+      // Calculate remaining seconds based on real clock time
+      const remainingResend = Math.max(0, Math.ceil((resendExpiry - now) / 1000));
+      const remainingCode = Math.max(0, Math.ceil((codeExpiry - now) / 1000));
+
+      setTimeLeft(remainingResend);
+      setCodeValidity(remainingCode);
+
+      // Stop ticking once both expire
+      if (remainingResend === 0 && remainingCode === 0) {
+        clearInterval(timer);
+      }
     }, 1000);
+
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [resendExpiry, codeExpiry]);
 
   // Lockout persist & expiration check
   useEffect(() => {
@@ -57,7 +81,7 @@ export function VerifyOtpForm() {
       const stored = localStorage.getItem(`lockoutUntil_${email}`);
       if (stored) {
         const lockoutTime = parseInt(stored, 10);
-        const now = Date.now();
+        const now = getCurrentTime();
         if (now < lockoutTime) {
           setIsLockedOut(true);
           const remainingSeconds = Math.ceil((lockoutTime - now) / 1000);
@@ -143,7 +167,7 @@ export function VerifyOtpForm() {
     if (isLockedOut) return;
 
     // Block verification if code has expired
-    if (timeLeft <= 0) {
+    if (codeValidity <= 0) {
       const errorMsg = 'This code has expired. Please request a new one.';
       setApiError(errorMsg);
       toast.error(errorMsg);
@@ -279,7 +303,14 @@ export function VerifyOtpForm() {
       } else {
         setResendSuccess(true);
         toast.success('OTP code resent successfully!');
-        setTimeLeft(30); // Reset timer to 30 seconds
+
+        // Update target expiration timestamps (restarts the single timer effect)
+        const now = getCurrentTime();
+        setResendExpiry(now + RESEND_COOLDOWN_SEC * 1000);
+        setCodeExpiry(now + CODE_VALIDITY_SEC * 1000);
+        setTimeLeft(RESEND_COOLDOWN_SEC);
+        setCodeValidity(CODE_VALIDITY_SEC);
+
         setOtp(['', '', '', '', '', '']); // Clear digits
         setFailedAttempts(0); // Reset failed attempts counter for new code
         setIsLockedOut(false); // Reset lockout state
@@ -307,7 +338,7 @@ export function VerifyOtpForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-[338px] flex flex-col items-center gap-5 md:gap-6 font-sans"
+      className="w-full max-w-84.5 flex flex-col items-center gap-5 md:gap-6 font-sans"
     >
       {/* Go Back Button */}
       <Button
@@ -325,7 +356,7 @@ export function VerifyOtpForm() {
         <h1 className="text-2xl md:text-[32px] font-bold text-[#1B1B1B] mb-2 leading-tight">
           Verify Your Email
         </h1>
-        <p className="text-sm md:text-base text-[#5E5E5E] font-normal max-w-[400px] mx-auto">
+        <p className="text-sm md:text-base text-[#5E5E5E] font-normal max-w-100 mx-auto">
           Enter the 6 digit code we sent to{' '}
           <span className="font-semibold text-[#1B1B1B]">{maskEmail(email) || 'your email'}</span>
         </p>
@@ -383,7 +414,7 @@ export function VerifyOtpForm() {
             'h-14 w-full rounded-2xl text-base font-bold transition-colors select-none flex items-center justify-center gap-2 border-transparent',
             isOtpComplete && !isVerifying && !isResending && !isLockedOut
               ? 'bg-primary-blue text-white hover:bg-primary-blue/90 cursor-pointer'
-              : 'bg-[#F5F5F5] text-[#767676] cursor-not-allowed',
+              : 'bg-[#F5F5F5] text-text-disabled cursor-not-allowed',
           )}
         >
           {isVerifying ? (
@@ -499,7 +530,7 @@ export function VerifyOtpForm() {
             <p>
               Code expires in{' '}
               <span className="font-semibold text-[#1B1B1B]">
-                00:{timeLeft.toString().padStart(2, '0')}
+                00:{codeValidity.toString().padStart(2, '0')}
               </span>
             </p>
           ) : (
@@ -509,7 +540,7 @@ export function VerifyOtpForm() {
                 type="button"
                 variant="link"
                 onClick={handleResend}
-                disabled={isVerifying || isResending}
+                disabled={isVerifying || isResending || timeLeft > 0}
                 className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
