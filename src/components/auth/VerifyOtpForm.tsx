@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -259,7 +259,7 @@ export function VerifyOtpForm() {
     }
   };
 
-  const handleResend = async () => {
+  const handleResend = useCallback(async () => {
     if (isLockedOut) return;
     if (!email) {
       const errorMsg = 'Email not found. Please try signing up again.';
@@ -325,23 +325,31 @@ export function VerifyOtpForm() {
     } finally {
       setIsResending(false);
     }
-  };
+  }, [email, isLockedOut]);
 
   useEffect(() => {
     const autoResend = searchParams.get('resend') === 'true';
-    if (autoResend && email) {
-      // Clean up the parameter from URL to prevent resending again on refresh
-      const newParams = new URLSearchParams(window.location.search);
-      newParams.delete('resend');
-      const newSearch = newParams.toString();
-      const newUrl = `${window.location.pathname}${newSearch ? `?${newSearch}` : ''}`;
-      window.history.replaceState(null, '', newUrl);
+    if (!autoResend || !email) return;
 
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      void handleResend();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email, searchParams]);
+    let active = true;
+
+    // Clean up the parameter from URL to prevent resending again on refresh
+    const newParams = new URLSearchParams(window.location.search);
+    newParams.delete('resend');
+    const newSearch = newParams.toString();
+    const newUrl = `${window.location.pathname}${newSearch ? `?${newSearch}` : ''}`;
+    window.history.replaceState(null, '', newUrl);
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    handleResend().finally(() => {
+      // no-op if unmounted/stale — active guard prevents state updates below
+      if (!active) return;
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [email, searchParams, handleResend]);
 
   const isOtpComplete = otp.every((digit) => digit !== '');
 
