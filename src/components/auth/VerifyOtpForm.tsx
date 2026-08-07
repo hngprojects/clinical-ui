@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -259,7 +259,7 @@ export function VerifyOtpForm() {
     }
   };
 
-  const handleResend = async () => {
+  const handleResend = useCallback(async () => {
     if (isLockedOut) return;
     if (!email) {
       const errorMsg = 'Email not found. Please try signing up again.';
@@ -325,7 +325,31 @@ export function VerifyOtpForm() {
     } finally {
       setIsResending(false);
     }
-  };
+  }, [email, isLockedOut]);
+
+  useEffect(() => {
+    const autoResend = searchParams.get('resend') === 'true';
+    if (!autoResend || !email) return;
+
+    let active = true;
+
+    // Clean up the parameter from URL to prevent resending again on refresh
+    const newParams = new URLSearchParams(window.location.search);
+    newParams.delete('resend');
+    const newSearch = newParams.toString();
+    const newUrl = `${window.location.pathname}${newSearch ? `?${newSearch}` : ''}`;
+    window.history.replaceState(null, '', newUrl);
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    handleResend().finally(() => {
+      // no-op if unmounted/stale — active guard prevents state updates below
+      if (!active) return;
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [email, searchParams, handleResend]);
 
   const isOtpComplete = otp.every((digit) => digit !== '');
 
@@ -513,10 +537,28 @@ export function VerifyOtpForm() {
           )}
         </Button>
 
-        <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center">
-          {isLockedOut ? (
+        <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center flex flex-col gap-1.5">
+          {/* Expiration Timer */}
+          {codeValidity > 0 ? (
             <p>
-              <span>{"Didn't receive the code? "}</span>
+              Code expires in{' '}
+              <span className="font-semibold text-[#1B1B1B]">
+                {Math.floor(codeValidity / 60)
+                  .toString()
+                  .padStart(2, '0')}
+                :{(codeValidity % 60).toString().padStart(2, '0')}
+              </span>
+            </p>
+          ) : (
+            <p className="text-red-500 font-semibold text-xs md:text-sm">
+              Code has expired. Please request a new one.
+            </p>
+          )}
+
+          {/* Resend Action */}
+          <p>
+            <span>{"Didn't receive the code? "}</span>
+            {isLockedOut ? (
               <Button
                 type="button"
                 variant="link"
@@ -525,28 +567,20 @@ export function VerifyOtpForm() {
               >
                 Resend Code
               </Button>
-            </p>
-          ) : timeLeft > 0 ? (
-            <p>
-              Code expires in{' '}
-              <span className="font-semibold text-[#1B1B1B]">
-                00:{codeValidity.toString().padStart(2, '0')}
-              </span>
-            </p>
-          ) : (
-            <p>
-              <span>{"Didn't receive the code? "}</span>
+            ) : timeLeft > 0 ? (
+              <span className="font-semibold text-primary-blue">Resend in {timeLeft}s</span>
+            ) : (
               <Button
                 type="button"
                 variant="link"
                 onClick={handleResend}
                 disabled={isVerifying || isResending || timeLeft > 0}
-                className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer"
+                className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer inline"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
               </Button>
-            </p>
-          )}
+            )}
+          </p>
         </div>
       </div>
     </motion.div>

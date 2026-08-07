@@ -29,11 +29,11 @@ This project uses **Next.js 16.2.6** with React 19. APIs differ from Next.js 13�
 
 `src/app/` uses Next.js route groups to segment layouts:
 
-| Group | Path prefix | Purpose |
-|---|---|---|
-| `(external)` | `/`, `/about`, `/contact`, `/how-it-works`, `/waitlist` | Public marketing pages |
-| `(auth)` | `/signin`, `/signup`, `/verify-otp`, `/forgot-password`, `/reset-password`, `/verification/*` | Authentication and doctor onboarding |
-| `(legal)` | `/privacy-policy`, `/terms-and-conditions` | Legal content pages |
+| Group        | Path prefix                                                                                   | Purpose                              |
+| ------------ | --------------------------------------------------------------------------------------------- | ------------------------------------ |
+| `(external)` | `/`, `/about`, `/contact`, `/how-it-works`, `/waitlist`                                       | Public marketing pages               |
+| `(auth)`     | `/signin`, `/signup`, `/verify-otp`, `/forgot-password`, `/reset-password`, `/verification/*` | Authentication and doctor onboarding |
+| `(legal)`    | `/privacy-policy`, `/terms-and-conditions`                                                    | Legal content pages                  |
 
 The **root layout** (`src/app/layout.tsx`) wraps all groups with `<Header>`, `<Footer>`, and `<Toaster>`. Auth pages use fixed/absolute positioning to create full-screen layouts on top of this.
 
@@ -43,7 +43,7 @@ The `(auth)/verification/` sub-group has its own layout that adds `<Verification
 
 Backend communication is split:
 
-- **`src/actions/`** — Server Actions (`'use server'`) for auth flows (signup, signin, verify OTP, resend OTP, password reset). These call the external staging API directly: `https://api.staging.clinsight.hng14.com/api/v1/`.
+- **`src/actions/`** — Server Actions (`'use server'`) for auth flows (signup, signin, verify OTP, resend OTP, password reset). These call the external staging API directly: `https://api.staging.useclinsight.com/api/v1/`.
 - **`src/app/api/`** — Next.js Route Handlers used for internal/proxy endpoints (health check, waitlist, auth sub-routes like `/api/auth/verify-otp`).
 
 ### Form Pattern
@@ -58,5 +58,4 @@ Icons come from `@hugeicons/react` (`HugeiconsIcon`) with icon definitions impor
 
 UI primitives are shadcn/ui components in `src/components/ui/`.
 
-
-All API URLs fall back to `https://api.staging.clinsight.hng14.com/api/v1/auth/*` if unset.
+All API URLs fall back to `https://api.staging.useclinsight.com/api/v1/auth/*` if unset.
