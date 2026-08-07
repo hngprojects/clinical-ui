@@ -2,10 +2,10 @@
 
 const SIGNUP_URL =
   process.env.NEXT_PUBLIC_SIGNUP_API_URL ||
-  'https://api.staging.useclinsight.com/api/v1/auth/signup';
+  'https://api.staging.useclinsight.com/api/v1/auth/doctor/signup';
 const SIGNIN_URL =
   process.env.NEXT_PUBLIC_SIGNIN_API_URL ||
-  'https://api.staging.useclinsight.com/api/v1/auth/login';
+  'https://api.staging.useclinsight.com/api/v1/auth/doctor/login';
 const VERIFY_OTP_URL =
   process.env.NEXT_PUBLIC_VERIFY_OTP_API_URL ||
   'https://api.staging.useclinsight.com/api/v1/auth/verify-otp';
@@ -206,7 +206,7 @@ export async function verifyOtpAction(email: string, code: string) {
     const response = await fetch(VERIFY_OTP_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, code }),
+      body: JSON.stringify({ email, code, purpose: 'email_verification', role: 'doctor' }),
     });
 
     const result = await handleApiResponse(response, 'Verification failed');
@@ -297,7 +297,11 @@ export async function resendOtpAction(email: string) {
     const response = await fetch(RESEND_OTP_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({
+        email,
+        purpose: 'email_verification',
+        role: 'doctor',
+      }),
     });
 
     return await handleApiResponse(response, 'Failed to resend OTP');
