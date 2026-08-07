@@ -327,6 +327,22 @@ export function VerifyOtpForm() {
     }
   };
 
+  useEffect(() => {
+    const autoResend = searchParams.get('resend') === 'true';
+    if (autoResend && email) {
+      // Clean up the parameter from URL to prevent resending again on refresh
+      const newParams = new URLSearchParams(window.location.search);
+      newParams.delete('resend');
+      const newSearch = newParams.toString();
+      const newUrl = `${window.location.pathname}${newSearch ? `?${newSearch}` : ''}`;
+      window.history.replaceState(null, '', newUrl);
+
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void handleResend();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email, searchParams]);
+
   const isOtpComplete = otp.every((digit) => digit !== '');
 
   // Turn borders red only if it's an actual incorrect/invalid code error from the server (not network timeouts or missing fields)
