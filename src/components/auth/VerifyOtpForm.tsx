@@ -513,10 +513,28 @@ export function VerifyOtpForm() {
           )}
         </Button>
 
-        <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center">
-          {isLockedOut ? (
+        <div className="text-sm md:text-base text-[#5E5E5E] mt-2 select-none text-center flex flex-col gap-1.5">
+          {/* Expiration Timer */}
+          {codeValidity > 0 ? (
             <p>
-              <span>{"Didn't receive the code? "}</span>
+              Code expires in{' '}
+              <span className="font-semibold text-[#1B1B1B]">
+                {Math.floor(codeValidity / 60)
+                  .toString()
+                  .padStart(2, '0')}
+                :{(codeValidity % 60).toString().padStart(2, '0')}
+              </span>
+            </p>
+          ) : (
+            <p className="text-red-500 font-semibold text-xs md:text-sm">
+              Code has expired. Please request a new one.
+            </p>
+          )}
+
+          {/* Resend Action */}
+          <p>
+            <span>{"Didn't receive the code? "}</span>
+            {isLockedOut ? (
               <Button
                 type="button"
                 variant="link"
@@ -525,28 +543,20 @@ export function VerifyOtpForm() {
               >
                 Resend Code
               </Button>
-            </p>
-          ) : timeLeft > 0 ? (
-            <p>
-              Code expires in{' '}
-              <span className="font-semibold text-[#1B1B1B]">
-                00:{codeValidity.toString().padStart(2, '0')}
-              </span>
-            </p>
-          ) : (
-            <p>
-              <span>{"Didn't receive the code? "}</span>
+            ) : timeLeft > 0 ? (
+              <span className="font-semibold text-primary-blue">Resend in {timeLeft}s</span>
+            ) : (
               <Button
                 type="button"
                 variant="link"
                 onClick={handleResend}
                 disabled={isVerifying || isResending || timeLeft > 0}
-                className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer"
+                className="p-0 text-sm md:text-base h-auto font-medium text-[#1565C0] underline hover:text-[#1565C0]/80 cursor-pointer inline"
               >
                 {isResending ? 'Resending...' : 'Resend Code'}
               </Button>
-            </p>
-          )}
+            )}
+          </p>
         </div>
       </div>
     </motion.div>
