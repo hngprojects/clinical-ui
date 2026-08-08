@@ -112,10 +112,10 @@ function applyCommonHeaders(response: NextResponse, requestId: string): NextResp
  * Validates the session by calling /api/auth/me with the active token.
  * Returns true only when the server responds with 2xx.
  */
-async function validateSession(request: Request, activeToken: string): Promise<boolean> {
+async function validateSession(activeToken: string): Promise<boolean> {
   try {
-    const url = new URL('/api/auth/me', request.url);
-    const res = await fetch(url.toString(), {
+    const url = `${BASE_URL.replace(/\/$/, '')}/api/v1/auth/me`;
+    const res = await fetch(url, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${activeToken}`,
@@ -141,6 +141,7 @@ export const proxy: NextProxy = async (request) => {
 
   // Perform token refresh if missing/expired but refresh_token exists
   if ((!token || isTokenExpired(token)) && refreshToken) {
+    console.log('isrefreshing');
     const refreshResult = await refreshSession(refreshToken);
     if (refreshResult) {
       token = refreshResult.token;
@@ -162,7 +163,8 @@ export const proxy: NextProxy = async (request) => {
 
   if (isProtected || isAuthOnly) {
     // Validate session server-side when a cookie is present
-    const isAuthenticated = hasCookie ? await validateSession(request, token!) : false;
+    const isAuthenticated = hasCookie ? await validateSession(token!) : false;
+    console.log('isAuthenticated', isAuthenticated);
 
     if (isProtected && !isAuthenticated) {
       const loginUrl = new URL(LOGIN_PAGE, request.url);
