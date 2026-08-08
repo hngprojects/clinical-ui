@@ -7,6 +7,7 @@ export async function POST(request: NextRequest) {
   const response = NextResponse.json({ success: true });
 
   response.cookies.delete('token');
+  response.cookies.delete('refresh_token');
 
   try {
     await fetch(`${BASE_URL}/api/v1/auth/logout`, {
