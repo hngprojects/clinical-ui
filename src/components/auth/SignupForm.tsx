@@ -140,7 +140,9 @@ export function SignupForm() {
         throw new Error('Google authentication URL is not configured.');
       }
 
-      window.location.href = url;
+      const googleUrl = new URL(url);
+      googleUrl.searchParams.set('role', 'doctor');
+      window.location.href = googleUrl.toString();
     } catch {
       const errorMsg = 'Unable to initiate Google authentication. Please try again.';
       setApiError(errorMsg);
