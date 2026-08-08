@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { applyAuthCookies } from '@/lib/auth-session';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.staging.useclinsight.com';
 
@@ -19,6 +20,27 @@ function getAccessToken(data: unknown) {
     response.data?.accessToken ??
     response.access_token ??
     response.accessToken ??
+    null
+  );
+}
+
+function getRefreshToken(data: unknown) {
+  if (!data || typeof data !== 'object') return null;
+
+  const response = data as {
+    refresh_token?: string;
+    refreshToken?: string;
+    data?: {
+      refresh_token?: string;
+      refreshToken?: string;
+    };
+  };
+
+  return (
+    response.data?.refresh_token ??
+    response.data?.refreshToken ??
+    response.refresh_token ??
+    response.refreshToken ??
     null
   );
 }
@@ -54,15 +76,10 @@ export async function POST(request: Request) {
     const data = await response.json();
     const nextResponse = NextResponse.json(data);
     const accessToken = getAccessToken(data);
+    const refreshToken = getRefreshToken(data);
 
     if (accessToken) {
-      nextResponse.cookies.set('token', accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: getExpiresIn(data),
-      });
+      applyAuthCookies(nextResponse, accessToken, refreshToken, getExpiresIn(data));
     }
 
     return nextResponse;
