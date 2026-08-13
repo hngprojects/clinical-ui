@@ -41,8 +41,8 @@ export default function Sidebar({
       const isActive =
         pathname === page.path || (page.path !== basePath && pathname.startsWith(`${page.path}/`));
       const baseCls = 'px-2.5 py-3.5 rounded-[8px] transition-colors flex gap-2.5';
-      const activeCls = 'bg-primary-blue text-white';
-      const inactiveCls = 'text-text-disabled hover:bg-primary-blue/10';
+      const activeCls = 'bg-primary-subtle text-primary-blue';
+      const inactiveCls = 'text-text-disabled hover:bg-primary-subtle';
       const PageIcon = iconMap[page.icon] ?? DashboardSquare03Icon;
 
       return (
@@ -65,10 +65,15 @@ export default function Sidebar({
   return (
     <>
       {/* ── Desktop sidebar ────────────────────────────────────────────── */}
-      <div className="hidden w-full sm:w-50 lg:w-62.5 px-4 py-5 shrink-0 bg-white sm:flex h-auto overflow-y-auto flex-col justify-between gap-10">
-        <div className="flex flex-col gap-8">
+      <div className="hidden w-full sm:w-50 lg:w-62.5 px-4 py-6 shrink-0 bg-white sm:flex h-auto overflow-y-auto flex-col justify-between gap-10">
+        <div className="flex flex-col gap-16">
           <div className="flex">
-            <Image src="/assets/dashboard/vector.svg" width={48} height={48} alt="Dashboard Logo" />
+            <Image
+              src="/assets/dashboard/vector-new.svg"
+              width={116}
+              height={40}
+              alt="Dashboard Logo"
+            />
           </div>
           <div className="flex flex-col gap-2">{NavItems()}</div>
         </div>
@@ -88,7 +93,7 @@ export default function Sidebar({
       {isOpen && (
         <aside className="sm:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white p-4 overflow-y-auto shadow-lg">
           <div className="flex items-center justify-between mb-6">
-            <Image src="/assets/dashboard/vector.svg" width={40} height={40} alt="Logo" />
+            <Image src="/assets/dashboard/vector-new.svg" width={116} height={40} alt="Logo" />
             <button type="button" aria-label="Close sidebar" className="p-2" onClick={onClose}>
               <HugeiconsIcon icon={Cancel01Icon as IconSvgElement} />
             </button>
