@@ -11,7 +11,7 @@ import {
   DashboardSquare03Icon,
   Folder03Icon,
   Stethoscope02Icon,
-  Cancel01Icon,
+  ArrowLeft01Icon,
 } from '@hugeicons/core-free-icons';
 import { LogoutIcon } from '@/components/icons/LogoutIcon';
 import LogoutModal from '@/components/auth/LogoutModal';
@@ -91,17 +91,24 @@ export default function Sidebar({
 
       {/* ── Mobile sidebar ─────────────────────────────────────────────── */}
       {isOpen && (
-        <aside className="sm:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white p-4 overflow-y-auto shadow-lg">
-          <div className="flex items-center justify-between mb-6">
-            <Image src="/assets/dashboard/vector-new.svg" width={116} height={40} alt="Logo" />
-            <button type="button" aria-label="Close sidebar" className="p-2" onClick={onClose}>
-              <HugeiconsIcon icon={Cancel01Icon as IconSvgElement} />
-            </button>
+        <aside className="sm:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white overflow-y-auto shadow-lg">
+          <div className="flex items-end justify-end border-b mb-6 pb-5.25">
+            <div className=" w-full flex items-center justify-between p-4 pb-0">
+              <Image src="/assets/dashboard/vector-new.svg" width={116} height={40} alt="Logo" />
+              <button
+                type="button"
+                aria-label="Close sidebar"
+                className="p-2 bg-outline-border rounded-[8px]"
+                onClick={onClose}
+              >
+                <HugeiconsIcon icon={ArrowLeft01Icon} />
+              </button>
+            </div>
           </div>
 
-          <nav className="flex flex-col gap-3">{NavItems({ onNavigate: onClose })}</nav>
+          <nav className="flex flex-col gap-3 p-4">{NavItems({ onNavigate: onClose })}</nav>
 
-          <div className="mt-6">
+          <div className="mt-6 p-4">
             <button
               className="flex w-full items-center justify-center gap-2.5 px-4 py-3 rounded-md border border-[#D0D0D0] text-text-disabled hover:text-red-600 transition-colors"
               type="button"
