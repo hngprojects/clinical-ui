@@ -1,6 +1,6 @@
 import overviewMock from '@/mocks/doctor/overview.json';
 
-interface CaseRequest {
+export interface CaseRequest {
   id: string;
   patientName: string;
   avatar: string;
@@ -9,12 +9,23 @@ interface CaseRequest {
   condition: string;
 }
 
+export interface CurrentCaseItem {
+  id: string;
+  patientName: string;
+  avatar: string;
+  timeAssigned: string;
+  priority: string;
+  condition: string;
+  subtext?: string;
+}
+
 export interface Case {
   id: string;
   patientName: string;
   avatar: string;
   timeAssigned: string;
   status: string;
+  priority?: string;
   condition: string;
 }
 
@@ -26,6 +37,7 @@ export interface Overview {
     earnings: number;
     earningsChange: number;
   };
+  currentCase?: CurrentCaseItem | null;
   caseRequests: CaseRequest[];
   cases: Case[];
 }
