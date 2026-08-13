@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { pages } from './pages';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { HugeiconsIcon, IconSvgElement } from '@hugeicons/react';
 import {
   DashboardSquare03Icon,
@@ -90,39 +90,47 @@ export default function Sidebar({
       </div>
 
       {/* ── Mobile sidebar ─────────────────────────────────────────────── */}
-      {isOpen && (
-        <aside className="sm:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white overflow-y-auto shadow-lg">
-          <div className="flex items-end justify-end border-b mb-6 pb-5.25">
-            <div className=" w-full flex items-center justify-between p-4 pb-0">
-              <Image src="/assets/dashboard/vector-new.svg" width={116} height={40} alt="Logo" />
+      <AnimatePresence>
+        {isOpen ? (
+          <motion.aside
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            className="sm:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white overflow-y-auto shadow-lg"
+          >
+            <div className="flex items-end justify-end border-b mb-6 pb-5.25">
+              <div className=" w-full flex items-center justify-between p-4 pb-0">
+                <Image src="/assets/dashboard/vector-new.svg" width={116} height={40} alt="Logo" />
+                <button
+                  type="button"
+                  aria-label="Close sidebar"
+                  className="p-2 bg-outline-border rounded-[8px]"
+                  onClick={onClose}
+                >
+                  <HugeiconsIcon icon={ArrowLeft01Icon} />
+                </button>
+              </div>
+            </div>
+
+            <nav className="flex flex-col gap-3 p-4">{NavItems({ onNavigate: onClose })}</nav>
+
+            <div className="mt-6 p-4">
               <button
+                className="flex w-full items-center justify-center gap-2.5 px-4 py-3 rounded-md border border-[#D0D0D0] text-text-disabled hover:text-red-600 transition-colors"
                 type="button"
-                aria-label="Close sidebar"
-                className="p-2 bg-outline-border rounded-[8px]"
-                onClick={onClose}
+                onClick={() => {
+                  onClose();
+                  setShowLogout(true);
+                }}
               >
-                <HugeiconsIcon icon={ArrowLeft01Icon} />
+                <LogoutIcon />
+                Logout
               </button>
             </div>
-          </div>
-
-          <nav className="flex flex-col gap-3 p-4">{NavItems({ onNavigate: onClose })}</nav>
-
-          <div className="mt-6 p-4">
-            <button
-              className="flex w-full items-center justify-center gap-2.5 px-4 py-3 rounded-md border border-[#D0D0D0] text-text-disabled hover:text-red-600 transition-colors"
-              type="button"
-              onClick={() => {
-                onClose();
-                setShowLogout(true);
-              }}
-            >
-              <LogoutIcon />
-              Logout
-            </button>
-          </div>
-        </aside>
-      )}
+          </motion.aside>
+        ) : null}
+      </AnimatePresence>
 
       {/* ── Logout modal (shared, portal-style) ────────────────────────── */}
       <AnimatePresence>
