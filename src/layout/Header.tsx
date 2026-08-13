@@ -3,7 +3,7 @@
 import { ArrowDown01Icon, Cancel01Icon, Menu01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import Image from 'next/image';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import DutyStatusToggle from '@/components/doctor/DutyStatusToggle';
 // import { getActiveCases } from '@/services/doctor';
@@ -15,8 +15,8 @@ function UserHeader({
   onMenuToggle: () => void;
   isSidebarOpen: boolean;
 }) {
-  const [isOnDuty, setIsOnDuty] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(6);
+  const [isOnDuty, setIsOnDuty] = useState<boolean>(false);
+  const [notificationCount, setNotificationCount] = useState<number>(6);
   const [doctorName, setDoctorName] = useState<string | null>('Light');
 
   return (
@@ -43,7 +43,9 @@ function UserHeader({
               width={24}
               height={24}
             />
-            <span className="absolute -top-0.5 sm:-top-1 -right-0.5 sm:-right-1 size-4 sm:h-4 sm:w-4 p-1 rounded-full bg-primary-blue text-white text-[8px] sm:text-xs flex items-center justify-center">
+            <span
+              className={`${notificationCount < 1 ? 'hidden' : ''} absolute -top-0.5 sm:-top-1 -right-0.5 sm:-right-1 size-4 sm:h-4 sm:w-4 p-1 rounded-full bg-primary-blue text-white text-[8px] sm:text-xs flex items-center justify-center`}
+            >
               {notificationCount > 9 ? '9+' : notificationCount}
             </span>
           </button>
