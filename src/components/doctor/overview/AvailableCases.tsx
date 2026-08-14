@@ -13,17 +13,6 @@ export interface PatientCase {
   condition: string;
 }
 
-function BlueFolderIcon({ className = 'w-7 h-7' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M3 7C3 5.89543 3.89543 5 5 5H9.58579C10.1162 5 10.6249 5.21071 11 5.58579L12.4142 7H19C20.1046 7 21 7.89543 21 9V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z"
-        fill="#2563EB"
-      />
-    </svg>
-  );
-}
-
 function PriorityBadge({ priority, isMobile = false }: { priority?: string; isMobile?: boolean }) {
   const level = priority || 'Medium';
 
@@ -60,7 +49,7 @@ export default function AvailableCases({
         <div className="flex items-center gap-2.5">
           <h3 className="text-base md:text-lg font-bold text-[#111827]">Available Cases</h3>
           {hasCases && countDisplay && (
-            <span className="bg-primary-blue text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center inline-flex items-center justify-center">
+            <span className="bg-primary-blue text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-6 text-center inline-flex items-center justify-center">
               {countDisplay}
             </span>
           )}
@@ -76,9 +65,13 @@ export default function AvailableCases({
       {!hasCases ? (
         /* Empty State */
         <div className="flex flex-col items-center text-center py-10 my-2">
-          <div className="w-14 h-14 rounded-full bg-[#EBF3FF] flex items-center justify-center mb-3">
-            <BlueFolderIcon className="w-7 h-7" />
-          </div>
+          <Image
+              src="/assets/dashboard/empty-illustration.png"
+              alt="No Current Case"
+              width={48}
+              height={48}
+              className="w-14 h-14 rounded-full object-cover border border-gray-100"
+            />
           <h4 className="font-bold text-base md:text-lg text-[#111827]">No Available Cases</h4>
           <p className="text-sm text-[#6B7280] max-w-sm mx-auto mt-1">
             There are no cases in the queue right now. New patient cases will appear here once

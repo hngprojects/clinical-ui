@@ -16,10 +16,14 @@ export default function CurrentCase({ currentCase }: { currentCase?: CurrentCase
         <div>
           {/* Desktop Empty State */}
           <div className="hidden sm:flex items-center justify-between gap-6 py-2">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-[#EBF3FF] flex items-center justify-center shrink-0">
-                <BlueFolderIcon className="w-6 h-6" />
-              </div>
+            <div className="flex items-center gap-6">
+              <Image
+                src="/assets/dashboard/empty-illustration.png"
+                alt="No Current Case"
+                width={56}
+                height={56}
+                className="w-14 h-14 object-cover"
+              />
               <div>
                 <h4 className="font-bold text-base md:text-lg text-[#111827]">No Current Case</h4>
                 <p className="text-sm text-[#6B7280] max-w-md mt-0.5">
@@ -40,9 +44,13 @@ export default function CurrentCase({ currentCase }: { currentCase?: CurrentCase
 
           {/* Mobile Empty State */}
           <div className="flex sm:hidden flex-col items-center text-center py-4">
-            <div className="w-14 h-14 rounded-full bg-[#EBF3FF] flex items-center justify-center mb-3">
-              <BlueFolderIcon className="w-7 h-7" />
-            </div>
+            <Image
+              src="/assets/dashboard/empty-illustration.png"
+              alt="No Current Case"
+              width={56}
+              height={56}
+              className="w-14 h-14 object-cover"
+            />
             <h4 className="font-bold text-base text-[#111827]">No Current Case</h4>
             <p className="text-sm text-[#6B7280] max-w-xs mx-auto mt-1 mb-5">
               You don&apos;t have a case in review yet. Check your assigned cases below and pick one
@@ -93,10 +101,10 @@ export default function CurrentCase({ currentCase }: { currentCase?: CurrentCase
             <span className="text-xs text-[#6B7280] block mb-1">Priority</span>
             <span
               className={`text-xs font-semibold px-3 py-1 rounded-full inline-block ${currentCase.priority === 'High'
-                  ? 'bg-[#FEE2E2] text-[#DC2626]'
-                  : currentCase.priority === 'Low'
-                    ? 'bg-[#DCFCE7] text-[#16A34A]'
-                    : 'bg-[#FEF3C7] text-[#D97706]'
+                ? 'bg-[#FEE2E2] text-[#DC2626]'
+                : currentCase.priority === 'Low'
+                  ? 'bg-[#DCFCE7] text-[#16A34A]'
+                  : 'bg-[#FEF3C7] text-[#D97706]'
                 }`}
             >
               {currentCase.priority || 'Medium'}
