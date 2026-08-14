@@ -162,8 +162,14 @@ export const proxy: NextProxy = async (request) => {
   const isAuthOnly = AUTH_ONLY_PREFIXES.some((prefix) => matchesPrefix(pathname, prefix));
 
   if (isProtected || isAuthOnly) {
-    // Validate session server-side when a cookie is present
-    const isAuthenticated = hasCookie ? await validateSession(token!) : false;
+    // If we just did a successful refresh, trust the new token directly —
+    // calling validateSession again would race against the browser not yet
+    // having the new cookie, causing a false-negative redirect to /login.
+    const isAuthenticated = didRefresh
+      ? true
+      : hasCookie
+        ? await validateSession(token!)
+        : false;
     console.log('isAuthenticated', isAuthenticated);
 
     if (isProtected && !isAuthenticated) {
@@ -172,7 +178,7 @@ export const proxy: NextProxy = async (request) => {
       const redirect = NextResponse.redirect(loginUrl);
 
       // Clear a stale/invalid token cookie so the browser doesn't loop
-      if (hasCookie) {
+      if (hasCookie && !didRefresh) {
         redirect.cookies.delete('token');
       }
 
@@ -181,10 +187,22 @@ export const proxy: NextProxy = async (request) => {
 
     if (isAuthOnly && isAuthenticated) {
       const redirect = NextResponse.redirect(new URL(DOCTOR_HOME, request.url));
+      // Always write the refreshed cookies onto the redirect so the
+      // destination page receives the updated token immediately.
       if (didRefresh) {
         setAuthCookies(redirect, newAccessToken, newRefreshToken, expiresIn);
       }
       return applyCommonHeaders(redirect, requestId);
+    }
+
+    // Protected route + freshly refreshed: let the request through and
+    // write the new cookies so the browser is updated.
+    if (isProtected && didRefresh && isAuthenticated) {
+      const response = NextResponse.next({
+        request: { headers: new Headers(request.headers) },
+      });
+      setAuthCookies(response, newAccessToken, newRefreshToken, expiresIn);
+      return applyCommonHeaders(response, requestId);
     }
   }
 

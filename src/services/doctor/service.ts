@@ -1,6 +1,6 @@
 import overviewMock from '@/mocks/doctor/overview.json';
 
-interface CaseRequest {
+export interface CaseRequest {
   id: string;
   patientName: string;
   avatar: string;
@@ -9,13 +9,39 @@ interface CaseRequest {
   condition: string;
 }
 
+export interface CurrentCaseItem {
+  id: string;
+  patientName: string;
+  avatar: string;
+  timeAssigned: string;
+  priority: string;
+  condition: string;
+  subtext?: string;
+}
+
 export interface Case {
   id: string;
   patientName: string;
   avatar: string;
   timeAssigned: string;
   status: string;
+  priority?: string;
   condition: string;
+}
+
+export interface DoctorStatistics {
+  pendingReviews: number;
+  acceptedCases: number;
+  completedCases: number;
+  earnings: number;
+  totalCases?: number;
+}
+
+export interface DoctorDutyStatus {
+  isOnDuty: boolean;
+  onDutySince: string | null;
+  onDutyExpiresAt: string | null;
+  remainingDutySeconds: number;
 }
 
 export interface Overview {
@@ -24,35 +50,119 @@ export interface Overview {
     activeCases: number;
     completedCases: number;
     earnings: number;
-    earningsChange: number;
+    earningsChange?: number;
   };
+  currentCase?: CurrentCaseItem | null;
   caseRequests: CaseRequest[];
   cases: Case[];
+  dutyStatus?: DoctorDutyStatus;
+  showVerificationBanner?: boolean;
+  isVerificationDismissed?: boolean;
+  verificationStatus?: string;
 }
 
-export async function getOverview() {
+export function formatLargeNumber(value: number): string {
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(1).replace(/\.0$/, '')}M`;
+  }
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+  }
+  return value.toLocaleString();
+}
+
+export async function fetchDoctorStatistics(): Promise<DoctorStatistics | null> {
+  try {
+    const res = await fetch('/api/doctors/dashboard/statistics', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const data = json.data || {};
+    return {
+      pendingReviews: data.pending_reviews ?? 0,
+      acceptedCases: data.accepted_cases ?? 0,
+      completedCases: data.completed_cases ?? 0,
+      earnings: data.earnings ?? 0,
+      totalCases: data.total_cases ?? 0,
+    };
+  } catch (error) {
+    console.error('Failed to fetch doctor statistics:', error);
+    return null;
+  }
+}
+
+export async function updateDutyStatus(isOnDuty: boolean): Promise<DoctorDutyStatus | { error: string }> {
+  try {
+    const res = await fetch('/api/doctors/duty-status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ is_on_duty: isOnDuty }),
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      return { error: json.detail || json.message || 'Manual off-duty is disabled.' };
+    }
+    const data = json.data || {};
+    return {
+      isOnDuty: data.is_on_duty ?? false,
+      onDutySince: data.on_duty_since ?? null,
+      onDutyExpiresAt: data.on_duty_expires_at ?? null,
+      remainingDutySeconds: data.remaining_duty_seconds ?? 0,
+    };
+  } catch (error) {
+    console.error('Failed to update duty status:', error);
+    return { error: 'Network error updating duty status.' };
+  }
+}
+
+export async function dismissVerificationBanner(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/doctors/verification/dismiss', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return res.ok;
+  } catch (error) {
+    console.error('Failed to dismiss verification banner:', error);
+    return false;
+  }
+}
+
+export async function getOverview(): Promise<Overview> {
   const {
     caseRequests = [],
     cases = [],
     summary: baseSummary = { earnings: 0, earningsChange: 0 },
   } = overviewMock as Overview;
 
-  const newRequests = caseRequests.length;
-  const activeCases = cases.filter((c: Case) => c.status === 'Pending').length;
-  const completedCases = cases.filter((c: Case) => c.status === 'Completed').length;
+  const realStats = await fetchDoctorStatistics();
 
-  const computed = {
+  const newRequests = realStats ? realStats.pendingReviews : caseRequests.length;
+  const activeCases = realStats ? realStats.acceptedCases : cases.filter((c: Case) => c.status === 'Pending').length;
+  const completedCases = realStats ? realStats.completedCases : cases.filter((c: Case) => c.status === 'Completed').length;
+  const earnings = realStats ? realStats.earnings : baseSummary.earnings;
+
+  const computed: Overview = {
     ...overviewMock,
     summary: {
       newRequests,
       activeCases,
       completedCases,
-      earnings: baseSummary.earnings,
+      earnings,
       earningsChange: baseSummary.earningsChange,
     },
   };
 
-  return new Promise((resolve) => setTimeout(() => resolve(computed), 10));
+  return computed;
 }
 
 export function getActiveCases(): Promise<Case[]> {
