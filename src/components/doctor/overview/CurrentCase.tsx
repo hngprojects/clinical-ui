@@ -6,17 +6,6 @@ import { ArrowRight02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CurrentCaseItem } from '@/services/doctor';
 
-function BlueFolderIcon({ className = 'w-6 h-6' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M3 7C3 5.89543 3.89543 5 5 5H9.58579C10.1162 5 10.6249 5.21071 11 5.58579L12.4142 7H19C20.1046 7 21 7.89543 21 9V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z"
-        fill="#2563EB"
-      />
-    </svg>
-  );
-}
-
 export default function CurrentCase({ currentCase }: { currentCase?: CurrentCaseItem | null }) {
   if (!currentCase) {
     return (
@@ -103,13 +92,12 @@ export default function CurrentCase({ currentCase }: { currentCase?: CurrentCase
           <div>
             <span className="text-xs text-[#6B7280] block mb-1">Priority</span>
             <span
-              className={`text-xs font-semibold px-3 py-1 rounded-full inline-block ${
-                currentCase.priority === 'High'
+              className={`text-xs font-semibold px-3 py-1 rounded-full inline-block ${currentCase.priority === 'High'
                   ? 'bg-[#FEE2E2] text-[#DC2626]'
                   : currentCase.priority === 'Low'
                     ? 'bg-[#DCFCE7] text-[#16A34A]'
                     : 'bg-[#FEF3C7] text-[#D97706]'
-              }`}
+                }`}
             >
               {currentCase.priority || 'Medium'}
             </span>
@@ -129,7 +117,7 @@ export default function CurrentCase({ currentCase }: { currentCase?: CurrentCase
           </p>
           <Link
             href={`/user/case/${currentCase.id}`}
-            className="bg-[#2563EB] hover:bg-[#1D4ED8] active:bg-[#1E40AF] text-white font-medium text-sm px-6 py-2.5 rounded-xl inline-flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-colors"
+            className="bg-primary-blue hover:bg-primary-blue/90 text-white font-medium text-sm px-6 py-2.5 rounded-xl inline-flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-colors"
           >
             Continue Review
             <HugeiconsIcon icon={ArrowRight02Icon} size={16} />
