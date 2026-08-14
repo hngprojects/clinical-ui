@@ -5,11 +5,25 @@ import CurrentCase from './CurrentCase';
 import AvailableCases from './AvailableCases';
 import Summary from './Summary';
 import VerificationBanner, { VerificationStatus } from './VerificationBanner';
-import { Overview, CaseRequest, Case } from '@/services/doctor';
+import { Overview, CaseRequest, Case } from '@/services/doctor/service';
 
-export default function OverviewDashboard({ overview }: { overview: Overview | null }) {
-  const [viewState, setViewState] = useState<'populated' | 'empty' | 'no-current'>('empty');
-  const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>('unsuccessful');
+export default function OverviewDashboard({
+  overview,
+  isLoading = false,
+  isError = false,
+  onRetry,
+}: {
+  overview: Overview | null;
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
+}) {
+  const [viewState] = useState<'populated' | 'empty' | 'no-current'>('populated');
+
+  const verificationStatus: VerificationStatus =
+    (overview?.verificationStatus as VerificationStatus) ?? 'unsuccessful';
+  const isDismissed = overview?.isVerificationDismissed ?? false;
+  const showBanner = overview?.showVerificationBanner ?? !isDismissed;
 
   const casesList = overview?.caseRequests ?? overview?.cases ?? [];
   const firstItem = casesList[0] as (CaseRequest & Case) | undefined;
@@ -34,11 +48,20 @@ export default function OverviewDashboard({ overview }: { overview: Overview | n
 
   return (
     <div className="flex flex-col gap-6 pt-2.5 pb-10 px-2.5 max-w-7xl mx-auto w-full">
-      {/* Verification Status Banner (Screenshot 1, 2, 3, 4) */}
-      <VerificationBanner status={verificationStatus} />
+      {/* Verification Status Banner */}
+      {showBanner && (
+        <VerificationBanner
+          status={verificationStatus}
+        />
+      )}
 
       {/* Summary Cards */}
-      <Summary overview={overview} />
+      <Summary
+        overview={overview}
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={onRetry}
+      />
 
       {/* Current Case Section */}
       <CurrentCase currentCase={displayCurrentCase} />

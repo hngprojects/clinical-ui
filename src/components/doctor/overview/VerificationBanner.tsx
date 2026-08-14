@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Cancel01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
+import { dismissVerificationBanner } from '@/services/doctor/service';
 
 export type VerificationStatus = 'unsuccessful' | 'in_progress' | 'verified' | 'hidden';
 
@@ -22,6 +23,11 @@ export default function VerificationBanner({
   if (dismissed || initialStatus === 'hidden') {
     return null;
   }
+
+  const handleDismiss = async () => {
+    setDismissed(true);
+    await dismissVerificationBanner();
+  };
 
   if (initialStatus === 'unsuccessful') {
     return (
@@ -140,7 +146,7 @@ export default function VerificationBanner({
           <button
             type="button"
             aria-label="Dismiss banner"
-            onClick={() => setDismissed(true)}
+            onClick={handleDismiss}
             className="text-[#10B981] hover:text-[#059669] p-1.5 rounded-lg hover:bg-[#D1FAE5]/60 transition-colors shrink-0 cursor-pointer"
           >
             <HugeiconsIcon icon={Cancel01Icon} size={18} color="currentColor" />
