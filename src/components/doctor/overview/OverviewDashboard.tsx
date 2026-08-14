@@ -4,10 +4,12 @@ import { useState } from 'react';
 import CurrentCase from './CurrentCase';
 import AvailableCases from './AvailableCases';
 import Summary from './Summary';
+import VerificationBanner, { VerificationStatus } from './VerificationBanner';
 import { Overview, CaseRequest, Case } from '@/services/doctor';
 
 export default function OverviewDashboard({ overview }: { overview: Overview | null }) {
   const [viewState, setViewState] = useState<'populated' | 'empty' | 'no-current'>('empty');
+  const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>('unsuccessful');
 
   const casesList = overview?.caseRequests ?? overview?.cases ?? [];
   const firstItem = casesList[0] as (CaseRequest & Case) | undefined;
@@ -32,13 +34,16 @@ export default function OverviewDashboard({ overview }: { overview: Overview | n
 
   return (
     <div className="flex flex-col gap-6 pt-2.5 pb-10 px-2.5 max-w-7xl mx-auto w-full">
+      {/* Verification Status Banner (Screenshot 1, 2, 3, 4) */}
+      <VerificationBanner status={verificationStatus} />
+
       {/* Summary Cards */}
       <Summary overview={overview} />
 
-      {/* Current Case Section (Screenshot 1, 2, 3, 4, 5) */}
+      {/* Current Case Section */}
       <CurrentCase currentCase={displayCurrentCase} />
 
-      {/* Available Cases Section (Screenshot 1, 2, 3, 4, 5) */}
+      {/* Available Cases Section */}
       <AvailableCases cases={displayAvailableCases} badgeCount="10+" />
     </div>
   );
