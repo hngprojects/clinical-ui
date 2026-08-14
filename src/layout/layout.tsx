@@ -24,7 +24,7 @@ export default function DashboardLayout({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.9 }}
+            transition={{ duration: 0.5 }}
             className="fixed inset-0 z-40 bg-slate-950/40 sm:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
