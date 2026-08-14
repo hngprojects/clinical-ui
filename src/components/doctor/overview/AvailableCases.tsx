@@ -60,14 +60,14 @@ export default function AvailableCases({
         <div className="flex items-center gap-2.5">
           <h3 className="text-base md:text-lg font-bold text-[#111827]">Available Cases</h3>
           {hasCases && countDisplay && (
-            <span className="bg-[#2563EB] text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center inline-flex items-center justify-center">
+            <span className="bg-primary-blue text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] text-center inline-flex items-center justify-center">
               {countDisplay}
             </span>
           )}
         </div>
         <Link
           href="/user/case"
-          className="text-[#2563EB] hover:text-[#1D4ED8] text-sm font-medium transition-colors"
+          className="text-primary-blue hover:text-primary-blue/90 text-sm font-medium transition-colors"
         >
           View All
         </Link>
@@ -138,7 +138,7 @@ export default function AvailableCases({
                     <td className="py-3.5 px-3 text-right">
                       <Link
                         href={`/user/case/${item.id}`}
-                        className="inline-flex items-center justify-center border border-[#DBEAFE] text-[#2563EB] hover:bg-[#F0F7FF] active:bg-[#E0EEFE] px-4 py-1.5 rounded-xl text-sm font-medium transition-colors"
+                        className="inline-flex items-center justify-center border border-[#DBEAFE] text-primary-blue hover:bg-[#F0F7FF] active:bg-[#E0EEFE] px-4 py-1.5 rounded-xl text-sm font-medium transition-colors"
                       >
                         View
                       </Link>
@@ -150,7 +150,7 @@ export default function AvailableCases({
           </div>
 
           {/* Mobile Card List View */}
-          <div className="block md:hidden flex flex-col gap-3 mt-4">
+          <div className="md:hidden flex flex-col gap-3 mt-4">
             {cases.map((item) => (
               <div
                 key={item.id}
@@ -189,7 +189,7 @@ export default function AvailableCases({
 
                   <Link
                     href={`/user/case/${item.id}`}
-                    className="inline-flex items-center justify-center border border-[#DBEAFE] text-[#2563EB] hover:bg-[#F0F7FF] px-4 py-2 rounded-xl text-xs font-semibold transition-colors"
+                    className="inline-flex items-center justify-center border border-[#DBEAFE] text-primary-blue hover:bg-[#F0F7FF] active:bg-[#E0EEFE] px-4 py-2 rounded-xl text-xs font-semibold transition-colors"
                   >
                     View Case
                   </Link>
